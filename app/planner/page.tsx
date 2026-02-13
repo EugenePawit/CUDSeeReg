@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Plus, X, Download, Trash2, ChevronDown } from 'lucide-react';
 import { useTimetableStore } from '../store/useTimetable';
@@ -17,7 +17,8 @@ const DAY_COLORS: Record<string, string> = {
     Friday: 'day-friday',
 };
 
-const GRADES = ['1', '2', '3', '4', '5', '6'];
+const GRADES = ['1'];
+const CLASSROOMS = ['1', '2', '3', '4', '5', '6', '7'];
 
 const PLANS: Record<string, { value: string; label: string }[]> = {
     '1': [{ value: 'general', label: 'ทั่วไป' }],
@@ -37,7 +38,8 @@ export default function PlannerPage() {
     const timetableRef = useRef<HTMLDivElement>(null);
 
     // Selector state
-    const [selectedGrade, setSelectedGrade] = useState('5');
+    const [selectedGrade, setSelectedGrade] = useState('1');
+    const [selectedClassroom, setSelectedClassroom] = useState('1');
     const [selectedPlan, setSelectedPlan] = useState('science');
     const [rotcMode, setRotcMode] = useState(false);
 
@@ -47,7 +49,9 @@ export default function PlannerPage() {
     // Build timetable ID from selections
     useEffect(() => {
         let id = '';
-        if (['1', '2', '3'].includes(selectedGrade)) {
+        if (selectedGrade === '1') {
+            id = `M1-${selectedClassroom}`;
+        } else if (['2', '3'].includes(selectedGrade)) {
             id = `M${selectedGrade}`;
         } else {
             const planMap: Record<string, string> = { science: 'Science', arts: 'Arts', ep: 'EP' };
@@ -57,7 +61,7 @@ export default function PlannerPage() {
         if (BASE_TIMETABLES[id]) {
             setBaseTimetableId(id);
         }
-    }, [selectedGrade, selectedPlan, rotcMode, setBaseTimetableId]);
+    }, [selectedGrade, selectedClassroom, selectedPlan, rotcMode, setBaseTimetableId]);
 
     // Reset plan when changing grade
     useEffect(() => {
@@ -157,6 +161,25 @@ export default function PlannerPage() {
                             </div>
                         </div>
 
+                        {/* Classroom Selector for M1 */}
+                        {selectedGrade === '1' && (
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm text-slate-600">ห้องเรียน</label>
+                                <div className="relative">
+                                    <select
+                                        value={selectedClassroom}
+                                        onChange={e => setSelectedClassroom(e.target.value)}
+                                        className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                    >
+                                        {CLASSROOMS.map(c => (
+                                            <option key={c} value={c}>ม.1/{c}</option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                </div>
+                            </div>
+                        )}
+
                         {/* Study Plan - only for ม.4-6 */}
                         {isSenior && (
                             <div className="flex flex-col gap-1">
@@ -210,15 +233,29 @@ export default function PlannerPage() {
                         </div>
 
                         <div ref={timetableRef} className="glass-card p-6 rounded-xl overflow-x-auto">
-                            <table className="w-full border-collapse min-w-[1200px]">
+                            <table className="w-full border-collapse min-w-[1200px] table-fixed">
                                 <thead>
                                     <tr>
-                                        <th className="border border-slate-200 bg-slate-100 p-2 w-24">วัน</th>
+                                        <th className="border border-slate-200 bg-slate-100 p-2 w-24 min-w-[6rem]">วัน</th>
                                         {PERIODS.map(period => (
-                                            <th key={period} className="border border-slate-200 bg-slate-100 p-2 text-center">
-                                                <div className="font-medium">{period}</div>
-                                                <div className="text-xs text-slate-500">{PERIOD_TIMES[period]}</div>
-                                            </th>
+                                            <React.Fragment key={period}>
+                                                <th className="border border-slate-200 bg-slate-100 p-2 text-center">
+                                                    <div className="font-medium">{period}</div>
+                                                    <div className="text-xs text-slate-500">{PERIOD_TIMES[period]}</div>
+                                                </th>
+                                                {/* Break after Period 2 */}
+                                                {period === 2 && (
+                                                    <th className="border border-slate-200 bg-slate-100 p-2 text-center w-12 min-w-[3rem]">
+                                                        <div className="text-xs text-slate-500">10:10-10:20</div>
+                                                    </th>
+                                                )}
+                                                {/* Break after Period 6 */}
+                                                {period === 6 && (
+                                                    <th className="border border-slate-200 bg-slate-100 p-2 text-center w-12 min-w-[3rem]">
+                                                        <div className="text-xs text-slate-500">13:40-13:50</div>
+                                                    </th>
+                                                )}
+                                            </React.Fragment>
                                         ))}
                                     </tr>
                                 </thead>
@@ -232,46 +269,73 @@ export default function PlannerPage() {
                                                 const entry = baseTimetable.schedule[day]?.[period];
                                                 const elective = selectedElectives[day]?.[period];
 
-                                                if (!entry) return <td key={period} className="border border-slate-200 p-2 bg-slate-50" />;
+                                                const cellContent = (() => {
+                                                    if (!entry) return <td key={period} className="border border-slate-200 p-2 bg-slate-50" />;
 
-                                                if (entry.type === 'break') {
+                                                    if (entry.type === 'break') {
+                                                        return (
+                                                            <td key={period} className="border border-slate-200 cell-break p-2 text-center text-sm h-24 align-middle">
+                                                                {period === 5 ? 'พักเที่ยง' : 'พัก'}
+                                                            </td>
+                                                        );
+                                                    }
+
+                                                    // Core subjects
+                                                    if (entry.type === 'core') {
+                                                        return (
+                                                            <td key={period} className="border border-slate-200 bg-slate-50 p-2 text-center text-sm h-24 align-middle whitespace-normal">
+                                                                {entry.code !== entry.name && <div>{entry.code}</div>}
+                                                                <div className="font-medium text-slate-700">{entry.name}</div>
+                                                            </td>
+                                                        );
+                                                    }
+
+                                                    if (elective) {
+                                                        return (
+                                                            <td key={period} className="border border-slate-200 cell-selected p-2 relative group h-24 align-middle">
+                                                                <div className="text-xs font-mono text-emerald-600">{elective.code}</div>
+                                                                <div className="text-xs font-medium text-emerald-900">{elective.name}</div>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        removeElective(day, period);
+                                                                    }}
+                                                                    className="absolute top-1 right-1 p-1 rounded-full bg-red-100 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200"
+                                                                >
+                                                                    <X size={12} />
+                                                                </button>
+                                                            </td>
+                                                        );
+                                                    }
+
                                                     return (
-                                                        <td key={period} className="border border-slate-200 cell-break p-2 text-center text-xs">
-                                                            {period === 5 ? 'พักเที่ยง' : 'พัก'}
+                                                        <td
+                                                            key={period}
+                                                            onClick={() => handleSlotClick(day, period)}
+                                                            className="border border-slate-200 cell-elective p-2 hover:bg-purple-50 cursor-pointer transition-colors group relative h-24 align-middle"
+                                                        >
+                                                            <div className="flex flex-col items-center justify-center h-full text-slate-400 group-hover:text-purple-500">
+                                                                <Plus size={20} />
+                                                                <span className="text-xs mt-1">วิชาเลือก</span>
+                                                            </div>
                                                         </td>
                                                     );
-                                                }
-
-                                                // Core subjects - leave blank
-                                                if (entry.type === 'core') {
-                                                    return <td key={period} className="border border-slate-200 bg-slate-50 p-2" />;
-                                                }
-
-                                                if (elective) {
-                                                    return (
-                                                        <td key={period} className="border border-slate-200 cell-selected p-2 relative group">
-                                                            <div className="text-xs font-mono text-emerald-600">{elective.code}</div>
-                                                            <div className="text-xs font-medium text-emerald-900">{elective.name}</div>
-                                                            <button
-                                                                onClick={() => removeElective(day, period)}
-                                                                className="absolute top-1 right-1 p-1 bg-rose-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            >
-                                                                <X size={12} />
-                                                            </button>
-                                                        </td>
-                                                    );
-                                                }
+                                                })();
 
                                                 return (
-                                                    <td
-                                                        key={period}
-                                                        onClick={() => handleSlotClick(day, period)}
-                                                        className="border border-slate-200 cell-elective p-2"
-                                                    >
-                                                        <div className="flex items-center justify-center h-10">
-                                                            <Plus size={20} className="text-purple-400" />
-                                                        </div>
-                                                    </td>
+                                                    <React.Fragment key={period}>
+                                                        {cellContent}
+                                                        {period === 2 && (
+                                                            <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
+                                                                พัก
+                                                            </td>
+                                                        )}
+                                                        {period === 6 && (
+                                                            <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
+                                                                พัก
+                                                            </td>
+                                                        )}
+                                                    </React.Fragment>
                                                 );
                                             })}
                                         </tr>
@@ -335,7 +399,6 @@ export default function PlannerPage() {
 
             <footer className="glass-card border-t border-white/20 py-6 mt-12">
                 <div className="container mx-auto px-4 text-center text-sm text-slate-600">
-                    <p>ข้อมูลจาก <a href="https://github.com/ronnapatp/cudElective" target="_blank" className="text-pink-600 hover:underline">ronnapatp/cudElective</a></p>
                     <p className="mt-1">CUDSeeReg © 2026</p>
                 </div>
             </footer>

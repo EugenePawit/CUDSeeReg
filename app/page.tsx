@@ -97,12 +97,6 @@ export default function Home() {
 
             <footer className="glass-card border-t border-white/20 py-6 mt-12">
                 <div className="container mx-auto px-4 text-center text-sm text-slate-600">
-                    <p>
-                        ข้อมูลจาก{' '}
-                        <a href="https://github.com/ronnapatp/cudElective" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">
-                            ronnapatp/cudElective
-                        </a>
-                    </p>
                     <p className="mt-1">CUDSeeReg © 2026</p>
                 </div>
             </footer>

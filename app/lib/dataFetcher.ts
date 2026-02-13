@@ -5,7 +5,7 @@ const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/ronnapatp/cudElective
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
 export async function fetchSubjects(grade: number): Promise<Subject[]> {
-    const cacheKey = `cudseereg_subjects_m${grade}`;
+    const cacheKey = `cudseereg_subjects_m${grade}_v2`;
 
     if (typeof window !== 'undefined') {
         const cached = localStorage.getItem(cacheKey);
