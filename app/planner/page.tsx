@@ -177,38 +177,6 @@ export default function PlannerPage() {
                                 </div>
                             </div>
                         )}
-
-                        {/* Study Plan - only for ม.4-6 */}
-                        {isSenior && (
-                            <div className="flex flex-col gap-1">
-                                <label className="text-sm text-slate-600">แผนการเรียน</label>
-                                <div className="relative">
-                                    <select
-                                        value={selectedPlan}
-                                        onChange={e => setSelectedPlan(e.target.value)}
-                                        className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                    >
-                                        {plans.map(p => (
-                                            <option key={p.value} value={p.value}>{p.label}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ROTC Toggle - only for ม.4-6 */}
-                        {isSenior && (
-                            <div className="flex items-center gap-2 ml-4">
-                                <label className="text-sm text-slate-600">ตารางช่วง ร.ด.</label>
-                                <button
-                                    onClick={() => setRotcMode(!rotcMode)}
-                                    className={`relative w-12 h-6 rounded-full transition-colors ${rotcMode ? 'bg-pink-500' : 'bg-slate-300'}`}
-                                >
-                                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${rotcMode ? 'translate-x-7' : 'translate-x-1'}`} />
-                                </button>
-                            </div>
-                        )}
                     </div>
                 </div>
 
