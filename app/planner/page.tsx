@@ -17,7 +17,7 @@ const DAY_COLORS: Record<string, string> = {
     Friday: 'day-friday',
 };
 
-const GRADES = ['1', '2'];
+const GRADES = ['1', '2', '3', '4', '5', '6'];
 const CLASSROOMS = ['1', '2', '3', '4', '5', '6', '7'];
 
 const PLANS: Record<string, { value: string; label: string }[]> = {
@@ -49,10 +49,8 @@ export default function PlannerPage() {
     // Build timetable ID from selections
     useEffect(() => {
         let id = '';
-        if (['1', '2'].includes(selectedGrade)) {
+        if (['1', '2', '3', '4', '5', '6'].includes(selectedGrade)) {
             id = `M${selectedGrade}-${selectedClassroom}`;
-        } else if (selectedGrade === '3') {
-            id = `M${selectedGrade}`;
         } else {
             const planMap: Record<string, string> = { science: 'Science', arts: 'Arts', ep: 'EP' };
             id = `M${selectedGrade}-${planMap[selectedPlan] || 'Science'}`;
@@ -65,7 +63,7 @@ export default function PlannerPage() {
 
     // Reset plan when changing grade
     useEffect(() => {
-        if (['1', '2', '3'].includes(selectedGrade)) {
+        if (['1', '2', '3', '4', '5', '6'].includes(selectedGrade)) {
             setSelectedPlan('general');
             setRotcMode(false);
         } else {
@@ -161,8 +159,8 @@ export default function PlannerPage() {
                             </div>
                         </div>
 
-                        {/* Classroom Selector for M1 and M2 */}
-                        {['1', '2'].includes(selectedGrade) && (
+                        {/* Classroom Selector for M1-M6 */}
+                        {['1', '2', '3', '4', '5', '6'].includes(selectedGrade) && (
                             <div className="flex flex-col gap-1">
                                 <label className="text-sm text-slate-600">ห้องเรียน</label>
                                 <div className="relative">
@@ -249,6 +247,12 @@ export default function PlannerPage() {
                                                         <div className="text-xs text-slate-500">10:10-10:20</div>
                                                     </th>
                                                 )}
+                                                {/* Lunch Break after Period 4 (for M.4-M.6) */}
+                                                {period === 4 && (
+                                                    <th className="border border-slate-200 bg-slate-100 p-2 text-center w-12 min-w-[3rem]">
+                                                        <div className="text-xs text-slate-500">12:00-12:50</div>
+                                                    </th>
+                                                )}
                                                 {/* Break after Period 6 */}
                                                 {period === 6 && (
                                                     <th className="border border-slate-200 bg-slate-100 p-2 text-center w-12 min-w-[3rem]">
@@ -328,6 +332,11 @@ export default function PlannerPage() {
                                                         {period === 2 && (
                                                             <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
                                                                 พัก
+                                                            </td>
+                                                        )}
+                                                        {period === 4 && (
+                                                            <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
+                                                                พักเที่ยง
                                                             </td>
                                                         )}
                                                         {period === 6 && (
