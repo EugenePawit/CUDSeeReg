@@ -215,8 +215,8 @@ export default function PlannerPage() {
                                                         <div className="text-xs text-slate-500">10:10-10:20</div>
                                                     </th>
                                                 )}
-                                                {/* Break after Period 6 (or 7 for M.4-M.6) */}
-                                                {(period === 6 || period === 7) && period === 7 && (
+                                                {/* Break after Period 6 */}
+                                                {period === 6 && (
                                                     <th className="border border-slate-200 bg-slate-100 p-2 text-center w-12 min-w-[3rem]">
                                                         <div className="text-xs text-slate-500">13:40-13:50</div>
                                                     </th>
@@ -296,7 +296,7 @@ export default function PlannerPage() {
                                                                 พัก
                                                             </td>
                                                         )}
-                                                        {period === 7 && (
+                                                        {period === 6 && (
                                                             <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
                                                                 พัก
                                                             </td>
