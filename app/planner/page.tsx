@@ -17,7 +17,7 @@ const DAY_COLORS: Record<string, string> = {
     Friday: 'day-friday',
 };
 
-const GRADES = ['2'];
+const GRADES = ['1', '2'];
 const CLASSROOMS = ['1', '2', '3', '4', '5', '6', '7'];
 
 const PLANS: Record<string, { value: string; label: string }[]> = {
@@ -38,7 +38,7 @@ export default function PlannerPage() {
     const timetableRef = useRef<HTMLDivElement>(null);
 
     // Selector state
-    const [selectedGrade, setSelectedGrade] = useState('2');
+    const [selectedGrade, setSelectedGrade] = useState('1');
     const [selectedClassroom, setSelectedClassroom] = useState('1');
     const [selectedPlan, setSelectedPlan] = useState('science');
     const [rotcMode, setRotcMode] = useState(false);
@@ -49,9 +49,9 @@ export default function PlannerPage() {
     // Build timetable ID from selections
     useEffect(() => {
         let id = '';
-        if (selectedGrade === '2') {
-            id = `M2-${selectedClassroom}`;
-        } else if (['1', '3'].includes(selectedGrade)) {
+        if (['1', '2'].includes(selectedGrade)) {
+            id = `M${selectedGrade}-${selectedClassroom}`;
+        } else if (selectedGrade === '3') {
             id = `M${selectedGrade}`;
         } else {
             const planMap: Record<string, string> = { science: 'Science', arts: 'Arts', ep: 'EP' };
@@ -161,8 +161,8 @@ export default function PlannerPage() {
                             </div>
                         </div>
 
-                        {/* Classroom Selector for M2 */}
-                        {selectedGrade === '2' && (
+                        {/* Classroom Selector for M1 and M2 */}
+                        {['1', '2'].includes(selectedGrade) && (
                             <div className="flex flex-col gap-1">
                                 <label className="text-sm text-slate-600">ห้องเรียน</label>
                                 <div className="relative">
@@ -172,7 +172,7 @@ export default function PlannerPage() {
                                         className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500"
                                     >
                                         {CLASSROOMS.map(c => (
-                                            <option key={c} value={c}>ม.2/{c}</option>
+                                            <option key={c} value={c}>ม.{selectedGrade}/{c}</option>
                                         ))}
                                     </select>
                                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
