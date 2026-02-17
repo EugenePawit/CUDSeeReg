@@ -115,6 +115,18 @@ export default function PlannerPage() {
         link.click();
     };
 
+    useEffect(() => {
+        const handleEsc = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setModalOpen(false);
+            }
+        };
+        if (modalOpen) {
+            window.addEventListener('keydown', handleEsc);
+        }
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [modalOpen]);
+
     const filteredSubjects = selectedSlot
         ? subjects.filter(s => {
             const matchesSlot = s.parsedTimeSlots.some(

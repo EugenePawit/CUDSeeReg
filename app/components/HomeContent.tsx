@@ -144,6 +144,18 @@ function SubjectCard({ subject, description }: { subject: GroupedSubject; descri
         return colorMap[dayAbbrev] || 'bg-pink-100 text-pink-700';
     };
 
+    useEffect(() => {
+        const handleEsc = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setShowModal(false);
+            }
+        };
+        if (showModal) {
+            window.addEventListener('keydown', handleEsc);
+        }
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [showModal]);
+
     return (
         <>
             <div className="glass-card rounded-xl p-4 relative">
