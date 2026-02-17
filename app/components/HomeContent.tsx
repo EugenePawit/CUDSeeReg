@@ -191,22 +191,16 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
                 {expanded && (
                     <div className="mt-4 pt-4 border-t border-slate-200 space-y-2" onClick={(e) => e.stopPropagation()}>
                         <div className="font-semibold text-slate-700">รายละเอียดเพิ่มเติม</div>
-                        {current.classroom && (
+                        {current.enrollment && (
                             <div className="flex gap-2">
-                                <span className="font-medium">ห้องเรียน:</span>
-                                <span>{current.classroom}</span>
+                                <span className="font-medium">เปิดรับ:</span>
+                                <span>{current.enrollment}</span>
                             </div>
                         )}
                         {current.classPerWeek && (
                             <div className="flex gap-2">
                                 <span className="font-medium">ชม./สัปดาห์:</span>
                                 <span>{current.classPerWeek}</span>
-                            </div>
-                        )}
-                        {hasMultipleGroups && current.instructor && (
-                            <div className="flex gap-2">
-                                <span className="font-medium">อาจารย์:</span>
-                                <span>{current.instructor}</span>
                             </div>
                         )}
                         {current.note && current.note.trim() !== '' && (
