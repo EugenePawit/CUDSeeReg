@@ -34,6 +34,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: 'CUD-EP วิทยาศาสตร์ 4', type: 'core' },
                 3: { code: '', name: 'สังคมศึกษาฯ', type: 'core' },
                 4: { code: '', name: 'พักกลางวัน', type: 'break' },
+                5: { code: '', name: 'วิชาเลือก', type: 'elective' },
+                6: { code: '', name: 'วิชาเลือก', type: 'elective' },
                 7: { code: '', name: 'ภาษาไทย 4', type: 'core' },
                 8: { code: '', name: 'CUD-EP คณิตศาสตร์พื้นฐาน 4', type: 'core' }
             },
@@ -209,8 +211,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: 'ทัศนศิลป์', type: 'core' },
                 3: { code: '', name: 'สังคมศึกษาฯ', type: 'core' },
                 4: { code: '', name: 'พักกลางวัน', type: 'break' },
-                5: { code: '', name: 'วิชาเลือก', type: 'elective' },
-                6: { code: '', name: 'วิชาเลือก', type: 'elective' },
+                5: { code: 'BC', name: 'ภาษาอังกฤษ (BC)', type: 'core' },
+                6: { code: 'BC', name: 'ภาษาอังกฤษ (BC)', type: 'core' },
                 7: { code: '', name: 'วิทยาศาสตร์ 4', type: 'core' },
                 8: { code: '', name: 'วิทยาศาสตร์ 4', type: 'core' }
             },
@@ -334,6 +336,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'วิชาเลือก', type: 'elective' },
+                2: { code: '', name: 'วิชาเลือก', type: 'elective' },
                 3: { code: 'BC', name: 'ภาษาอังกฤษ (BC)', type: 'core' },
                 4: { code: '', name: 'พักกลางวัน', type: 'break' },
                 5: { code: '', name: 'วิทยาศาสตร์ 4', type: 'core' },
