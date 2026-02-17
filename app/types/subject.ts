@@ -24,12 +24,13 @@ export interface ParsedTimeSlot {
     timeRange: string;
 }
 
-export interface FlattenedSubject extends Omit<Subject, 'group' | 'instructor' | 'classtime' | 'classroom' | 'updatedElectiveQuantity'> {
+export interface FlattenedSubject extends Omit<Subject, 'group' | 'instructor' | 'classtime' | 'classroom' | 'updatedElectiveQuantity' | 'note'> {
     group: string;
     instructor: string;
     classtime: string;
     classroom: string;
     updatedElectiveQuantity: string;
+    note: string;
     parsedTimeSlots: ParsedTimeSlot[];
     availableSeats: number;
 }

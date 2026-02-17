@@ -123,6 +123,7 @@ export default function HomeContent() {
 
 function SubjectCard({ subject }: { subject: GroupedSubject }) {
     const [selectedGroup, setSelectedGroup] = useState(0);
+    const [expanded, setExpanded] = useState(false);
     const current = subject.groups[selectedGroup];
     const hasMultipleGroups = subject.groups.length > 1;
 
@@ -139,14 +140,22 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
     };
 
     return (
-        <div className="glass-card rounded-xl p-4">
+        <div
+            className="glass-card rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all"
+            onClick={() => setExpanded(!expanded)}
+        >
             <div className="mb-3">
-                <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
+                <div className="flex items-center justify-between mb-1">
+                    <div className="text-sm font-mono text-pink-600">{subject.code}</div>
+                    <div className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-medium">
+                        รับ {current.availableSeats} คน
+                    </div>
+                </div>
                 <h3 className="text-lg font-semibold text-slate-900">{subject.name}</h3>
             </div>
 
             {hasMultipleGroups && (
-                <div className="mb-3">
+                <div className="mb-3" onClick={(e) => e.stopPropagation()}>
                     <select
                         value={selectedGroup}
                         onChange={e => setSelectedGroup(Number(e.target.value))}
@@ -177,7 +186,44 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
                     )}
                 </div>
                 <div>หน่วยกิต: {subject.credit}</div>
+
+                {/* Expandable Details */}
+                {expanded && (
+                    <div className="mt-4 pt-4 border-t border-slate-200 space-y-2" onClick={(e) => e.stopPropagation()}>
+                        <div className="font-semibold text-slate-700">รายละเอียดเพิ่มเติม</div>
+                        {current.classroom && (
+                            <div className="flex gap-2">
+                                <span className="font-medium">ห้องเรียน:</span>
+                                <span>{current.classroom}</span>
+                            </div>
+                        )}
+                        {current.classPerWeek && (
+                            <div className="flex gap-2">
+                                <span className="font-medium">ชม./สัปดาห์:</span>
+                                <span>{current.classPerWeek}</span>
+                            </div>
+                        )}
+                        {hasMultipleGroups && current.instructor && (
+                            <div className="flex gap-2">
+                                <span className="font-medium">อาจารย์:</span>
+                                <span>{current.instructor}</span>
+                            </div>
+                        )}
+                        {current.note && current.note.trim() !== '' && (
+                            <div className="flex gap-2">
+                                <span className="font-medium">หมายเหตุ:</span>
+                                <span className="text-amber-700">{current.note}</span>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Click indicator */}
+                <div className="text-xs text-slate-400 mt-2 text-center">
+                    {expanded ? '▲ คลิกเพื่อซ่อนรายละเอียด' : '▼ คลิกเพื่อดูรายละเอียด'}
+                </div>
             </div>
         </div>
     );
 }
+
