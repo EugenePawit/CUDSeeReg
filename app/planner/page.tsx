@@ -33,6 +33,7 @@ export default function PlannerPage() {
     const [selectedSlot, setSelectedSlot] = useState<{ day: string; period: number } | null>(null);
     const [subjects, setSubjects] = useState<FlattenedSubject[]>([]);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const timetableRef = useRef<HTMLDivElement>(null);
 
     // Selector state
@@ -91,6 +92,7 @@ export default function PlannerPage() {
         const entry = baseTimetable.schedule[day]?.[period];
         if (entry?.type === 'elective' && !selectedElectives[day]?.[period]) {
             setSelectedSlot({ day, period });
+            setSearchQuery(''); // Reset search when opening modal
             setModalOpen(true);
         }
     };
@@ -99,6 +101,7 @@ export default function PlannerPage() {
         if (selectedSlot) {
             addElective(selectedSlot.day, selectedSlot.period, subject);
             setModalOpen(false);
+            setSearchQuery(''); // Reset search after selection
         }
     };
 
@@ -117,7 +120,11 @@ export default function PlannerPage() {
             const matchesSlot = s.parsedTimeSlots.some(
                 slot => slot.day === selectedSlot.day && slot.periods.includes(selectedSlot.period)
             );
-            return matchesSlot && !hasConflict(s);
+            const matchesSearch = searchQuery === '' ||
+                s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                s.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                s.instructor.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesSlot && !hasConflict(s) && matchesSearch;
         })
         : [];
 
@@ -316,13 +323,23 @@ export default function PlannerPage() {
             {modalOpen && selectedSlot && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setModalOpen(false)}>
                     <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
-                        <div className="p-4 border-b flex justify-between items-center bg-pink-50">
-                            <h2 className="text-xl font-bold text-pink-900">
-                                เลือกวิชา - {DAY_NAMES_TH[selectedSlot.day]} คาบ {selectedSlot.period}
-                            </h2>
-                            <button onClick={() => setModalOpen(false)} className="p-2 hover:bg-pink-100 rounded-lg">
-                                <X size={20} />
-                            </button>
+                        <div className="p-4 border-b bg-pink-50">
+                            <div className="flex justify-between items-center mb-3">
+                                <h2 className="text-xl font-bold text-pink-900">
+                                    เลือกวิชา - {DAY_NAMES_TH[selectedSlot.day]} คาบ {selectedSlot.period}
+                                </h2>
+                                <button onClick={() => setModalOpen(false)} className="p-2 hover:bg-pink-100 rounded-lg">
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            {/* Search Bar */}
+                            <input
+                                type="text"
+                                placeholder="ค้นหาวิชา (ชื่อวิชา, รหัสวิชา, อาจารย์)..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm"
+                            />
                         </div>
                         <div className="p-4 overflow-y-auto max-h-[60vh]">
                             {loading ? (
