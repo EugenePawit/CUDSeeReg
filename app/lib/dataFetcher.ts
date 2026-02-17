@@ -2,6 +2,7 @@ import { Subject, FlattenedSubject, GroupedSubject } from '../types/subject';
 import { parseThaiTime } from './thaiTimeParser';
 
 const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/ronnapatp/cudElective/main/data/json';
+const GITHUB_CSV_URL = 'https://raw.githubusercontent.com/ronnapatp/cudElective/main/data/csv';
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
 export async function fetchSubjects(grade: number): Promise<Subject[]> {
@@ -32,6 +33,88 @@ export async function fetchSubjects(grade: number): Promise<Subject[]> {
     }
 
     return data;
+}
+
+// Helper to parse a CSV line handling quoted fields
+function parseCSVLine(line: string): string[] {
+    const cells: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            cells.push(current);
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    cells.push(current);
+
+    return cells;
+}
+
+// Fetch subject descriptions from CSV
+export async function fetchSubjectDescriptions(grade: number): Promise<Record<string, string>> {
+    const cacheKey = `cudseereg_descriptions_m${grade}_v1`;
+
+    if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+            try {
+                const parsedCache = JSON.parse(cached);
+                if (Date.now() - parsedCache.timestamp < CACHE_DURATION) {
+                    return parsedCache.data;
+                }
+            } catch (error) {
+                console.warn('Failed to parse cached descriptions:', error);
+            }
+        }
+    }
+
+    const url = `${GITHUB_CSV_URL}/m${grade}.csv`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const csvText = await response.text();
+    const lines = csvText.trim().split('\n');
+    const descriptions: Record<string, string> = {};
+
+    // Find header row
+    let headerLineIdx = -1;
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+        if (lines[i].includes('รหัสวิชา') && lines[i].includes('ชื่อรายวิชา')) {
+            headerLineIdx = i;
+            break;
+        }
+    }
+
+    if (headerLineIdx === -1) return descriptions;
+
+    // Parse data rows (skip header and the two rows after it)
+    for (let i = headerLineIdx + 3; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || line.startsWith('กลุ่มสาระ')) continue;
+
+        const cells = parseCSVLine(line);
+        const code = cells[0]?.trim() || '';
+        const description = cells[4]?.trim() || ''; // Column 5 (0-indexed as 4)
+
+        // Only store if we have a code (indicates new subject row)
+        if (code && description) {
+            descriptions[code] = description;
+        }
+    }
+
+    if (typeof window !== 'undefined') {
+        localStorage.setItem(cacheKey, JSON.stringify({ data: descriptions, timestamp: Date.now() }));
+    }
+
+    return descriptions;
 }
 
 export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {

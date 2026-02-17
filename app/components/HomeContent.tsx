@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
-import { fetchSubjects, flattenSubjects, groupSubjectsByCode } from '../lib/dataFetcher';
+import { fetchSubjects, flattenSubjects, groupSubjectsByCode, fetchSubjectDescriptions } from '../lib/dataFetcher';
 import { GroupedSubject } from '../types/subject';
 
 export default function HomeContent() {
@@ -21,6 +21,7 @@ export default function HomeContent() {
     const [subjects, setSubjects] = useState<GroupedSubject[]>([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
+    const [descriptions, setDescriptions] = useState<Record<string, string>>({});
 
     // Update URL when grade changes
     useEffect(() => {
@@ -31,14 +32,18 @@ export default function HomeContent() {
 
     useEffect(() => {
         setLoading(true);
-        fetchSubjects(grade)
-            .then(data => {
+        Promise.all([
+            fetchSubjects(grade),
+            fetchSubjectDescriptions(grade)
+        ])
+            .then(([data, descs]) => {
                 const flattened = flattenSubjects(data);
                 const grouped = groupSubjectsByCode(flattened);
                 setSubjects(grouped);
+                setDescriptions(descs);
                 setLoading(false);
             })
-            .catch(err => {
+            .catch((err: any) => {
                 console.error(err);
                 setLoading(false);
             });
@@ -106,7 +111,7 @@ export default function HomeContent() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filtered.map(subject => (
-                            <SubjectCard key={subject.code} subject={subject} />
+                            <SubjectCard key={subject.code} subject={subject} description={descriptions[subject.code] || ''} />
                         ))}
                     </div>
                 )}
@@ -121,7 +126,7 @@ export default function HomeContent() {
     );
 }
 
-function SubjectCard({ subject }: { subject: GroupedSubject }) {
+function SubjectCard({ subject, description }: { subject: GroupedSubject; description: string }) {
     const [selectedGroup, setSelectedGroup] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const current = subject.groups[selectedGroup];
@@ -203,7 +208,7 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
                     onClick={() => setShowModal(false)}
                 >
                     <div
-                        className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+                        className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex justify-between items-start mb-4">
@@ -262,6 +267,12 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
                                             </span>
                                         ))}
                                     </div>
+                                </div>
+                            )}
+                            {description && description.trim() !== '' && (
+                                <div className="pt-2 border-t border-slate-200">
+                                    <span className="font-medium text-slate-700">รายละเอียด:</span>
+                                    <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
                                 </div>
                             )}
                             {current.note && current.note.trim() !== '' && (
