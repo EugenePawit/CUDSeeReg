@@ -12,8 +12,8 @@ export interface SharedTimetablePayload {
     s: SharedSubjectRef[];
 }
 
-function toBase64Url(input: string): string {
-    const bytes = new TextEncoder().encode(input);
+// Compact base64url encoding for binary data
+function toBase64Url(bytes: Uint8Array): string {
     let binary = '';
     for (const byte of bytes) {
         binary += String.fromCharCode(byte);
@@ -21,11 +21,30 @@ function toBase64Url(input: string): string {
     return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 }
 
-function fromBase64Url(input: string): string {
+function fromBase64Url(input: string): Uint8Array {
     const padded = input.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(input.length / 4) * 4, '=');
     const binary = atob(padded);
-    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-    return new TextDecoder().decode(bytes);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+// Encode string as UTF-8 bytes with length prefix
+function encodeString(str: string): number[] {
+    const bytes = Array.from(new TextEncoder().encode(str));
+    const len = bytes.length;
+    if (len > 255) return [255, ...bytes.slice(0, 255)]; // Cap at 255 chars
+    return [len, ...bytes];
+}
+
+// Decode string from bytes array
+function decodeString(bytes: Uint8Array, offset: number): { value: string; nextOffset: number } {
+    const len = bytes[offset];
+    const strBytes = bytes.slice(offset + 1, offset + 1 + len);
+    const value = new TextDecoder().decode(strBytes);
+    return { value, nextOffset: offset + 1 + len };
 }
 
 function subjectIdentity(subject: FlattenedSubject): SharedSubjectRef {
@@ -68,12 +87,32 @@ export function encodeTimetableShare(baseTimetableId: string, selectedElectives:
     if (!baseTimetableId) {
         return null;
     }
-    const payload: SharedTimetablePayload = {
-        v: 1,
-        b: baseTimetableId,
-        s: extractSharedSubjects(selectedElectives),
-    };
-    return toBase64Url(JSON.stringify(payload));
+
+    const subjects = extractSharedSubjects(selectedElectives);
+
+    // Binary format: [version:1][baseId:string][count:1][subjects...]
+    // Each subject: [code:string][group:string][time:string]
+    const parts: number[] = [];
+
+    // Version byte
+    parts.push(1);
+
+    // Base timetable ID
+    parts.push(...encodeString(baseTimetableId));
+
+    // Subject count (max 255)
+    const count = Math.min(subjects.length, 255);
+    parts.push(count);
+
+    // Encode each subject compactly
+    for (let i = 0; i < count; i++) {
+        const subj = subjects[i];
+        parts.push(...encodeString(subj.c));  // code
+        parts.push(...encodeString(subj.g));  // group
+        parts.push(...encodeString(subj.t));  // classtime
+    }
+
+    return toBase64Url(new Uint8Array(parts));
 }
 
 export function decodeTimetableShare(token: string | null): SharedTimetablePayload | null {
@@ -82,26 +121,59 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
     }
 
     try {
-        const raw = fromBase64Url(token);
-        const parsed = JSON.parse(raw) as Partial<SharedTimetablePayload>;
-        if (parsed.v !== 1 || typeof parsed.b !== 'string' || !Array.isArray(parsed.s)) {
+        const bytes = fromBase64Url(token);
+
+        if (bytes.length < 3) {
             return null;
         }
 
-        const cleanedSubjects = parsed.s
-            .filter((item): item is SharedSubjectRef => (
-                item !== null &&
-                typeof item === 'object' &&
-                typeof item.c === 'string' &&
-                typeof item.g === 'string' &&
-                typeof item.t === 'string'
-            ))
-            .slice(0, 120);
+        let offset = 0;
+
+        // Read version
+        const version = bytes[offset++];
+        if (version !== 1) {
+            return null;
+        }
+
+        // Read base timetable ID
+        const baseResult = decodeString(bytes, offset);
+        const baseTimetableId = baseResult.value;
+        offset = baseResult.nextOffset;
+
+        if (offset >= bytes.length) {
+            return null;
+        }
+
+        // Read subject count
+        const count = bytes[offset++];
+        const subjects: SharedSubjectRef[] = [];
+
+        // Read each subject
+        for (let i = 0; i < count && offset < bytes.length; i++) {
+            try {
+                const codeResult = decodeString(bytes, offset);
+                offset = codeResult.nextOffset;
+
+                const groupResult = decodeString(bytes, offset);
+                offset = groupResult.nextOffset;
+
+                const timeResult = decodeString(bytes, offset);
+                offset = timeResult.nextOffset;
+
+                subjects.push({
+                    c: codeResult.value,
+                    g: groupResult.value,
+                    t: timeResult.value,
+                });
+            } catch {
+                break;
+            }
+        }
 
         return {
             v: 1,
-            b: parsed.b,
-            s: cleanedSubjects,
+            b: baseTimetableId,
+            s: subjects,
         };
     } catch {
         return null;
