@@ -22,9 +22,9 @@ const PROGRAMS: Record<string, { value: string; label: string }[]> = {
     '1': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
     '2': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
     '3': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
-    '4': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์-ภาษา' }],
-    '5': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์-ภาษา' }],
-    '6': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์-ภาษา' }],
+    '4': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์' }],
+    '5': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์' }],
+    '6': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์' }],
 };
 
 export default function PlannerPage() {

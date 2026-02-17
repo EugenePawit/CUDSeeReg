@@ -437,7 +437,7 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
     },
     // M.4 ศิลป์
     'M4-Arts': {
-        id: 'M4-Arts', label: 'ม.4 ศิลป์-ภาษา', grade: 4, schedule: createSchedule({
+        id: 'M4-Arts', label: 'ม.4 ศิลป์', grade: 4, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: 'Elective', type: 'elective' },
@@ -557,7 +557,7 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
     },
     // M.5 ศิลป์
     'M5-Arts': {
-        id: 'M5-Arts', label: 'ม.5 ศิลป์-ภาษา', grade: 5, schedule: createSchedule({
+        id: 'M5-Arts', label: 'ม.5 ศิลป์', grade: 5, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: '', type: 'core' },
@@ -677,7 +677,7 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
     },
     // M.6 ศิลป์
     'M6-Arts': {
-        id: 'M6-Arts', label: 'ม.6 ศิลป์-ภาษา', grade: 6, schedule: createSchedule({
+        id: 'M6-Arts', label: 'ม.6 ศิลป์', grade: 6, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: 'Elective', type: 'elective' },
