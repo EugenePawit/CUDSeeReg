@@ -109,6 +109,18 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
     const current = subject.groups[selectedGroup];
     const hasMultipleGroups = subject.groups.length > 1;
 
+    // Map day abbreviations to colors matching the timetable
+    const getDayColor = (dayAbbrev: string) => {
+        const colorMap: Record<string, string> = {
+            'จ': 'bg-yellow-100 text-yellow-700',
+            'อ': 'bg-pink-100 text-pink-700',
+            'พ': 'bg-green-100 text-green-700',
+            'พฤ': 'bg-orange-100 text-orange-700',
+            'ศ': 'bg-blue-100 text-blue-700',
+        };
+        return colorMap[dayAbbrev] || 'bg-pink-100 text-pink-700';
+    };
+
     return (
         <div className="glass-card rounded-xl p-4">
             <div className="mb-3">
@@ -136,7 +148,7 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
                 {!hasMultipleGroups && <div>อาจารย์: {current.instructor}</div>}
                 <div className="flex flex-wrap gap-1">
                     {current.parsedTimeSlots.map((t, i) => (
-                        <span key={i} className="px-2 py-1 bg-pink-100 text-pink-700 rounded text-xs">
+                        <span key={i} className={`px-2 py-1 rounded text-xs ${getDayColor(t.dayAbbrev)}`}>
                             {t.dayAbbrev}. {t.timeRange}
                         </span>
                     ))}
