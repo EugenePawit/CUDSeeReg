@@ -20,58 +20,58 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         id: 'M1-EP', label: 'ม.1 EP', grade: 1, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: 'Elective', type: 'elective' },
                 2: { code: '', name: 'Elective', type: 'elective' },
-                3: { code: '', name: 'Core', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             }
         })
     },
@@ -80,12 +80,12 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         id: 'M1-Normal', label: 'ม.1 ปกติ', grade: 1, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
                 7: { code: '', name: 'Elective', type: 'elective' },
                 8: { code: '', name: 'Elective', type: 'elective' }
             },
@@ -93,45 +93,45 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: 'Elective', type: 'elective' },
                 2: { code: '', name: 'Elective', type: 'elective' },
-                3: { code: '', name: 'Core', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
                 7: { code: '', name: 'Elective', type: 'elective' },
                 8: { code: '', name: 'Elective', type: 'elective' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             }
         })
     },
@@ -140,58 +140,58 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         id: 'M2-EP', label: 'ม.2 EP', grade: 2, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             }
         })
     },
@@ -200,56 +200,56 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         id: 'M2-Normal', label: 'ม.2 ปกติ', grade: 2, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: 'Elective', type: 'elective' },
                 2: { code: '', name: 'Elective', type: 'elective' },
-                3: { code: '', name: 'Core', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
                 7: { code: '', name: 'Elective', type: 'elective' },
                 8: { code: '', name: 'Elective', type: 'elective' }
             }
@@ -260,58 +260,58 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         id: 'M3-EP', label: 'ม.3 EP', grade: 3, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             }
         })
     },
@@ -320,58 +320,418 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         id: 'M3-Normal', label: 'ม.3 ปกติ', grade: 3, schedule: createSchedule({
             Monday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
                 7: { code: '', name: 'Elective', type: 'elective' },
                 8: { code: '', name: 'Elective', type: 'elective' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Core', type: 'core' },
-                2: { code: '', name: 'Core', type: 'core' },
-                3: { code: '', name: 'Core', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: 'Elective', type: 'elective' },
                 6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: 'Elective', type: 'elective' },
                 2: { code: '', name: 'Elective', type: 'elective' },
-                3: { code: '', name: 'Core', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Core', type: 'core' },
-                6: { code: '', name: 'Core', type: 'core' },
-                7: { code: '', name: 'Core', type: 'core' },
-                8: { code: '', name: 'Core', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            }
+        })
+    },
+    // M.4 วิทย์-คณิต
+    'M4-Science': {
+        id: 'M4-Science', label: 'ม.4 วิทย์-คณิต', grade: 4, schedule: createSchedule({
+            Monday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Tuesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Wednesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Thursday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Friday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            }
+        })
+    },
+    // M.4 ศิลป์
+    'M4-Arts': {
+        id: 'M4-Arts', label: 'ม.4 ศิลป์-ภาษา', grade: 4, schedule: createSchedule({
+            Monday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Tuesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Wednesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Thursday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Friday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            }
+        })
+    },
+    // M.5 วิทย์-คณิต
+    'M5-Science': {
+        id: 'M5-Science', label: 'ม.5 วิทย์-คณิต', grade: 5, schedule: createSchedule({
+            Monday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Tuesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Wednesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Thursday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Friday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            }
+        })
+    },
+    // M.5 ศิลป์
+    'M5-Arts': {
+        id: 'M5-Arts', label: 'ม.5 ศิลป์-ภาษา', grade: 5, schedule: createSchedule({
+            Monday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Tuesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Wednesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Thursday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Friday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            }
+        })
+    },
+    // M.6 วิทย์-คณิต
+    'M6-Science': {
+        id: 'M6-Science', label: 'ม.6 วิทย์-คณิต', grade: 6, schedule: createSchedule({
+            Monday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Tuesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Wednesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Thursday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Friday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            }
+        })
+    },
+    // M.6 ศิลป์
+    'M6-Arts': {
+        id: 'M6-Arts', label: 'ม.6 ศิลป์-ภาษา', grade: 6, schedule: createSchedule({
+            Monday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Tuesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Wednesday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: 'Elective', type: 'elective' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
+            },
+            Thursday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: '', type: 'core' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
+            },
+            Friday: {
+                0: { code: '', name: 'Homeroom', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: '', type: 'core' },
+                4: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: 'พักเที่ยง', type: 'break' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
             }
         })
     }

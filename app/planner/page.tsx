@@ -17,11 +17,14 @@ const DAY_COLORS: Record<string, string> = {
     Friday: 'day-friday',
 };
 
-const GRADES = ['1', '2', '3'];
+const GRADES = ['1', '2', '3', '4', '5', '6'];
 const PROGRAMS: Record<string, { value: string; label: string }[]> = {
     '1': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
     '2': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
     '3': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
+    '4': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์-ภาษา' }],
+    '5': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์-ภาษา' }],
+    '6': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์-ภาษา' }],
 };
 
 export default function PlannerPage() {
@@ -41,7 +44,7 @@ export default function PlannerPage() {
     // Build timetable ID from selections
     useEffect(() => {
         let id = '';
-        if (['1', '2', '3'].includes(selectedGrade)) {
+        if (['1', '2', '3', '4', '5', '6'].includes(selectedGrade)) {
             id = `M${selectedGrade}-${selectedProgram}`;
         }
         if (BASE_TIMETABLES[id]) {
@@ -51,7 +54,11 @@ export default function PlannerPage() {
 
     // Reset program when changing grade
     useEffect(() => {
-        setSelectedProgram('EP');
+        if (['1', '2', '3'].includes(selectedGrade)) {
+            setSelectedProgram('EP');
+        } else {
+            setSelectedProgram('Science');
+        }
     }, [selectedGrade]);
 
     const baseTimetable = baseTimetableId ? BASE_TIMETABLES[baseTimetableId] : null;
@@ -142,9 +149,9 @@ export default function PlannerPage() {
                             </div>
                         </div>
 
-                        {/* Program Selector for M1-M3 */}
+                        {/* Program Selector for M1-M6 */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm text-slate-600">โครงการ</label>
+                            <label className="text-sm text-slate-600">แผนการเรียน</label>
                             <div className="relative">
                                 <select
                                     value={selectedProgram}
