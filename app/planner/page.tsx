@@ -17,16 +17,11 @@ const DAY_COLORS: Record<string, string> = {
     Friday: 'day-friday',
 };
 
-const GRADES = ['1', '2', '3', '4', '5', '6'];
-const CLASSROOMS = ['1', '2', '3', '4', '5', '6', '7'];
-
-const PLANS: Record<string, { value: string; label: string }[]> = {
-    '1': [{ value: 'general', label: 'ทั่วไป' }],
-    '2': [{ value: 'general', label: 'ทั่วไป' }],
-    '3': [{ value: 'general', label: 'ทั่วไป' }],
-    '4': [{ value: 'science', label: 'วิทย์-คณิต' }, { value: 'arts', label: 'ศิลป์-ภาษา' }, { value: 'ep', label: 'EP' }],
-    '5': [{ value: 'science', label: 'วิทย์-คณิต' }, { value: 'arts', label: 'ศิลป์-ภาษา' }, { value: 'ep', label: 'EP' }],
-    '6': [{ value: 'science', label: 'วิทย์-คณิต' }, { value: 'arts', label: 'ศิลป์-ภาษา' }, { value: 'ep', label: 'EP' }],
+const GRADES = ['1', '2', '3'];
+const PROGRAMS: Record<string, { value: string; label: string }[]> = {
+    '1': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
+    '2': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
+    '3': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
 };
 
 export default function PlannerPage() {
@@ -39,36 +34,24 @@ export default function PlannerPage() {
 
     // Selector state
     const [selectedGrade, setSelectedGrade] = useState('1');
-    const [selectedClassroom, setSelectedClassroom] = useState('1');
-    const [selectedPlan, setSelectedPlan] = useState('science');
-    const [rotcMode, setRotcMode] = useState(false);
+    const [selectedProgram, setSelectedProgram] = useState('EP');
 
-    const isSenior = ['4', '5', '6'].includes(selectedGrade);
-    const plans = PLANS[selectedGrade];
+    const programs = PROGRAMS[selectedGrade];
 
     // Build timetable ID from selections
     useEffect(() => {
         let id = '';
-        if (['1', '2', '3', '4', '5', '6'].includes(selectedGrade)) {
-            id = `M${selectedGrade}-${selectedClassroom}`;
-        } else {
-            const planMap: Record<string, string> = { science: 'Science', arts: 'Arts', ep: 'EP' };
-            id = `M${selectedGrade}-${planMap[selectedPlan] || 'Science'}`;
-            if (rotcMode) id += '-ROTC';
+        if (['1', '2', '3'].includes(selectedGrade)) {
+            id = `M${selectedGrade}-${selectedProgram}`;
         }
         if (BASE_TIMETABLES[id]) {
             setBaseTimetableId(id);
         }
-    }, [selectedGrade, selectedClassroom, selectedPlan, rotcMode, setBaseTimetableId]);
+    }, [selectedGrade, selectedProgram, setBaseTimetableId]);
 
-    // Reset plan when changing grade
+    // Reset program when changing grade
     useEffect(() => {
-        if (['1', '2', '3', '4', '5', '6'].includes(selectedGrade)) {
-            setSelectedPlan('general');
-            setRotcMode(false);
-        } else {
-            setSelectedPlan('science');
-        }
+        setSelectedProgram('EP');
     }, [selectedGrade]);
 
     const baseTimetable = baseTimetableId ? BASE_TIMETABLES[baseTimetableId] : null;
@@ -159,24 +142,22 @@ export default function PlannerPage() {
                             </div>
                         </div>
 
-                        {/* Classroom Selector for M1-M6 */}
-                        {['1', '2', '3', '4', '5', '6'].includes(selectedGrade) && (
-                            <div className="flex flex-col gap-1">
-                                <label className="text-sm text-slate-600">ห้องเรียน</label>
-                                <div className="relative">
-                                    <select
-                                        value={selectedClassroom}
-                                        onChange={e => setSelectedClassroom(e.target.value)}
-                                        className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                    >
-                                        {CLASSROOMS.map(c => (
-                                            <option key={c} value={c}>ม.{selectedGrade}/{c}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                </div>
+                        {/* Program Selector for M1-M3 */}
+                        <div className="flex flex-col gap-1">
+                            <label className="text-sm text-slate-600">โครงการ</label>
+                            <div className="relative">
+                                <select
+                                    value={selectedProgram}
+                                    onChange={e => setSelectedProgram(e.target.value)}
+                                    className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                >
+                                    {programs.map(p => (
+                                        <option key={p.value} value={p.value}>{p.label}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
 
