@@ -164,11 +164,17 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
             <div className="text-sm text-slate-600 space-y-2">
                 {!hasMultipleGroups && <div>อาจารย์: {current.instructor}</div>}
                 <div className="flex flex-wrap gap-1">
-                    {current.parsedTimeSlots.map((t, i) => (
-                        <span key={i} className={`px-2 py-1 rounded text-xs ${getDayColor(t.dayAbbrev)}`}>
-                            {t.dayAbbrev}. {t.timeRange}
+                    {current.parsedTimeSlots.length > 0 ? (
+                        current.parsedTimeSlots.map((t, i) => (
+                            <span key={i} className={`px-2 py-1 rounded text-xs ${getDayColor(t.dayAbbrev)}`}>
+                                {t.dayAbbrev}. {t.timeRange}
+                            </span>
+                        ))
+                    ) : (
+                        <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded text-xs italic">
+                            ไม่มีข้อมูลเวลาเรียน
                         </span>
-                    ))}
+                    )}
                 </div>
                 <div>หน่วยกิต: {subject.credit}</div>
             </div>
