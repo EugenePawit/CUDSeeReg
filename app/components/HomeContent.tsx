@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useDeferredValue, memo, useCallback } fro
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { fetchSubjects, flattenSubjects, groupSubjectsByCode, fetchSubjectDescriptions } from '../lib/dataFetcher';
 import { GroupedSubject } from '../types/subject';
 
@@ -94,12 +93,7 @@ export default function HomeContent() {
     }, []);
 
     return (
-        <motion.div
-            className="min-h-screen"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="min-h-screen">
             <header className="glass-card sticky top-0 z-40 border-b border-white/20">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <div>
@@ -154,42 +148,22 @@ export default function HomeContent() {
                         <div className="animate-spin w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full" />
                     </div>
                 ) : (
-                    <motion.div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-                        initial="hidden"
-                        animate="show"
-                        variants={{
-                            hidden: { opacity: 0 },
-                            show: {
-                                opacity: 1,
-                                transition: {
-                                    staggerChildren: 0.04,
-                                },
-                            },
-                        }}
-                    >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredSubjects.map((subject) => (
-                            <motion.div
-                                key={subject.code}
-                                variants={{
-                                    hidden: { opacity: 0, y: 12 },
-                                    show: { opacity: 1, y: 0 },
-                                }}
-                                transition={{ duration: 0.24 }}
-                            >
+                            <div key={subject.code}>
                                 <SubjectCard subject={subject} description={descriptions[subject.code] || ''} />
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
-            </main>
+            </main >
 
             <footer className="glass-card border-t border-white/20 py-6 mt-12">
                 <div className="container mx-auto px-4 text-center text-sm text-slate-600">
                     <p className="mt-1">CUDSeeReg © 2026</p>
                 </div>
             </footer>
-        </motion.div>
+        </div >
     );
 }
 
@@ -224,12 +198,7 @@ const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectC
 
     return (
         <>
-            <motion.div
-                className="glass-card rounded-xl p-4 relative interactive-press"
-                whileHover={{ y: -2, scale: 1.006 }}
-                whileTap={{ scale: 0.988 }}
-                transition={{ duration: 0.18 }}
-            >
+            <div className="glass-card rounded-xl p-4 relative interactive-press">
                 <button
                     onClick={() => setShowModal(true)}
                     className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press"
@@ -281,101 +250,91 @@ const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectC
                         </span>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
-            <AnimatePresence>
-                {showModal && (
-                    <motion.div
-                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                        onClick={() => setShowModal(false)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+            {showModal && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
+                    onClick={() => setShowModal(false)}
+                >
+                    <div
+                        className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+                        onClick={(event) => event.stopPropagation()}
                     >
-                        <motion.div
-                            className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl"
-                            onClick={(event) => event.stopPropagation()}
-                            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 16, scale: 0.97 }}
-                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
-                                    <h3 className="text-xl font-bold text-slate-900">{subject.name}</h3>
-                                </div>
-                                <button
-                                    onClick={() => setShowModal(false)}
-                                    className="text-slate-400 hover:text-slate-600 text-2xl leading-none interactive-press"
-                                >
-                                    ×
-                                </button>
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
+                                <h3 className="text-xl font-bold text-slate-900">{subject.name}</h3>
                             </div>
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="text-slate-400 hover:text-slate-600 text-2xl leading-none interactive-press"
+                            >
+                                ×
+                            </button>
+                        </div>
 
-                            <div className="space-y-3 text-sm">
-                                {hasMultipleGroups && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">กลุ่ม:</span>
-                                        <span className="ml-2">{current.group} - {current.instructor}</span>
-                                    </div>
-                                )}
-                                {!hasMultipleGroups && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">อาจารย์:</span>
-                                        <span className="ml-2">{current.instructor}</span>
-                                    </div>
-                                )}
+                        <div className="space-y-3 text-sm">
+                            {hasMultipleGroups && (
                                 <div>
-                                    <span className="font-medium text-slate-700">หน่วยกิต:</span>
-                                    <span className="ml-2">{subject.credit}</span>
+                                    <span className="font-medium text-slate-700">กลุ่ม:</span>
+                                    <span className="ml-2">{current.group} - {current.instructor}</span>
                                 </div>
+                            )}
+                            {!hasMultipleGroups && (
                                 <div>
-                                    <span className="font-medium text-slate-700">รับนักเรียน:</span>
-                                    <span className="ml-2">{current.availableSeats} คน</span>
+                                    <span className="font-medium text-slate-700">อาจารย์:</span>
+                                    <span className="ml-2">{current.instructor}</span>
                                 </div>
-                                {current.enrollment && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">เปิดรับ:</span>
-                                        <span className="ml-2">{current.enrollment}</span>
-                                    </div>
-                                )}
-                                {current.classPerWeek && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
-                                        <span className="ml-2">{current.classPerWeek}</span>
-                                    </div>
-                                )}
-                                {current.parsedTimeSlots.length > 0 && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">เวลาเรียน:</span>
-                                        <div className="flex flex-wrap gap-1 mt-1">
-                                            {current.parsedTimeSlots.map((timeSlot, timeIndex) => (
-                                                <span key={timeIndex} className={`px-2 py-1 rounded text-xs ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700'}`}>
-                                                    {timeSlot.dayAbbrev}. {timeSlot.timeRange}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                {description && description.trim() !== '' && (
-                                    <div className="pt-2 border-t border-slate-200">
-                                        <span className="font-medium text-slate-700">รายละเอียด:</span>
-                                        <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
-                                    </div>
-                                )}
-                                {current.note && current.note.trim() !== '' && (
-                                    <div className="pt-2 border-t border-slate-200">
-                                        <span className="font-medium text-slate-700">หมายเหตุ:</span>
-                                        <p className="text-amber-700 mt-1">{current.note}</p>
-                                    </div>
-                                )}
+                            )}
+                            <div>
+                                <span className="font-medium text-slate-700">หน่วยกิต:</span>
+                                <span className="ml-2">{subject.credit}</span>
                             </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            <div>
+                                <span className="font-medium text-slate-700">รับนักเรียน:</span>
+                                <span className="ml-2">{current.availableSeats} คน</span>
+                            </div>
+                            {current.enrollment && (
+                                <div>
+                                    <span className="font-medium text-slate-700">เปิดรับ:</span>
+                                    <span className="ml-2">{current.enrollment}</span>
+                                </div>
+                            )}
+                            {current.classPerWeek && (
+                                <div>
+                                    <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
+                                    <span className="ml-2">{current.classPerWeek}</span>
+                                </div>
+                            )}
+                            {current.parsedTimeSlots.length > 0 && (
+                                <div>
+                                    <span className="font-medium text-slate-700">เวลาเรียน:</span>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                        {current.parsedTimeSlots.map((timeSlot, timeIndex) => (
+                                            <span key={timeIndex} className={`px-2 py-1 rounded text-xs ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700'}`}>
+                                                {timeSlot.dayAbbrev}. {timeSlot.timeRange}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {description && description.trim() !== '' && (
+                                <div className="pt-2 border-t border-slate-200">
+                                    <span className="font-medium text-slate-700">รายละเอียด:</span>
+                                    <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
+                                </div>
+                            )}
+                            {current.note && current.note.trim() !== '' && (
+                                <div className="pt-2 border-t border-slate-200">
+                                    <span className="font-medium text-slate-700">หมายเหตุ:</span>
+                                    <p className="text-amber-700 mt-1">{current.note}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 });

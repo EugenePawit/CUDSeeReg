@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Download, Trash2, ChevronDown, Share2, Check } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 import { useTimetableStore } from '../store/useTimetable';
@@ -101,8 +100,6 @@ export default function PlannerPage() {
     const [subjectsGrade, setSubjectsGrade] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedGrade, setSelectedGrade] = useState(parsedFromStore.grade);
-    const [selectedProgram, setSelectedProgram] = useState(parsedFromStore.program);
     const [pendingSharedPayload, setPendingSharedPayload] = useState<SharedTimetablePayload | null>(null);
     const [feedback, setFeedback] = useState('');
     const [didCopyShareLink, setDidCopyShareLink] = useState(false);
@@ -111,7 +108,7 @@ export default function PlannerPage() {
     const feedbackTimeoutRef = useRef<number | null>(null);
     const appliedShareTokenRef = useRef<string | null>(null);
 
-    const programs = PROGRAMS[selectedGrade] ?? [];
+    const programs = PROGRAMS[parsedFromStore.grade] ?? [];
     const baseTimetable = useMemo(
         () => (baseTimetableId ? BASE_TIMETABLES[baseTimetableId] ?? null : null),
         [baseTimetableId]
@@ -137,27 +134,7 @@ export default function PlannerPage() {
         };
     }, []);
 
-    useEffect(() => {
-        const parsed = parseBaseTimetableId(baseTimetableId);
-        if (!parsed) {
-            return;
-        }
-        setSelectedGrade((prev) => (prev === parsed.grade ? prev : parsed.grade));
-        setSelectedProgram((prev) => (prev === parsed.program ? prev : parsed.program));
-    }, [baseTimetableId]);
 
-    useEffect(() => {
-        const validProgram = normalizeProgram(selectedGrade, selectedProgram);
-        if (validProgram !== selectedProgram) {
-            setSelectedProgram(validProgram);
-            return;
-        }
-
-        const nextBaseId = `M${selectedGrade}-${validProgram}`;
-        if (BASE_TIMETABLES[nextBaseId] && baseTimetableId !== nextBaseId) {
-            setBaseTimetableId(nextBaseId);
-        }
-    }, [selectedGrade, selectedProgram, baseTimetableId, setBaseTimetableId]);
 
     useEffect(() => {
         if (!baseTimetable) {
@@ -217,9 +194,10 @@ export default function PlannerPage() {
         }
 
         setPendingSharedPayload(decodedSharePayload);
-        setSelectedGrade(parsed.grade);
-        setSelectedProgram(parsed.program);
-    }, [shareToken, decodedSharePayload, setTransientFeedback]);
+        if (baseTimetableId !== decodedSharePayload.b) {
+            setBaseTimetableId(decodedSharePayload.b);
+        }
+    }, [shareToken, decodedSharePayload, setTransientFeedback, baseTimetableId, setBaseTimetableId]);
 
     useEffect(() => {
         if (!pendingSharedPayload || !shareToken) {
@@ -319,13 +297,15 @@ export default function PlannerPage() {
     }, [subjects, selectedSlot, selectedSubjectKeys, occupiedSlots, normalizedSearch]);
 
     const handleGradeChange = useCallback((nextGrade: string) => {
-        setSelectedGrade(nextGrade);
-        setSelectedProgram((previousProgram) => normalizeProgram(nextGrade, previousProgram));
-    }, []);
+        const nextProgram = normalizeProgram(nextGrade, parsedFromStore.program);
+        const nextBaseId = `M${nextGrade}-${nextProgram}`;
+        setBaseTimetableId(nextBaseId);
+    }, [parsedFromStore.program, setBaseTimetableId]);
 
     const handleProgramChange = useCallback((nextProgram: string) => {
-        setSelectedProgram(nextProgram);
-    }, []);
+        const nextBaseId = `M${parsedFromStore.grade}-${nextProgram}`;
+        setBaseTimetableId(nextBaseId);
+    }, [parsedFromStore.grade, setBaseTimetableId]);
 
     const handleSlotClick = useCallback((day: string, period: number) => {
         if (!baseTimetable) {
@@ -406,12 +386,7 @@ export default function PlannerPage() {
     }, [modalOpen]);
 
     return (
-        <motion.div
-            className="min-h-screen"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="min-h-screen">
             <header className="glass-card sticky top-0 z-40 border-b border-white/20">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <div>
@@ -435,7 +410,7 @@ export default function PlannerPage() {
                             <label className="text-sm text-slate-600">ระดับชั้น</label>
                             <div className="relative">
                                 <select
-                                    value={selectedGrade}
+                                    value={parsedFromStore.grade}
                                     onChange={(e) => handleGradeChange(e.target.value)}
                                     className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 interactive-press"
                                 >
@@ -451,7 +426,7 @@ export default function PlannerPage() {
                             <label className="text-sm text-slate-600">แผนการเรียน</label>
                             <div className="relative">
                                 <select
-                                    value={selectedProgram}
+                                    value={parsedFromStore.program}
                                     onChange={(e) => handleProgramChange(e.target.value)}
                                     className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 interactive-press"
                                 >
@@ -602,93 +577,80 @@ export default function PlannerPage() {
                 )}
             </main>
 
-            <AnimatePresence>
-                {modalOpen && selectedSlot && (
-                    <motion.div
-                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                        onClick={() => setModalOpen(false)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+            {modalOpen && selectedSlot && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                    onClick={() => setModalOpen(false)}
+                >
+                    <div
+                        className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
+                        onClick={(event) => event.stopPropagation()}
                     >
-                        <motion.div
-                            className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
-                            onClick={(event) => event.stopPropagation()}
-                            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 16, scale: 0.97 }}
-                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <div className="p-4 border-b bg-pink-50">
-                                <div className="flex justify-between items-center mb-3">
-                                    <h2 className="text-xl font-bold text-pink-900">
-                                        เลือกวิชา - {DAY_NAMES_TH[selectedSlot.day]} คาบ {selectedSlot.period}
-                                    </h2>
-                                    <button onClick={() => setModalOpen(false)} className="p-2 hover:bg-pink-100 rounded-lg interactive-press">
-                                        <X size={20} />
-                                    </button>
+                        <div className="p-4 border-b bg-pink-50">
+                            <div className="flex justify-between items-center mb-3">
+                                <h2 className="text-xl font-bold text-pink-900">
+                                    เลือกวิชา - {DAY_NAMES_TH[selectedSlot.day]} คาบ {selectedSlot.period}
+                                </h2>
+                                <button onClick={() => setModalOpen(false)} className="p-2 hover:bg-pink-100 rounded-lg interactive-press">
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="ค้นหาวิชา (ชื่อวิชา, รหัสวิชา, อาจารย์)..."
+                                value={searchQuery}
+                                onChange={(event) => setSearchQuery(event.target.value)}
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm"
+                            />
+                        </div>
+                        <div className="p-4 overflow-y-auto max-h-[60vh]">
+                            {loading ? (
+                                <div className="flex justify-center py-12">
+                                    <div className="animate-spin w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full" />
                                 </div>
-                                <input
-                                    type="text"
-                                    placeholder="ค้นหาวิชา (ชื่อวิชา, รหัสวิชา, อาจารย์)..."
-                                    value={searchQuery}
-                                    onChange={(event) => setSearchQuery(event.target.value)}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm"
-                                />
-                            </div>
-                            <div className="p-4 overflow-y-auto max-h-[60vh]">
-                                {loading ? (
-                                    <div className="flex justify-center py-12">
-                                        <div className="animate-spin w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full" />
-                                    </div>
-                                ) : baseTimetable && baseTimetable.grade < 4 ? (
-                                    <div className="text-center py-12">
-                                        <p className="text-slate-600 mb-2">ข้อมูลวิชาเลือกมีเฉพาะสำหรับ ม.4 - ม.6 เท่านั้น</p>
-                                        <p className="text-sm text-slate-500">กรุณาเลือกระดับชั้น ม.4, ม.5 หรือ ม.6</p>
-                                    </div>
-                                ) : filteredSubjects.length === 0 ? (
-                                    <p className="text-center text-slate-500 py-12">ไม่พบวิชาที่เปิดสอนในคาบนี้</p>
-                                ) : (
-                                    <div className="space-y-3">
-                                        {filteredSubjects.map((subject, index) => (
-                                            <motion.div
-                                                key={`${subject.code}-${subject.group}-${index}`}
-                                                onClick={() => handleSelectSubject(subject)}
-                                                className="p-4 border border-slate-200 rounded-xl hover:bg-pink-50 hover:border-pink-300 cursor-pointer transition-colors"
-                                                whileHover={{ y: -2, scale: 1.005 }}
-                                                whileTap={{ scale: 0.985 }}
-                                                transition={{ duration: 0.18 }}
-                                            >
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <div className="text-sm font-mono text-pink-600">{subject.code} {subject.group && `กลุ่ม ${subject.group}`}</div>
-                                                        <div className="font-semibold">{subject.name}</div>
-                                                        <div className="text-sm text-slate-600">{subject.instructor}</div>
-                                                    </div>
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {subject.parsedTimeSlots.map((timeSlot, timeIndex) => (
-                                                            <span key={timeIndex} className="px-2 py-1 bg-pink-100 text-pink-700 rounded text-xs">
-                                                                {timeSlot.dayAbbrev}. {timeSlot.timeRange}
-                                                            </span>
-                                                        ))}
-                                                    </div>
+                            ) : baseTimetable && baseTimetable.grade < 4 ? (
+                                <div className="text-center py-12">
+                                    <p className="text-slate-600 mb-2">ข้อมูลวิชาเลือกมีเฉพาะสำหรับ ม.4 - ม.6 เท่านั้น</p>
+                                    <p className="text-sm text-slate-500">กรุณาเลือกระดับชั้น ม.4, ม.5 หรือ ม.6</p>
+                                </div>
+                            ) : filteredSubjects.length === 0 ? (
+                                <p className="text-center text-slate-500 py-12">ไม่พบวิชาที่เปิดสอนในคาบนี้</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {filteredSubjects.map((subject, index) => (
+                                        <div
+                                            key={`${subject.code}-${subject.group}-${index}`}
+                                            onClick={() => handleSelectSubject(subject)}
+                                            className="p-4 border border-slate-200 rounded-xl hover:bg-pink-50 hover:border-pink-300 cursor-pointer transition-colors"
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <div className="text-sm font-mono text-pink-600">{subject.code} {subject.group && `กลุ่ม ${subject.group}`}</div>
+                                                    <div className="font-semibold">{subject.name}</div>
+                                                    <div className="text-sm text-slate-600">{subject.instructor}</div>
                                                 </div>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {subject.parsedTimeSlots.map((timeSlot, timeIndex) => (
+                                                        <span key={timeIndex} className="px-2 py-1 bg-pink-100 text-pink-700 rounded text-xs">
+                                                            {timeSlot.dayAbbrev}. {timeSlot.timeRange}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <footer className="glass-card border-t border-white/20 py-6 mt-12">
                 <div className="container mx-auto px-4 text-center text-sm text-slate-600">
                     <p className="mt-1">CUDSeeReg © 2026</p>
                 </div>
             </footer>
-        </motion.div>
+        </div>
     );
 }
