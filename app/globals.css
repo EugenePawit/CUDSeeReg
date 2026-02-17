@@ -33,4 +33,28 @@
   .cell-core { @apply bg-white text-slate-800; }
   .cell-break { @apply bg-amber-50 text-amber-700; }
   .cell-selected { @apply bg-emerald-100 text-emerald-800; }
+
+  .interactive-press {
+    @apply transition-transform duration-200 ease-out;
+    transform: translateZ(0);
+  }
+
+  .interactive-press:hover {
+    transform: translateY(-1px);
+  }
+
+  .interactive-press:active {
+    transform: scale(0.975);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-press {
+    transition: none;
+  }
+
+  .interactive-press:hover,
+  .interactive-press:active {
+    transform: none;
+  }
 }

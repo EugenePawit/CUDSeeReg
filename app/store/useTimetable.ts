@@ -6,6 +6,7 @@ interface TimetableState {
     baseTimetableId: string;
     selectedElectives: UserTimetable;
     setBaseTimetableId: (id: string) => void;
+    replaceTimetable: (baseTimetableId: string, subjects: FlattenedSubject[]) => void;
     addElective: (day: string, period: number, subject: FlattenedSubject) => void;
     removeElective: (day: string, period: number) => void;
     clearAllElectives: () => void;
@@ -18,7 +19,29 @@ export const useTimetableStore = create<TimetableState>()(
             baseTimetableId: '',
             selectedElectives: {},
 
-            setBaseTimetableId: (id) => set({ baseTimetableId: id, selectedElectives: {} }),
+            setBaseTimetableId: (id) => set((state) => {
+                if (state.baseTimetableId === id) {
+                    return state;
+                }
+                return { baseTimetableId: id, selectedElectives: {} };
+            }),
+
+            replaceTimetable: (baseTimetableId, subjects) => set(() => {
+                const selectedElectives: UserTimetable = {};
+
+                for (const subject of subjects) {
+                    for (const slot of subject.parsedTimeSlots) {
+                        if (!selectedElectives[slot.day]) {
+                            selectedElectives[slot.day] = {};
+                        }
+                        for (const period of slot.periods) {
+                            selectedElectives[slot.day][period] = subject;
+                        }
+                    }
+                }
+
+                return { baseTimetableId, selectedElectives };
+            }),
 
             addElective: (day, period, subject) => set((state) => {
                 const newElectives = { ...state.selectedElectives };

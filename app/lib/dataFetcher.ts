@@ -4,16 +4,27 @@ import { parseThaiTime } from './thaiTimeParser';
 const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/ronnapatp/cudElective/main/data/json';
 const GITHUB_CSV_URL = 'https://raw.githubusercontent.com/ronnapatp/cudElective/main/data/csv';
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+const memorySubjectCache = new Map<number, { data: Subject[]; timestamp: number }>();
+const memoryDescriptionCache = new Map<number, { data: Record<string, string>; timestamp: number }>();
+
+function isFresh(timestamp: number): boolean {
+    return Date.now() - timestamp < CACHE_DURATION;
+}
 
 export async function fetchSubjects(grade: number): Promise<Subject[]> {
     const cacheKey = `cudseereg_subjects_m${grade}_json_v3`;
+    const inMemory = memorySubjectCache.get(grade);
+    if (inMemory && isFresh(inMemory.timestamp)) {
+        return inMemory.data;
+    }
 
     if (typeof window !== 'undefined') {
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
             try {
                 const parsedCache = JSON.parse(cached);
-                if (Date.now() - parsedCache.timestamp < CACHE_DURATION) {
+                if (isFresh(parsedCache.timestamp)) {
+                    memorySubjectCache.set(grade, parsedCache);
                     return parsedCache.data;
                 }
             } catch (error) {
@@ -27,6 +38,7 @@ export async function fetchSubjects(grade: number): Promise<Subject[]> {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const data = await response.json();
+    memorySubjectCache.set(grade, { data, timestamp: Date.now() });
 
     if (typeof window !== 'undefined') {
         localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
@@ -45,6 +57,11 @@ function parseCSVLine(line: string): string[] {
         const char = line[i];
 
         if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+                current += '"';
+                i += 1;
+                continue;
+            }
             inQuotes = !inQuotes;
         } else if (char === ',' && !inQuotes) {
             cells.push(current);
@@ -61,13 +78,18 @@ function parseCSVLine(line: string): string[] {
 // Fetch subject descriptions from CSV
 export async function fetchSubjectDescriptions(grade: number): Promise<Record<string, string>> {
     const cacheKey = `cudseereg_descriptions_m${grade}_v1`;
+    const inMemory = memoryDescriptionCache.get(grade);
+    if (inMemory && isFresh(inMemory.timestamp)) {
+        return inMemory.data;
+    }
 
     if (typeof window !== 'undefined') {
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
             try {
                 const parsedCache = JSON.parse(cached);
-                if (Date.now() - parsedCache.timestamp < CACHE_DURATION) {
+                if (isFresh(parsedCache.timestamp)) {
+                    memoryDescriptionCache.set(grade, parsedCache);
                     return parsedCache.data;
                 }
             } catch (error) {
@@ -80,7 +102,7 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const csvText = await response.text();
+    const csvText = (await response.text()).replace(/\r/g, '');
     const lines = csvText.trim().split('\n');
     const descriptions: Record<string, string> = {};
 
@@ -94,6 +116,10 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
     }
 
     if (headerLineIdx === -1) return descriptions;
+    const headerCells = parseCSVLine(lines[headerLineIdx]).map((cell) => cell.trim());
+    const codeIndex = headerCells.findIndex((header) => header.includes('รหัสวิชา'));
+    const descriptionIndex = headerCells.findIndex((header) => header.includes('คำอธิบาย'));
+    const fallbackDescriptionIndex = headerCells.findIndex((header) => header.includes('ชื่อรายวิชา'));
 
     // Parse data rows (skip header and the two rows after it)
     for (let i = headerLineIdx + 3; i < lines.length; i++) {
@@ -101,14 +127,16 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
         if (!line || line.startsWith('กลุ่มสาระ')) continue;
 
         const cells = parseCSVLine(line);
-        const code = cells[0]?.trim() || '';
-        const description = cells[4]?.trim() || ''; // Column 5 (0-indexed as 4)
+        const code = cells[Math.max(codeIndex, 0)]?.trim() || '';
+        const descriptionCellIndex = descriptionIndex >= 0 ? descriptionIndex : fallbackDescriptionIndex;
+        const description = cells[Math.max(descriptionCellIndex, 0)]?.trim() || '';
 
         // Only store if we have a code (indicates new subject row)
         if (code && description) {
             descriptions[code] = description;
         }
     }
+    memoryDescriptionCache.set(grade, { data: descriptions, timestamp: Date.now() });
 
     if (typeof window !== 'undefined') {
         localStorage.setItem(cacheKey, JSON.stringify({ data: descriptions, timestamp: Date.now() }));
