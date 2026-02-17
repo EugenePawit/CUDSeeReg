@@ -34,6 +34,24 @@ export default function HomeContent() {
     const [search, setSearch] = useState('');
     const deferredSearch = useDeferredValue(search);
     const [descriptions, setDescriptions] = useState<Record<string, string>>({});
+    const [modalData, setModalData] = useState<{ subject: GroupedSubject, groupIndex: number, description: string } | null>(null);
+
+    const handleViewDetails = useCallback((subject: GroupedSubject, groupIndex: number) => {
+        setModalData({ subject, groupIndex, description: descriptions[subject.code] || '' });
+    }, [descriptions]);
+
+    // Add keydown listener to close modal on Escape
+    useEffect(() => {
+        const handleEsc = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setModalData(null);
+            }
+        };
+        if (modalData) {
+            window.addEventListener('keydown', handleEsc);
+        }
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [modalData]);
 
     useEffect(() => {
         const currentGrade = searchParams.get('grade');
@@ -151,7 +169,11 @@ export default function HomeContent() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredSubjects.map((subject, index) => (
                             <div key={subject.code} className="stagger-item" style={{ animationDelay: `${Math.min(index * 0.05, 0.3)}s` }}>
-                                <SubjectCard subject={subject} description={descriptions[subject.code] || ''} />
+                                <SubjectCard
+                                    subject={subject}
+                                    description={descriptions[subject.code] || ''}
+                                    onViewDetails={handleViewDetails}
+                                />
                             </div>
                         ))}
                     </div>
@@ -163,6 +185,96 @@ export default function HomeContent() {
                     <p className="mt-1">CUDSeeReg © 2026</p>
                 </div>
             </footer>
+
+            {modalData && (() => {
+                const { subject, groupIndex, description } = modalData;
+                const current = subject.groups[groupIndex] ?? subject.groups[0];
+                const hasMultipleGroups = subject.groups.length > 1;
+
+                return (
+                    <div
+                        className="modal-overlay fixed inset-0 bg-black/50 z-[100] flex items-start justify-center p-4 pt-10"
+                        onClick={() => setModalData(null)}
+                    >
+                        <div
+                            className="modal-content bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+                            onClick={(event) => event.stopPropagation()}
+                        >
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
+                                    <h3 className="text-xl font-bold text-slate-900">{subject.name}</h3>
+                                </div>
+                                <button
+                                    onClick={() => setModalData(null)}
+                                    className="text-slate-400 hover:text-slate-600 text-2xl leading-none interactive-press"
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            <div className="space-y-3 text-sm">
+                                {hasMultipleGroups && (
+                                    <div>
+                                        <span className="font-medium text-slate-700">กลุ่ม:</span>
+                                        <span className="ml-2">{current.group} - {current.instructor}</span>
+                                    </div>
+                                )}
+                                {!hasMultipleGroups && (
+                                    <div>
+                                        <span className="font-medium text-slate-700">อาจารย์:</span>
+                                        <span className="ml-2">{current.instructor}</span>
+                                    </div>
+                                )}
+                                <div>
+                                    <span className="font-medium text-slate-700">หน่วยกิต:</span>
+                                    <span className="ml-2">{subject.credit}</span>
+                                </div>
+                                <div>
+                                    <span className="font-medium text-slate-700">รับนักเรียน:</span>
+                                    <span className="ml-2">{current.availableSeats} คน</span>
+                                </div>
+                                {current.enrollment && (
+                                    <div>
+                                        <span className="font-medium text-slate-700">เปิดรับ:</span>
+                                        <span className="ml-2">{current.enrollment}</span>
+                                    </div>
+                                )}
+                                {current.classPerWeek && (
+                                    <div>
+                                        <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
+                                        <span className="ml-2">{current.classPerWeek}</span>
+                                    </div>
+                                )}
+                                {current.parsedTimeSlots.length > 0 && (
+                                    <div>
+                                        <span className="font-medium text-slate-700">เวลาเรียน:</span>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                            {current.parsedTimeSlots.map((timeSlot, timeIndex) => (
+                                                <span key={timeIndex} className={`px-2 py-1 rounded text-xs ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700'}`}>
+                                                    {timeSlot.dayAbbrev}. {timeSlot.timeRange}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {description && description.trim() !== '' && (
+                                    <div className="pt-2 border-t border-slate-200">
+                                        <span className="font-medium text-slate-700">รายละเอียด:</span>
+                                        <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
+                                    </div>
+                                )}
+                                {current.note && current.note.trim() !== '' && (
+                                    <div className="pt-2 border-t border-slate-200">
+                                        <span className="font-medium text-slate-700">หมายเหตุ:</span>
+                                        <p className="text-amber-700 mt-1">{current.note}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
         </div >
     );
 }
@@ -170,25 +282,13 @@ export default function HomeContent() {
 interface SubjectCardProps {
     subject: GroupedSubject;
     description: string;
+    onViewDetails: (subject: GroupedSubject, groupIndex: number) => void;
 }
 
-const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectCardProps) {
+const SubjectCard = memo(function SubjectCard({ subject, description, onViewDetails }: SubjectCardProps) {
     const [selectedGroup, setSelectedGroup] = useState(0);
-    const [showModal, setShowModal] = useState(false);
     const current = subject.groups[selectedGroup] ?? subject.groups[0];
     const hasMultipleGroups = subject.groups.length > 1;
-
-    useEffect(() => {
-        const handleEsc = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setShowModal(false);
-            }
-        };
-        if (showModal) {
-            window.addEventListener('keydown', handleEsc);
-        }
-        return () => window.removeEventListener('keydown', handleEsc);
-    }, [showModal]);
 
     useEffect(() => {
         if (selectedGroup >= subject.groups.length) {
@@ -200,7 +300,7 @@ const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectC
         <>
             <div className="glass-card rounded-xl p-4 relative card-hover">
                 <button
-                    onClick={() => setShowModal(true)}
+                    onClick={() => onViewDetails(subject, selectedGroup)}
                     className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press"
                     aria-label="Show details"
                 >
@@ -251,90 +351,6 @@ const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectC
                     </div>
                 </div>
             </div>
-
-            {showModal && (
-                <div
-                    className="modal-overlay fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
-                    onClick={() => setShowModal(false)}
-                >
-                    <div
-                        className="modal-content bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
-                                <h3 className="text-xl font-bold text-slate-900">{subject.name}</h3>
-                            </div>
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="text-slate-400 hover:text-slate-600 text-2xl leading-none interactive-press"
-                            >
-                                ×
-                            </button>
-                        </div>
-
-                        <div className="space-y-3 text-sm">
-                            {hasMultipleGroups && (
-                                <div>
-                                    <span className="font-medium text-slate-700">กลุ่ม:</span>
-                                    <span className="ml-2">{current.group} - {current.instructor}</span>
-                                </div>
-                            )}
-                            {!hasMultipleGroups && (
-                                <div>
-                                    <span className="font-medium text-slate-700">อาจารย์:</span>
-                                    <span className="ml-2">{current.instructor}</span>
-                                </div>
-                            )}
-                            <div>
-                                <span className="font-medium text-slate-700">หน่วยกิต:</span>
-                                <span className="ml-2">{subject.credit}</span>
-                            </div>
-                            <div>
-                                <span className="font-medium text-slate-700">รับนักเรียน:</span>
-                                <span className="ml-2">{current.availableSeats} คน</span>
-                            </div>
-                            {current.enrollment && (
-                                <div>
-                                    <span className="font-medium text-slate-700">เปิดรับ:</span>
-                                    <span className="ml-2">{current.enrollment}</span>
-                                </div>
-                            )}
-                            {current.classPerWeek && (
-                                <div>
-                                    <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
-                                    <span className="ml-2">{current.classPerWeek}</span>
-                                </div>
-                            )}
-                            {current.parsedTimeSlots.length > 0 && (
-                                <div>
-                                    <span className="font-medium text-slate-700">เวลาเรียน:</span>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                        {current.parsedTimeSlots.map((timeSlot, timeIndex) => (
-                                            <span key={timeIndex} className={`px-2 py-1 rounded text-xs ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700'}`}>
-                                                {timeSlot.dayAbbrev}. {timeSlot.timeRange}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            {description && description.trim() !== '' && (
-                                <div className="pt-2 border-t border-slate-200">
-                                    <span className="font-medium text-slate-700">รายละเอียด:</span>
-                                    <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
-                                </div>
-                            )}
-                            {current.note && current.note.trim() !== '' && (
-                                <div className="pt-2 border-t border-slate-200">
-                                    <span className="font-medium text-slate-700">หมายเหตุ:</span>
-                                    <p className="text-amber-700 mt-1">{current.note}</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
         </>
     );
 });
