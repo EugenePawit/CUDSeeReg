@@ -12,6 +12,20 @@ export interface SharedTimetablePayload {
     s: SharedSubjectRef[];
 }
 
+// Map base timetable IDs to single bytes for ultra-compact encoding
+const BASE_ID_TO_BYTE: Record<string, number> = {
+    'M1-EP': 0, 'M1-MEP': 1, 'M1-IEP': 2, 'M1-Science': 3, 'M1-3': 4, 'M1-4': 5,
+    'M2-EP': 10, 'M2-MEP': 11, 'M2-IEP': 12, 'M2-Science': 13, 'M2-3': 14, 'M2-4': 15,
+    'M3-EP': 20, 'M3-MEP': 21, 'M3-IEP': 22, 'M3-Science': 23, 'M3-3': 24, 'M3-4': 25,
+    'M4-EP': 30, 'M4-MEP': 31, 'M4-IEP': 32, 'M4-Science': 33,
+    'M5-EP': 40, 'M5-MEP': 41, 'M5-IEP': 42, 'M5-Science': 43,
+    'M6-EP': 50, 'M6-MEP': 51, 'M6-IEP': 52, 'M6-Science': 53,
+};
+
+const BYTE_TO_BASE_ID: Record<number, string> = Object.fromEntries(
+    Object.entries(BASE_ID_TO_BYTE).map(([k, v]) => [v, k])
+);
+
 // Compact base64url encoding for binary data
 function toBase64Url(bytes: Uint8Array): string {
     let binary = '';
@@ -90,26 +104,40 @@ export function encodeTimetableShare(baseTimetableId: string, selectedElectives:
 
     const subjects = extractSharedSubjects(selectedElectives);
 
-    // Binary format: [version:1][baseId:string][count:1][subjects...]
-    // Each subject: [code:string][group:string][time:string]
+    // Ultra-compact binary format v2:
+    // [version:1][baseIdByte:1][count:1][subjects...]
+    // Each subject: [code:string][group:string] (removed classtime - redundant)
     const parts: number[] = [];
 
-    // Version byte
-    parts.push(1);
+    // Version byte (v2 for new format)
+    parts.push(2);
 
-    // Base timetable ID
-    parts.push(...encodeString(baseTimetableId));
+    // Base timetable ID as single byte
+    const baseIdByte = BASE_ID_TO_BYTE[baseTimetableId];
+    if (baseIdByte === undefined) {
+        // Fallback: encode as string with v1 marker
+        parts[0] = 1;
+        parts.push(...encodeString(baseTimetableId));
+    } else {
+        parts.push(baseIdByte);
+    }
 
     // Subject count (max 255)
     const count = Math.min(subjects.length, 255);
     parts.push(count);
 
-    // Encode each subject compactly
+    // Encode each subject (code + group only, skip classtime)
     for (let i = 0; i < count; i++) {
         const subj = subjects[i];
         parts.push(...encodeString(subj.c));  // code
-        parts.push(...encodeString(subj.g));  // group
-        parts.push(...encodeString(subj.t));  // classtime
+
+        // Optimize group encoding - single digit = 1 byte
+        const group = subj.g || '';
+        if (group.length === 1 && group >= '0' && group <= '9') {
+            parts.push(1, group.charCodeAt(0));
+        } else {
+            parts.push(...encodeString(group));
+        }
     }
 
     return toBase64Url(new Uint8Array(parts));
@@ -131,14 +159,26 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
 
         // Read version
         const version = bytes[offset++];
-        if (version !== 1) {
+        if (version !== 1 && version !== 2) {
             return null;
         }
 
         // Read base timetable ID
-        const baseResult = decodeString(bytes, offset);
-        const baseTimetableId = baseResult.value;
-        offset = baseResult.nextOffset;
+        let baseTimetableId: string;
+
+        if (version === 2) {
+            // V2: Single byte base ID
+            const baseIdByte = bytes[offset++];
+            baseTimetableId = BYTE_TO_BASE_ID[baseIdByte];
+            if (!baseTimetableId) {
+                return null; // Unknown base ID
+            }
+        } else {
+            // V1: String base ID
+            const baseResult = decodeString(bytes, offset);
+            baseTimetableId = baseResult.value;
+            offset = baseResult.nextOffset;
+        }
 
         if (offset >= bytes.length) {
             return null;
@@ -157,13 +197,19 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
                 const groupResult = decodeString(bytes, offset);
                 offset = groupResult.nextOffset;
 
-                const timeResult = decodeString(bytes, offset);
-                offset = timeResult.nextOffset;
+                // V2: No classtime field (we add empty string for compatibility)
+                // V1: Has classtime field
+                let classtime = '';
+                if (version === 1 && offset < bytes.length) {
+                    const timeResult = decodeString(bytes, offset);
+                    offset = timeResult.nextOffset;
+                    classtime = timeResult.value;
+                }
 
                 subjects.push({
                     c: codeResult.value,
                     g: groupResult.value,
-                    t: timeResult.value,
+                    t: classtime,
                 });
             } catch {
                 break;
