@@ -13,48 +13,274 @@
 @layer components {
   .glass-card {
     @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-lg;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    @apply shadow-xl;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-pink-500 to-rose-500 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/40 hover:-translate-y-0.5;
+    @apply bg-gradient-to-r from-pink-500 to-rose-500 text-white font-medium px-6 py-2.5 rounded-lg shadow-lg shadow-pink-500/25;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-primary:hover {
+    @apply shadow-xl shadow-pink-500/40;
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    transition: all 0.1s ease-out;
   }
 
   .btn-secondary {
-    @apply bg-slate-200 text-slate-700 font-medium px-6 py-2.5 rounded-lg transition-all duration-200 hover:bg-slate-300;
+    @apply bg-slate-200 text-slate-700 font-medium px-6 py-2.5 rounded-lg;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .day-monday { @apply bg-yellow-100 border-l-4 border-yellow-400; }
-  .day-tuesday { @apply bg-pink-100 border-l-4 border-pink-400; }
-  .day-wednesday { @apply bg-green-100 border-l-4 border-green-400; }
-  .day-thursday { @apply bg-orange-100 border-l-4 border-orange-400; }
-  .day-friday { @apply bg-blue-100 border-l-4 border-blue-400; }
+  .btn-secondary:hover {
+    @apply bg-slate-300;
+    transform: translateY(-1px);
+  }
 
-  .cell-elective { @apply bg-purple-100 text-purple-800 hover:bg-purple-200 cursor-pointer; }
-  .cell-core { @apply bg-white text-slate-800; }
-  .cell-break { @apply bg-amber-50 text-amber-700; }
-  .cell-selected { @apply bg-emerald-100 text-emerald-800; }
+  .btn-secondary:active {
+    transform: scale(0.97);
+  }
 
+  .day-monday {
+    @apply bg-yellow-100 border-l-4 border-yellow-400;
+  }
+
+  .day-tuesday {
+    @apply bg-pink-100 border-l-4 border-pink-400;
+  }
+
+  .day-wednesday {
+    @apply bg-green-100 border-l-4 border-green-400;
+  }
+
+  .day-thursday {
+    @apply bg-orange-100 border-l-4 border-orange-400;
+  }
+
+  .day-friday {
+    @apply bg-blue-100 border-l-4 border-blue-400;
+  }
+
+  .cell-elective {
+    @apply bg-purple-100 text-purple-800 cursor-pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cell-elective:hover {
+    @apply bg-purple-200;
+    transform: scale(1.02);
+  }
+
+  .cell-core {
+    @apply bg-white text-slate-800;
+  }
+
+  .cell-break {
+    @apply bg-amber-50 text-amber-700;
+  }
+
+  .cell-selected {
+    @apply bg-emerald-100 text-emerald-800;
+  }
+
+  /* Enhanced interactive press with smoother animations */
   .interactive-press {
-    @apply transition-transform duration-200 ease-out;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.2s ease-out,
+      box-shadow 0.25s ease-out;
     transform: translateZ(0);
   }
 
   .interactive-press:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.01);
   }
 
   .interactive-press:active {
-    transform: scale(0.975);
+    transform: scale(0.97);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  /* Card animations */
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  /* Modal animations */
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      backdrop-filter: blur(0px);
+    }
+
+    to {
+      opacity: 1;
+      backdrop-filter: blur(8px);
+    }
+  }
+
+  @keyframes modalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .modal-overlay {
+    animation: modalFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .modal-content {
+    animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Fade in animations for content */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Stagger children animation */
+  @keyframes staggerFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .stagger-item {
+    animation: staggerFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .stagger-item:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+
+  .stagger-item:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .stagger-item:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+
+  .stagger-item:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+
+  .stagger-item:nth-child(5) {
+    animation-delay: 0.25s;
+  }
+
+  .stagger-item:nth-child(6) {
+    animation-delay: 0.3s;
+  }
+
+  /* Tab transition */
+  .tab-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgb(236, 72, 153), rgb(244, 63, 94));
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Ripple effect for buttons */
+  .btn-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-ripple:active::before {
+    width: 300px;
+    height: 300px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .interactive-press {
-    transition: none;
+
+  .interactive-press,
+  .card-hover,
+  .modal-overlay,
+  .modal-content,
+  .fade-in-up,
+  .stagger-item,
+  .tab-active,
+  .btn-primary,
+  .btn-secondary,
+  .cell-elective {
+    animation: none !important;
+    transition: none !important;
   }
 
   .interactive-press:hover,
-  .interactive-press:active {
-    transform: none;
+  .interactive-press:active,
+  .card-hover:hover {
+    transform: none !important;
   }
 }

@@ -149,8 +149,8 @@ export default function HomeContent() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {filteredSubjects.map((subject) => (
-                            <div key={subject.code}>
+                        {filteredSubjects.map((subject, index) => (
+                            <div key={subject.code} className="stagger-item" style={{ animationDelay: `${Math.min(index * 0.05, 0.3)}s` }}>
                                 <SubjectCard subject={subject} description={descriptions[subject.code] || ''} />
                             </div>
                         ))}
@@ -198,7 +198,7 @@ const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectC
 
     return (
         <>
-            <div className="glass-card rounded-xl p-4 relative interactive-press">
+            <div className="glass-card rounded-xl p-4 relative card-hover">
                 <button
                     onClick={() => setShowModal(true)}
                     className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press"
@@ -254,11 +254,11 @@ const SubjectCard = memo(function SubjectCard({ subject, description }: SubjectC
 
             {showModal && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
+                    className="modal-overlay fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
                     onClick={() => setShowModal(false)}
                 >
                     <div
-                        className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+                        className="modal-content bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl"
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div className="flex justify-between items-start mb-4">

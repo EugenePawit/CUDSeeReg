@@ -579,11 +579,11 @@ export default function PlannerPage() {
 
             {modalOpen && selectedSlot && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
+                    className="modal-overlay fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
                     onClick={() => setModalOpen(false)}
                 >
                     <div
-                        className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
+                        className="modal-content bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div className="p-4 border-b bg-pink-50">
@@ -621,7 +621,8 @@ export default function PlannerPage() {
                                         <div
                                             key={`${subject.code}-${subject.group}-${index}`}
                                             onClick={() => handleSelectSubject(subject)}
-                                            className="p-4 border border-slate-200 rounded-xl hover:bg-pink-50 hover:border-pink-300 cursor-pointer transition-colors"
+                                            className="stagger-item p-4 border border-slate-200 rounded-xl hover:bg-pink-50 hover:border-pink-300 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+                                            style={{ animationDelay: `${Math.min(index * 0.03, 0.2)}s` }}
                                         >
                                             <div className="flex justify-between items-start">
                                                 <div>
