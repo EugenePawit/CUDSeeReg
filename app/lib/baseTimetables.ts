@@ -459,9 +459,10 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: 'ทัศนศิลป์', type: 'core' },
                 3: { code: '', name: 'ภาษาไทย 2', type: 'core' },
                 4: { code: '', name: 'พักกลางวัน', type: 'break' },
-                5: { code: '', name: 'สังคมศึกษาฯ', type: 'core' },
-                6: { code: '', name: 'CUD-EP เสริมทักษะ ภาษาอังกฤษ 2', type: 'core' },
-                7: { code: '', name: 'CUD-EP ทักษะกระบวนการทางคณิตศาสตร์ 2', type: 'core' }
+                5: { code: '', name: 'CUD-EP คณิตศาสตร์เพิ่มเติม 2', type: 'core' },
+                6: { code: '', name: 'สังคมศึกษาฯ', type: 'core' },
+                7: { code: '', name: 'CUD-EP เสริมทักษะ ภาษาอังกฤษ 2', type: 'core' },
+                8: { code: '', name: 'CUD-EP ทักษะกระบวนการทางคณิตศาสตร์ 2', type: 'core' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
@@ -469,9 +470,10 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: 'CUD-EP คณิตศาสตร์พื้นฐาน 2', type: 'core' },
                 3: { code: '', name: 'ภาษาไทย 2', type: 'core' },
                 4: { code: '', name: 'พักกลางวัน', type: 'break' },
-                5: { code: '', name: 'CUD-EP คณิตศาสตร์เพิ่มเติม 2', type: 'core' },
-                6: { code: '', name: 'CUD-EP วิทยาศาสตร์เพิ่มเติม 2', type: 'core' },
-                7: { code: '', name: 'CUD-EP ภาษาอังกฤษ 2', type: 'core' }
+                5: { code: '', name: 'วิชาเลือก', type: 'elective' },
+                6: { code: '', name: 'วิชาเลือก', type: 'elective' },
+                7: { code: '', name: 'CUD-EP วิทยาศาสตร์เพิ่มเติม 2', type: 'core' },
+                8: { code: '', name: 'CUD-EP ภาษาอังกฤษ 2', type: 'core' }
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
@@ -479,8 +481,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: 'ดนตรี/นาฏศิลป์', type: 'core' },
                 3: { code: '', name: 'สังคมศึกษาฯ', type: 'core' },
                 4: { code: '', name: 'พักกลางวัน', type: 'break' },
-                5: { code: '', name: 'CUD-EP ทักษะกระบวนการทางวิทยาศาสตร์ 2', type: 'core' },
-                6: { code: '', name: 'ลส.-นน', type: 'core' },
+                5: { code: '', name: 'ลส.-นน', type: 'core' },
+                6: { code: '', name: 'CUD-EP ทักษะกระบวนการทางวิทยาศาสตร์ 2', type: 'core' },
                 7: { code: '', name: 'สุขศึกษา', type: 'core' },
                 8: { code: '', name: 'ประวัติศาสตร์', type: 'core' }
             }
