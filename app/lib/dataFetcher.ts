@@ -4,72 +4,179 @@ import { parseThaiTime } from './thaiTimeParser';
 const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/ronnapatp/cudElective/main/data/csv';
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
+// Day name mapping for period columns
+const DAY_MAP: Record<string, string> = {
+    'จันทร์': 'จ',
+    'อังคาร': 'อ',
+    'พุธ': 'พ',
+    'พฤหัสบดี': 'พฤ',
+    'ศุกร์': 'ศ',
+};
+
 function parseCSV(text: string): Subject[] {
     const lines = text.trim().split('\n');
-    if (lines.length < 2) return [];
+    if (lines.length < 5) return [];
 
-    const headers = lines[0].split(',').map(h => h.trim());
+    // Find the header row with column names
+    let headerLineIdx = -1;
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+        if (lines[i].includes('รหัสวิชา') && lines[i].includes('ชื่อรายวิชา')) {
+            headerLineIdx = i;
+            break;
+        }
+    }
+
+    if (headerLineIdx === -1) return [];
+
+    // Parse header to get column positions
+    const headerCells = parseCSVLine(lines[headerLineIdx]);
+    const codeIdx = headerCells.findIndex(h => h.includes('รหัสวิชา'));
+    const nameIdx = headerCells.findIndex(h => h.includes('ชื่อรายวิชา') || h.includes('ชื่อวิชา'));
+    const creditIdx = headerCells.findIndex(h => h.includes('นก'));
+    const classPerWeekIdx = headerCells.findIndex(h => h.includes('คาบ/สัปดาห์'));
+    const descIdx = headerCells.findIndex(h => h.includes('คำแนะนำรายวิชา'));
+    const instructorIdx = headerCells.findIndex(h => h.includes('อ.ผู้สอน') || h.includes('ผู้สอน'));
+    const groupIdx = headerCells.findIndex(h => h.includes('กลุ่ม / ตอนเรียน') || h.includes('กลุ่ม'));
+    const programIdx = headerCells.findIndex(h => h.includes('กลุ่มการเรียนที่ลงทะเบียนได้'));
+    const enrollmentIdx = headerCells.findIndex(h => h.includes('จำนวนรับ'));
+    const conditionIdx = headerCells.findIndex(h => h.includes('เงื่อนไขรายวิชา'));
+
+    // Find where period columns start (after condition column or enrollment)
+    const periodStartIdx = Math.max(conditionIdx, enrollmentIdx) + 1;
+
     const subjects: Subject[] = [];
+    let currentSubject: Partial<Subject> | null = null;
+    let subjectGroups: Array<{
+        group: string;
+        instructor: string;
+        enrollment: string;
+        periods: string[];
+    }> = [];
 
-    for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (!line.trim()) continue;
+    for (let i = headerLineIdx + 3; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || line.startsWith('กลุ่มสาระ')) continue;
 
-        // Parse CSV with proper quote handling
-        const values: string[] = [];
-        let current = '';
-        let inQuotes = false;
+        const cells = parseCSVLine(line);
+        const code = cells[codeIdx]?.trim() || '';
 
-        for (let j = 0; j < line.length; j++) {
-            const char = line[j];
-            if (char === '"') {
-                inQuotes = !inQuotes;
-            } else if (char === ',' && !inQuotes) {
-                values.push(current.trim());
-                current = '';
-            } else {
-                current += char;
+        // New subject starts
+        if (code) {
+            // Save previous subject
+            if (currentSubject && subjectGroups.length > 0) {
+                saveSubject(currentSubject, subjectGroups, subjects);
+            }
+
+            // Start new subject
+            currentSubject = {
+                order: subjects.length + 1,
+                code,
+                name: cells[nameIdx]?.trim() || '',
+                credit: cells[creditIdx]?.trim() || '',
+                classPerWeek: cells[classPerWeekIdx]?.trim() || '',
+                note: cells[descIdx]?.trim() || '',
+            };
+            subjectGroups = [];
+        }
+
+        // Parse group data
+        if (currentSubject) {
+            const group = cells[groupIdx]?.trim() || '';
+            const instructor = cells[instructorIdx]?.trim() || '';
+            const enrollment = cells[enrollmentIdx]?.trim() || '';
+
+            // Extract periods from checkmarks
+            const periods: string[] = [];
+            for (let j = periodStartIdx; j < cells.length; j++) {
+                if (cells[j]?.includes('✔')) {
+                    periods.push(String(j - periodStartIdx));
+                }
+            }
+
+            if (group || instructor) {
+                subjectGroups.push({ group, instructor, enrollment, periods });
             }
         }
-        values.push(current.trim());
+    }
 
-        // Map to subject object
-        const row: Record<string, string> = {};
-        headers.forEach((header, idx) => {
-            row[header] = values[idx] || '';
-        });
-
-        // Parse arrays (fields that contain multiple values separated by |)
-        const parseField = (val: string): string | string[] => {
-            if (!val) return '';
-            if (val.includes('|')) {
-                return val.split('|').map(v => v.trim());
-            }
-            return val;
-        };
-
-        subjects.push({
-            order: parseInt(row['ลำดับ'] || '0'),
-            code: row['รหัสวิชา'] || '',
-            name: row['ชื่อวิชา'] || '',
-            credit: row['หน่วยกิต'] || '',
-            classPerWeek: row['ชม./สัปดาห์'] || '',
-            group: parseField(row['กลุ่ม']),
-            instructor: parseField(row['ผู้สอน']),
-            enrollment: parseField(row['รับ']),
-            electiveQuantity: parseField(row['เลือก']),
-            updatedElectiveQuantity: parseField(row['เลือก(update)']),
-            classtime: parseField(row['เวลาเรียน']),
-            classroom: parseField(row['ห้องเรียน']),
-            note: parseField(row['หมายเหตุ']),
-        });
+    // Save last subject
+    if (currentSubject && subjectGroups.length > 0) {
+        saveSubject(currentSubject, subjectGroups, subjects);
     }
 
     return subjects;
 }
 
+function parseCSVLine(line: string): string[] {
+    const cells: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            cells.push(current);
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    cells.push(current);
+
+    return cells;
+}
+
+function saveSubject(
+    baseSubject: Partial<Subject>,
+    groups: Array<{ group: string; instructor: string; enrollment: string; periods: string[] }>,
+    subjects: Subject[]
+) {
+    const noteText = baseSubject.note || '';
+
+    if (groups.length === 1) {
+        // Single group
+        const g = groups[0];
+        subjects.push({
+            order: baseSubject.order || 0,
+            code: baseSubject.code || '',
+            name: baseSubject.name || '',
+            credit: baseSubject.credit || '',
+            classPerWeek: baseSubject.classPerWeek || '',
+            group: g.group,
+            instructor: g.instructor,
+            enrollment: g.enrollment,
+            electiveQuantity: g.enrollment,
+            updatedElectiveQuantity: g.enrollment,
+            classtime: '', // Period data available in periods array but hard to convert back to Thai format
+            classroom: '',
+            note: noteText,
+        });
+    } else {
+        // Multiple groups - all fields must be arrays
+        const multiGroupSubject: Subject = {
+            order: baseSubject.order || 0,
+            code: baseSubject.code || '',
+            name: baseSubject.name || '',
+            credit: baseSubject.credit || '',
+            classPerWeek: baseSubject.classPerWeek || '',
+            group: groups.map(g => g.group),
+            instructor: groups.map(g => g.instructor),
+            enrollment: groups.map(g => g.enrollment),
+            electiveQuantity: groups.map(g => g.enrollment),
+            updatedElectiveQuantity: groups.map(g => g.enrollment),
+            classtime: groups.map(() => ''),
+            classroom: groups.map(() => ''),
+            note: groups.map(() => noteText) as string[],
+        };
+        subjects.push(multiGroupSubject);
+    }
+}
+
 export async function fetchSubjects(grade: number): Promise<Subject[]> {
-    const cacheKey = `cudseereg_subjects_m${grade}_csv_v1`;
+    const cacheKey = `cudseereg_subjects_m${grade}_csv_v2`;
 
     if (typeof window !== 'undefined') {
         const cached = localStorage.getItem(cacheKey);
@@ -176,4 +283,3 @@ export function groupSubjectsByCode(flattened: FlattenedSubject[]): GroupedSubje
         groups,
     }));
 }
-
