@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useDeferredValue, memo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useDeferredValue, memo, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
@@ -197,29 +197,31 @@ export default function HomeContent() {
                 let overlayClasses = "modal-overlay fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"; // Default centered (mobile)
 
                 if (anchor && !isMobile) {
-                    // Desktop: Position absolute/fixed near the anchor
-                    // Prefer placing top-right of modal to align with button, but shifted down
-                    const top = anchor.bottom + 10;
-                    const right = window.innerWidth - anchor.right;
+                    // Desktop: Position absolute/fixed relative to the anchor (which is now the CARD)
+                    // Center horizontally relative to the card
+                    const cardCenter = anchor.left + (anchor.width / 2);
+                    const modalWidth = 448; // max-w-md (approx 28rem)
+                    let left = cardCenter - (modalWidth / 2);
+                    const top = anchor.top; // Align top with card top (or use anchor.bottom for below)
 
                     // Boundary checks
-                    const modalWidth = 448; // max-w-md approx
-                    const modalHeight = 600; // estimated max height
-
-                    // If too close to bottom, flip up? For now, we rely on scroll in global overlay if needed, 
-                    // but we are using fixed positioning for the content.
-                    // Actually, let's use absolute positioning within the overlay to allow scrolling if needed.
+                    // Ensure at least 16px from left edge
+                    left = Math.max(16, left);
+                    // Ensure at least 16px from right edge
+                    const maxLeft = window.innerWidth - modalWidth - 16;
+                    left = Math.min(left, maxLeft);
 
                     positionStyle = {
                         position: 'absolute',
                         top: `${top}px`,
-                        right: `${Math.max(16, right)}px`, // Keep at least 16px from right edge
+                        left: `${left}px`,
+                        width: '100%',
+                        maxWidth: '28rem',
                         margin: 0,
                     };
 
                     // Ensure it doesn't go off-screen to the left
                     // logic handled by max-width + right alignment usually safe on desktop for this layout
-
                     // Change overlay to allow absolute positioning
                     overlayClasses = "modal-overlay fixed inset-0 bg-black/20 z-[100] block overflow-y-auto";
                 }
@@ -320,6 +322,7 @@ interface SubjectCardProps {
 }
 
 const SubjectCard = memo(function SubjectCard({ subject, description, onViewDetails }: SubjectCardProps) {
+    const cardRef = useRef<HTMLDivElement>(null);
     const [selectedGroup, setSelectedGroup] = useState(0);
     const current = subject.groups[selectedGroup] ?? subject.groups[0];
     const hasMultipleGroups = subject.groups.length > 1;
@@ -332,11 +335,12 @@ const SubjectCard = memo(function SubjectCard({ subject, description, onViewDeta
 
     return (
         <>
-            <div className="glass-card rounded-xl p-4 relative card-hover">
+            <div ref={cardRef} className="glass-card rounded-xl p-4 relative card-hover">
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        onViewDetails(subject, selectedGroup, e.currentTarget.getBoundingClientRect());
+                        const rect = cardRef.current?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect();
+                        onViewDetails(subject, selectedGroup, rect);
                     }}
                     className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press"
                     aria-label="Show details"
