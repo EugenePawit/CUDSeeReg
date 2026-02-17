@@ -123,7 +123,7 @@ export default function HomeContent() {
 
 function SubjectCard({ subject }: { subject: GroupedSubject }) {
     const [selectedGroup, setSelectedGroup] = useState(0);
-    const [expanded, setExpanded] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const current = subject.groups[selectedGroup];
     const hasMultipleGroups = subject.groups.length > 1;
 
@@ -140,84 +140,141 @@ function SubjectCard({ subject }: { subject: GroupedSubject }) {
     };
 
     return (
-        <div
-            className="glass-card rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all"
-            onClick={() => setExpanded(!expanded)}
-        >
-            <div className="mb-3">
-                <div className="flex items-center justify-between mb-1">
-                    <div className="text-sm font-mono text-pink-600">{subject.code}</div>
-                    <div className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-medium">
-                        รับ {current.availableSeats} คน
-                    </div>
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900">{subject.name}</h3>
-            </div>
+        <>
+            <div className="glass-card rounded-xl p-4 relative">
+                {/* Info Icon Button */}
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors"
+                    aria-label="Show details"
+                >
+                    <span className="text-xs font-bold">i</span>
+                </button>
 
-            {hasMultipleGroups && (
-                <div className="mb-3" onClick={(e) => e.stopPropagation()}>
-                    <select
-                        value={selectedGroup}
-                        onChange={e => setSelectedGroup(Number(e.target.value))}
-                        className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-                    >
-                        {subject.groups.map((g, i) => (
-                            <option key={i} value={i}>
-                                กลุ่ม {g.group} - {g.instructor}
-                            </option>
-                        ))}
-                    </select>
+                <div className="mb-3 pr-8">
+                    <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
+                    <h3 className="text-lg font-semibold text-slate-900">{subject.name}</h3>
                 </div>
-            )}
 
-            <div className="text-sm text-slate-600 space-y-2">
-                {!hasMultipleGroups && <div>อาจารย์: {current.instructor}</div>}
-                <div className="flex flex-wrap gap-1">
-                    {current.parsedTimeSlots.length > 0 ? (
-                        current.parsedTimeSlots.map((t, i) => (
-                            <span key={i} className={`px-2 py-1 rounded text-xs ${getDayColor(t.dayAbbrev)}`}>
-                                {t.dayAbbrev}. {t.timeRange}
-                            </span>
-                        ))
-                    ) : (
-                        <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded text-xs italic">
-                            ไม่มีข้อมูลเวลาเรียน
-                        </span>
-                    )}
-                </div>
-                <div>หน่วยกิต: {subject.credit}</div>
-
-                {/* Expandable Details */}
-                {expanded && (
-                    <div className="mt-4 pt-4 border-t border-slate-200 space-y-2" onClick={(e) => e.stopPropagation()}>
-                        <div className="font-semibold text-slate-700">รายละเอียดเพิ่มเติม</div>
-                        {current.enrollment && (
-                            <div className="flex gap-2">
-                                <span className="font-medium">เปิดรับ:</span>
-                                <span>{current.enrollment}</span>
-                            </div>
-                        )}
-                        {current.classPerWeek && (
-                            <div className="flex gap-2">
-                                <span className="font-medium">ชม./สัปดาห์:</span>
-                                <span>{current.classPerWeek}</span>
-                            </div>
-                        )}
-                        {current.note && current.note.trim() !== '' && (
-                            <div className="flex gap-2">
-                                <span className="font-medium">หมายเหตุ:</span>
-                                <span className="text-amber-700">{current.note}</span>
-                            </div>
-                        )}
+                {hasMultipleGroups && (
+                    <div className="mb-3">
+                        <select
+                            value={selectedGroup}
+                            onChange={e => setSelectedGroup(Number(e.target.value))}
+                            className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        >
+                            {subject.groups.map((g, i) => (
+                                <option key={i} value={i}>
+                                    กลุ่ม {g.group} - {g.instructor}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 )}
 
-                {/* Click indicator */}
-                <div className="text-xs text-slate-400 mt-2 text-center">
-                    {expanded ? '▲ คลิกเพื่อซ่อนรายละเอียด' : '▼ คลิกเพื่อดูรายละเอียด'}
+                <div className="text-sm text-slate-600 space-y-2">
+                    {!hasMultipleGroups && <div>อาจารย์: {current.instructor}</div>}
+                    <div className="flex flex-wrap gap-1">
+                        {current.parsedTimeSlots.length > 0 ? (
+                            current.parsedTimeSlots.map((t, i) => (
+                                <span key={i} className={`px-2 py-1 rounded text-xs ${getDayColor(t.dayAbbrev)}`}>
+                                    {t.dayAbbrev}. {t.timeRange}
+                                </span>
+                            ))
+                        ) : (
+                            <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded text-xs italic">
+                                ไม่มีข้อมูลเวลาเรียน
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span>หน่วยกิต: {subject.credit}</span>
+                        <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-full text-xs">
+                            รับ {current.availableSeats} คน
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {/* Modal Popup */}
+            {showModal && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                    onClick={() => setShowModal(false)}
+                >
+                    <div
+                        className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
+                                <h3 className="text-xl font-bold text-slate-900">{subject.name}</h3>
+                            </div>
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <div className="space-y-3 text-sm">
+                            {hasMultipleGroups && (
+                                <div>
+                                    <span className="font-medium text-slate-700">กลุ่ม:</span>
+                                    <span className="ml-2">{current.group} - {current.instructor}</span>
+                                </div>
+                            )}
+                            {!hasMultipleGroups && (
+                                <div>
+                                    <span className="font-medium text-slate-700">อาจารย์:</span>
+                                    <span className="ml-2">{current.instructor}</span>
+                                </div>
+                            )}
+                            <div>
+                                <span className="font-medium text-slate-700">หน่วยกิต:</span>
+                                <span className="ml-2">{subject.credit}</span>
+                            </div>
+                            <div>
+                                <span className="font-medium text-slate-700">รับนักเรียน:</span>
+                                <span className="ml-2">{current.availableSeats} คน</span>
+                            </div>
+                            {current.enrollment && (
+                                <div>
+                                    <span className="font-medium text-slate-700">เปิดรับ:</span>
+                                    <span className="ml-2">{current.enrollment}</span>
+                                </div>
+                            )}
+                            {current.classPerWeek && (
+                                <div>
+                                    <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
+                                    <span className="ml-2">{current.classPerWeek}</span>
+                                </div>
+                            )}
+                            {current.parsedTimeSlots.length > 0 && (
+                                <div>
+                                    <span className="font-medium text-slate-700">เวลาเรียน:</span>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                        {current.parsedTimeSlots.map((t, i) => (
+                                            <span key={i} className={`px-2 py-1 rounded text-xs ${getDayColor(t.dayAbbrev)}`}>
+                                                {t.dayAbbrev}. {t.timeRange}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {current.note && current.note.trim() !== '' && (
+                                <div className="pt-2 border-t border-slate-200">
+                                    <span className="font-medium text-slate-700">หมายเหตุ:</span>
+                                    <p className="text-amber-700 mt-1">{current.note}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
 
