@@ -34,10 +34,10 @@ export default function HomeContent() {
     const [search, setSearch] = useState('');
     const deferredSearch = useDeferredValue(search);
     const [descriptions, setDescriptions] = useState<Record<string, string>>({});
-    const [modalData, setModalData] = useState<{ subject: GroupedSubject, groupIndex: number, description: string } | null>(null);
+    const [modalData, setModalData] = useState<{ subject: GroupedSubject, groupIndex: number, description: string, anchor?: DOMRect } | null>(null);
 
-    const handleViewDetails = useCallback((subject: GroupedSubject, groupIndex: number) => {
-        setModalData({ subject, groupIndex, description: descriptions[subject.code] || '' });
+    const handleViewDetails = useCallback((subject: GroupedSubject, groupIndex: number, rect?: DOMRect) => {
+        setModalData({ subject, groupIndex, description: descriptions[subject.code] || '', anchor: rect });
     }, [descriptions]);
 
     // Add keydown listener to close modal on Escape
@@ -187,17 +187,51 @@ export default function HomeContent() {
             </footer>
 
             {modalData && (() => {
-                const { subject, groupIndex, description } = modalData;
+                const { subject, groupIndex, description, anchor } = modalData;
                 const current = subject.groups[groupIndex] ?? subject.groups[0];
                 const hasMultipleGroups = subject.groups.length > 1;
 
+                // Calculate position style if anchor exists (desktop)
+                const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                let positionStyle: React.CSSProperties = {};
+                let overlayClasses = "modal-overlay fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"; // Default centered (mobile)
+
+                if (anchor && !isMobile) {
+                    // Desktop: Position absolute/fixed near the anchor
+                    // Prefer placing top-right of modal to align with button, but shifted down
+                    const top = anchor.bottom + 10;
+                    const right = window.innerWidth - anchor.right;
+
+                    // Boundary checks
+                    const modalWidth = 448; // max-w-md approx
+                    const modalHeight = 600; // estimated max height
+
+                    // If too close to bottom, flip up? For now, we rely on scroll in global overlay if needed, 
+                    // but we are using fixed positioning for the content.
+                    // Actually, let's use absolute positioning within the overlay to allow scrolling if needed.
+
+                    positionStyle = {
+                        position: 'absolute',
+                        top: `${top}px`,
+                        right: `${Math.max(16, right)}px`, // Keep at least 16px from right edge
+                        margin: 0,
+                    };
+
+                    // Ensure it doesn't go off-screen to the left
+                    // logic handled by max-width + right alignment usually safe on desktop for this layout
+
+                    // Change overlay to allow absolute positioning
+                    overlayClasses = "modal-overlay fixed inset-0 bg-black/20 z-[100] block overflow-y-auto";
+                }
+
                 return (
                     <div
-                        className="modal-overlay fixed inset-0 bg-black/50 z-[100] flex items-start justify-center p-4 pt-10"
+                        className={overlayClasses}
                         onClick={() => setModalData(null)}
                     >
                         <div
-                            className="modal-content bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+                            className="modal-content bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/40"
+                            style={positionStyle}
                             onClick={(event) => event.stopPropagation()}
                         >
                             <div className="flex justify-between items-start mb-4">
@@ -282,7 +316,7 @@ export default function HomeContent() {
 interface SubjectCardProps {
     subject: GroupedSubject;
     description: string;
-    onViewDetails: (subject: GroupedSubject, groupIndex: number) => void;
+    onViewDetails: (subject: GroupedSubject, groupIndex: number, rect?: DOMRect) => void;
 }
 
 const SubjectCard = memo(function SubjectCard({ subject, description, onViewDetails }: SubjectCardProps) {
@@ -300,7 +334,10 @@ const SubjectCard = memo(function SubjectCard({ subject, description, onViewDeta
         <>
             <div className="glass-card rounded-xl p-4 relative card-hover">
                 <button
-                    onClick={() => onViewDetails(subject, selectedGroup)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onViewDetails(subject, selectedGroup, e.currentTarget.getBoundingClientRect());
+                    }}
                     className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press"
                     aria-label="Show details"
                 >
