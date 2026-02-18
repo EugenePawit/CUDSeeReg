@@ -202,7 +202,7 @@ export default function HomeContent() {
                     const cardCenter = anchor.left + (anchor.width / 2);
                     const modalWidth = 448; // max-w-md (approx 28rem)
                     let left = cardCenter - (modalWidth / 2);
-                    const top = anchor.top; // Align top with card top (or use anchor.bottom for below)
+                    const top = anchor.top - 48; // Slightly above the card
 
                     // Boundary checks
                     // Ensure at least 16px from left edge
