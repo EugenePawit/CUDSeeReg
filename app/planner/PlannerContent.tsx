@@ -145,13 +145,6 @@ export default function PlannerPage() {
             return;
         }
 
-        if (baseTimetable.grade < 4) {
-            setSubjects([]);
-            setSubjectsGrade(baseTimetable.grade);
-            setLoading(false);
-            return;
-        }
-
         let cancelled = false;
         setLoading(true);
         setSubjectsGrade(null);
