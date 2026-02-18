@@ -118,7 +118,7 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
     if (headerLineIdx === -1) return descriptions;
     const headerCells = parseCSVLine(lines[headerLineIdx]).map((cell) => cell.trim());
     const codeIndex = headerCells.findIndex((header) => header.includes('รหัสวิชา'));
-    const descriptionIndex = headerCells.findIndex((header) => header.includes('คำอธิบาย'));
+    const descriptionIndex = headerCells.findIndex((header) => header.includes('คำอธิบาย') || header.includes('แนะนำ'));
     const fallbackDescriptionIndex = headerCells.findIndex((header) => header.includes('ชื่อรายวิชา'));
 
     // Parse data rows (skip header and the two rows after it)

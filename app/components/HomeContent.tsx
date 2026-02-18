@@ -275,7 +275,11 @@ export default function HomeContent() {
                                     <div className="font-bold text-slate-800 mb-2">กลุ่มเรียน:</div>
                                     <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                                         {subject.groups.map((group, idx) => (
-                                            <div key={`${group.group}-${idx}`} className={`p-3 rounded-lg border ${idx === groupIndex ? 'bg-pink-50 border-pink-200 ring-1 ring-pink-200' : 'bg-slate-50 border-slate-100'}`}>
+                                            <div
+                                                key={`${group.group}-${idx}`}
+                                                className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${idx === groupIndex ? 'bg-pink-50 border-pink-200 ring-1 ring-pink-200' : 'bg-slate-50 border-slate-100 hover:bg-white hover:border-pink-100 hover:shadow-sm'}`}
+                                                onClick={() => setModalData(prev => prev ? ({ ...prev, groupIndex: idx }) : null)}
+                                            >
                                                 <div className="flex justify-between items-start mb-1">
                                                     <div>
                                                         <span className="font-semibold text-pink-700">กลุ่ม {group.group}</span>
@@ -303,10 +307,10 @@ export default function HomeContent() {
                                 </div>
 
                                 {/* Description Section */}
-                                {description && description.trim() !== '' && (
+                                {(descriptions[subject.code] || description) && (descriptions[subject.code] || description).trim() !== '' && (
                                     <div className="pt-2 border-t border-slate-200">
                                         <span className="font-medium text-slate-700">รายละเอียด:</span>
-                                        <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
+                                        <p className="text-slate-600 mt-1 leading-relaxed">{descriptions[subject.code] || description}</p>
                                     </div>
                                 )}
                             </div>
