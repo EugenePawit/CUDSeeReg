@@ -12,7 +12,7 @@ function isFresh(timestamp: number): boolean {
 }
 
 export async function fetchSubjects(grade: number): Promise<Subject[]> {
-    const cacheKey = `cudseereg_subjects_m${grade}_json_v3`;
+    const cacheKey = `cudseereg_subjects_m${grade}_json_v4`;
     const inMemory = memorySubjectCache.get(grade);
     if (inMemory && isFresh(inMemory.timestamp)) {
         return inMemory.data;
