@@ -517,7 +517,7 @@ export default function PlannerPage() {
                                                     if (elective) {
                                                         return (
                                                             <td key={period} className="border border-slate-200 cell-selected p-2 relative group h-24 align-middle interactive-press">
-                                                                <div className="text-xs font-mono text-emerald-600">{elective.code} {elective.group && `กลุ่ม ${elective.group}`}</div>
+                                                                <div className="text-[10px] font-mono text-emerald-600 whitespace-nowrap">{elective.code} {elective.group && `กลุ่ม ${elective.group}`}</div>
                                                                 <div className="text-xs font-medium text-emerald-900">{elective.name}</div>
                                                                 <button
                                                                     onClick={(event) => {
