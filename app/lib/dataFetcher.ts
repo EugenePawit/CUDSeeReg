@@ -180,7 +180,7 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
                     updatedElectiveQuantity: updatedQty,
                     note: notes[i] || notes[0] || '',
                     parsedTimeSlots: parseThaiTime(classtime),
-                    availableSeats: parseInt(updatedQty || electiveQty || '0', 10),
+                    availableSeats: parseInt(updatedQty, 10) || parseInt(electiveQty, 10) || parseInt(enrollment || '0', 10),
                 });
             }
         } else {
@@ -200,7 +200,7 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
                 updatedElectiveQuantity: updatedQty,
                 note: subject.note as string,
                 parsedTimeSlots: parseThaiTime(classtime),
-                availableSeats: parseInt(updatedQty || electiveQty || '0', 10),
+                availableSeats: parseInt(updatedQty, 10) || parseInt(electiveQty, 10) || parseInt(enrollment || '0', 10),
             });
         }
     }
