@@ -77,7 +77,7 @@ function parseCSVLine(line: string): string[] {
 
 // Fetch subject descriptions from CSV
 export async function fetchSubjectDescriptions(grade: number): Promise<Record<string, string>> {
-    const cacheKey = `cudseereg_descriptions_m${grade}_v1`;
+    const cacheKey = `cudseereg_descriptions_m${grade}_v2`;
     const inMemory = memoryDescriptionCache.get(grade);
     if (inMemory && isFresh(inMemory.timestamp)) {
         return inMemory.data;
@@ -119,7 +119,6 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
     const headerCells = parseCSVLine(lines[headerLineIdx]).map((cell) => cell.trim());
     const codeIndex = headerCells.findIndex((header) => header.includes('รหัสวิชา'));
     const descriptionIndex = headerCells.findIndex((header) => header.includes('คำอธิบาย') || header.includes('แนะนำ'));
-    const fallbackDescriptionIndex = headerCells.findIndex((header) => header.includes('ชื่อรายวิชา'));
 
     // Parse data rows (skip header and the two rows after it)
     for (let i = headerLineIdx + 3; i < lines.length; i++) {
@@ -128,8 +127,9 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
 
         const cells = parseCSVLine(line);
         const code = cells[Math.max(codeIndex, 0)]?.trim() || '';
-        const descriptionCellIndex = descriptionIndex >= 0 ? descriptionIndex : fallbackDescriptionIndex;
-        const description = cells[Math.max(descriptionCellIndex, 0)]?.trim() || '';
+        // Description is in the 5th column (index 4); use it as fallback if no explicit header match
+        const descriptionCellIndex = descriptionIndex >= 0 ? descriptionIndex : 4;
+        const description = cells[descriptionCellIndex]?.trim() || '';
 
         // Only store if we have a code (indicates new subject row)
         if (code && description) {
