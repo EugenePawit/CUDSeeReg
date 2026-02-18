@@ -250,39 +250,62 @@ export default function HomeContent() {
                             </div>
 
                             <div className="space-y-3 text-sm">
-                                {hasMultipleGroups && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">กลุ่ม:</span>
-                                        <span className="ml-2">{current.group} - {current.instructor}</span>
+                                {hasMultipleGroups ? (
+                                    <div className="pt-2">
+                                        <div className="font-bold text-slate-800 mb-2">กลุ่มเรียนทั้งหมด:</div>
+                                        <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                                            {subject.groups.map((group, idx) => (
+                                                <div key={`${group.group}-${idx}`} className={`p-3 rounded-lg border ${idx === groupIndex ? 'bg-pink-50 border-pink-200 ring-1 ring-pink-200' : 'bg-slate-50 border-slate-100'}`}>
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <div>
+                                                            <span className="font-semibold text-pink-700">กลุ่ม {group.group}</span>
+                                                            <span className="text-slate-600 ml-2 text-sm">{group.instructor}</span>
+                                                        </div>
+                                                        <div className="text-xs font-medium text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                                                            รับ {group.availableSeats}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-1 mt-2">
+                                                        {group.parsedTimeSlots.length > 0 ? (
+                                                            group.parsedTimeSlots.map((timeSlot, timeIndex) => (
+                                                                <span key={timeIndex} className={`px-2 py-1 rounded text-xs ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700'}`}>
+                                                                    {timeSlot.dayAbbrev}. {timeSlot.timeRange}
+                                                                </span>
+                                                            ))
+                                                        ) : (
+                                                            <span className="text-xs text-slate-400 italic">ไม่มีข้อมูลเวลา</span>
+                                                        )}
+                                                    </div>
+                                                    {group.note && <div className="text-xs text-amber-700 mt-2 bg-amber-50 p-1.5 rounded border border-amber-100">{group.note}</div>}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <span className="font-medium text-slate-700">อาจารย์:</span>
+                                            <span className="ml-2">{current.instructor}</span>
+                                        </div>
+                                        <div>
+                                            <span className="font-medium text-slate-700">รับนักเรียน:</span>
+                                            <span className="ml-2">{current.availableSeats} คน</span>
+                                        </div>
+                                        {current.enrollment && (
+                                            <div>
+                                                <span className="font-medium text-slate-700">เปิดรับ:</span>
+                                                <span className="ml-2">{current.enrollment}</span>
+                                            </div>
+                                        )}
+                                        {current.classPerWeek && (
+                                            <div>
+                                                <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
+                                                <span className="ml-2">{current.classPerWeek}</span>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
-                                {!hasMultipleGroups && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">อาจารย์:</span>
-                                        <span className="ml-2">{current.instructor}</span>
-                                    </div>
-                                )}
-                                <div>
-                                    <span className="font-medium text-slate-700">หน่วยกิต:</span>
-                                    <span className="ml-2">{subject.credit}</span>
-                                </div>
-                                <div>
-                                    <span className="font-medium text-slate-700">รับนักเรียน:</span>
-                                    <span className="ml-2">{current.availableSeats} คน</span>
-                                </div>
-                                {current.enrollment && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">เปิดรับ:</span>
-                                        <span className="ml-2">{current.enrollment}</span>
-                                    </div>
-                                )}
-                                {current.classPerWeek && (
-                                    <div>
-                                        <span className="font-medium text-slate-700">ชม./สัปดาห์:</span>
-                                        <span className="ml-2">{current.classPerWeek}</span>
-                                    </div>
-                                )}
-                                {current.parsedTimeSlots.length > 0 && (
+                                {!hasMultipleGroups && current.parsedTimeSlots.length > 0 && (
                                     <div>
                                         <span className="font-medium text-slate-700">เวลาเรียน:</span>
                                         <div className="flex flex-wrap gap-1 mt-1">
@@ -300,7 +323,7 @@ export default function HomeContent() {
                                         <p className="text-slate-600 mt-1 leading-relaxed">{description}</p>
                                     </div>
                                 )}
-                                {current.note && current.note.trim() !== '' && (
+                                {!hasMultipleGroups && current.note && current.note.trim() !== '' && (
                                     <div className="pt-2 border-t border-slate-200">
                                         <span className="font-medium text-slate-700">หมายเหตุ:</span>
                                         <p className="text-amber-700 mt-1">{current.note}</p>
