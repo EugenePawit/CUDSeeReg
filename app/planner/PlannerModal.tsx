@@ -61,11 +61,6 @@ export default function PlannerModal({
                         <div className="flex justify-center py-12">
                             <div className="animate-spin w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full" />
                         </div>
-                    ) : baseTimetable && baseTimetable.grade < 4 ? (
-                        <div className="text-center py-12">
-                            <p className="text-slate-600 mb-2">ข้อมูลวิชาเลือกมีเฉพาะสำหรับ ม.4 - ม.6 เท่านั้น</p>
-                            <p className="text-sm text-slate-500">กรุณาเลือกระดับชั้น ม.4, ม.5 หรือ ม.6</p>
-                        </div>
                     ) : filteredSubjects.length === 0 ? (
                         <p className="text-center text-slate-500 py-12">ไม่พบวิชาที่เปิดสอนในคาบนี้</p>
                     ) : (
