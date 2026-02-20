@@ -34,6 +34,17 @@ export default {
                 sans: ['Inter', 'Noto Sans Thai', 'sans-serif'],
                 display: ['Outfit', 'Noto Sans Thai', 'sans-serif'],
             },
+            transitionTimingFunction: {
+                'liquid': 'cubic-bezier(0.4, 0, 0.2, 1)',
+            },
+            borderRadius: {
+                'bento': '32px',
+            },
+            boxShadow: {
+                'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+                'glass-sm': '0 4px 16px 0 rgba(31, 38, 135, 0.25)',
+                'glass-lg': '0 12px 48px 0 rgba(31, 38, 135, 0.45)',
+            }
         },
     },
     plugins: [],

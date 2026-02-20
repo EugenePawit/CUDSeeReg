@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import FloatingNav from "./components/FloatingNav";
 
 export const metadata: Metadata = {
     title: "CUDSeeReg - ระบบช่วยเลือกวิชาเลือก",
@@ -13,7 +14,8 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="th">
-            <body className="font-sans antialiased min-h-screen">
+            <body className="font-sans antialiased min-h-screen flex flex-col text-slate-50">
+                <FloatingNav />
                 {children}
             </body>
         </html>

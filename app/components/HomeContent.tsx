@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useMemo, useDeferredValue, memo, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import { fetchSubjects, flattenSubjects, groupSubjectsByCode, fetchSubjectDescriptions } from '../lib/dataFetcher';
 import { GroupedSubject } from '../types/subject';
+import { StaggerContainer, StaggerItem } from './motion/Stagger';
+import TiltCard from './motion/TiltCard';
 
 const DAY_COLORS: Record<string, string> = {
     'จ': 'bg-yellow-100 text-yellow-700',
@@ -111,74 +114,69 @@ export default function HomeContent() {
     }, []);
 
     return (
-        <div className="min-h-screen">
-            <header className="glass-card sticky top-0 z-40 border-b border-white/20">
-                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="min-h-screen flex flex-col pt-32 pb-12">
+            <main className="container mx-auto px-4 max-w-7xl flex-grow flex flex-col z-10 w-full relative">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
                     <div>
-                        <h1 className="text-2xl font-display font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                            CUDSeeReg
+                        <h1 className="text-5xl md:text-7xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-3 drop-shadow-sm">
+                            รายวิชาเรียน
                         </h1>
-                        <p className="text-xs text-slate-600">ระบบช่วยเลือกวิชาเลือก</p>
+                        <p className="text-slate-600 font-medium text-lg tracking-wide">สำรวจและวางแผนวิชาเลือกที่เปิดสอน</p>
                     </div>
-                    <nav className="flex gap-2">
-                        <Link href="/" className="px-4 py-2 rounded-lg bg-pink-100 text-pink-700 font-medium interactive-press">
-                            รายวิชา
-                        </Link>
-                        <Link href="/planner" className="px-4 py-2 rounded-lg text-slate-600 hover:bg-pink-100 font-medium interactive-press">
-                            วางแผนตาราง
-                        </Link>
-                    </nav>
                 </div>
-            </header>
 
-            <main className="container mx-auto px-4 py-8 max-w-7xl">
-                <h1 className="text-4xl font-display font-bold text-slate-900 mb-6">รายวิชาเรียน</h1>
-
-                <div className="glass-card p-4 rounded-xl mb-6">
-                    <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
+                    {/* Grade Selector */}
+                    <div className="md:col-span-5 glass-card p-2 shadow-glass rounded-full flex gap-1 z-20 relative">
                         {[1, 2, 3, 4, 5, 6].map((itemGrade) => (
                             <button
                                 key={itemGrade}
                                 onClick={() => handleGradeChange(itemGrade)}
-                                className={`${grade === itemGrade ? 'btn-primary' : 'btn-secondary'} interactive-press`}
+                                className={`flex-1 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${grade === itemGrade ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}
                             >
                                 ม.{itemGrade}
                             </button>
                         ))}
                     </div>
-                </div>
 
-                <div className="glass-card p-4 rounded-xl mb-6">
-                    <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    {/* Search Bar */}
+                    <div className="md:col-span-7 glass-card shadow-glass relative rounded-full overflow-hidden flex items-center z-20">
+                        <Search className="absolute left-6 w-5 h-5 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="ค้นหาชื่อวิชา, รหัสวิชา..."
+                            placeholder="ค้นหาชื่อวิชา, รหัสวิชา, หรืออาจารย์ผู้สอน..."
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
-                            className="w-full pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            className="w-full pl-14 pr-6 py-4 bg-transparent text-slate-800 placeholder-slate-400 focus:outline-none text-base border-none ring-0 outline-none"
                         />
                     </div>
                 </div>
 
                 {loading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="animate-spin w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full" />
+                    <div className="flex justify-center py-32 flex-grow items-center">
+                        <div className="animate-spin w-16 h-16 border-4 border-pink-500/30 border-t-pink-500 rounded-full" />
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {filteredSubjects.map((subject, index) => (
-                            <div key={subject.code} className="stagger-item" style={{ animationDelay: `${Math.min(index * 0.05, 0.3)}s` }}>
-                                <SubjectCard
-                                    subject={subject}
-                                    description={descriptions[subject.code] || ''}
-                                    onViewDetails={handleViewDetails}
-                                />
-                            </div>
-                        ))}
-                    </div>
+                    <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-[minmax(280px,auto)]">
+                        {filteredSubjects.map((subject) => {
+                            return (
+                                <StaggerItem
+                                    key={subject.code}
+                                    className={`col-span-1 w-full h-full relative z-10`}
+                                >
+                                    <TiltCard className="w-full h-full glass-card hover:border-pink-300 transition-colors">
+                                        <SubjectCard
+                                            subject={subject}
+                                            description={descriptions[subject.code] || ''}
+                                            onViewDetails={handleViewDetails}
+                                        />
+                                    </TiltCard>
+                                </StaggerItem>
+                            );
+                        })}
+                    </StaggerContainer>
                 )}
-            </main >
+            </main>
 
             <footer className="glass-card border-t border-white/20 py-6 mt-12">
                 <div className="container mx-auto px-4 text-center text-sm text-slate-600">
@@ -212,7 +210,7 @@ export default function HomeContent() {
                     left = Math.min(left, maxLeft);
 
                     positionStyle = {
-                        position: 'absolute',
+                        position: 'fixed',
                         top: `${top}px`,
                         left: `${left}px`,
                         width: '100%',
@@ -222,11 +220,13 @@ export default function HomeContent() {
 
                     // Ensure it doesn't go off-screen to the left
                     // logic handled by max-width + right alignment usually safe on desktop for this layout
-                    // Change overlay to allow absolute positioning
+                    // Change overlay to allow fixed positioning
                     overlayClasses = "modal-overlay fixed inset-0 bg-black/20 z-[100] block overflow-y-auto";
                 }
 
-                return (
+                if (typeof window === 'undefined') return null;
+
+                return createPortal(
                     <div
                         className={overlayClasses}
                         onClick={() => setModalData(null)}
@@ -315,7 +315,8 @@ export default function HomeContent() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </div>,
+                    document.body
                 );
             })()}
         </div >
@@ -342,60 +343,63 @@ const SubjectCard = memo(function SubjectCard({ subject, description, onViewDeta
 
     return (
         <>
-            <div ref={cardRef} className="glass-card rounded-xl p-4 relative card-hover">
+            <div ref={cardRef} className="w-full h-full p-6 relative flex flex-col justify-between z-30">
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         const rect = cardRef.current?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect();
                         onViewDetails(subject, selectedGroup, rect);
                     }}
-                    className="absolute top-4 right-4 w-6 h-6 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press"
+                    className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press z-40"
                     aria-label="Show details"
                 >
-                    <span className="text-xs font-bold">i</span>
+                    <span className="text-sm font-bold font-sans">i</span>
                 </button>
 
-                <div className="mb-3 pr-8">
-                    <div className="text-sm font-mono text-pink-600 mb-1">{subject.code}</div>
-                    <h3 className="text-lg font-semibold text-slate-900">{subject.name}</h3>
+                <div className="mb-4 pr-10">
+                    <div className="text-sm font-mono tracking-widest text-pink-500 font-semibold mb-1 uppercase drop-shadow-sm">{subject.code}</div>
+                    <h3 className="text-2xl font-black text-slate-800 leading-tight tracking-tight drop-shadow-sm">{subject.name}</h3>
                 </div>
 
                 {hasMultipleGroups && (
-                    <div className="mb-3">
+                    <div className="mb-5 relative z-40">
                         <select
                             value={selectedGroup}
                             onChange={(event) => setSelectedGroup(Number(event.target.value))}
-                            className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 interactive-press"
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 transition-colors"
                         >
                             {subject.groups.map((group, groupIndex) => (
-                                <option key={`${group.group}-${groupIndex}`} value={groupIndex}>
+                                <option key={`${group.group}-${groupIndex}`} value={groupIndex} className="text-slate-900 bg-white">
                                     กลุ่ม {group.group} - {group.instructor}
                                 </option>
                             ))}
                         </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                        </div>
                     </div>
                 )}
 
-                <div className="text-sm text-slate-600 space-y-2">
-                    {!hasMultipleGroups && <div>อาจารย์: {current.instructor}</div>}
-                    <div className="flex flex-wrap gap-1">
-                        {current.parsedTimeSlots.length > 0 ? (
-                            current.parsedTimeSlots.map((timeSlot, timeIndex) => (
-                                <span key={timeIndex} className={`px-2 py-1 rounded text-xs ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700'}`}>
-                                    {timeSlot.dayAbbrev}. {timeSlot.timeRange}
+                <div className="mt-auto">
+                    <div className="text-sm text-slate-600 space-y-3 font-medium">
+                        {!hasMultipleGroups && <div className="text-slate-700"><span className="text-slate-500 mr-2">อาจารย์:</span>{current.instructor}</div>}
+                        <div className="flex flex-wrap gap-2">
+                            {current.parsedTimeSlots.length > 0 ? (
+                                current.parsedTimeSlots.map((timeSlot, timeIndex) => (
+                                    <span key={timeIndex} className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${DAY_COLORS[timeSlot.dayAbbrev] || 'bg-slate-100 text-slate-700'}`}>
+                                        {timeSlot.dayAbbrev}. {timeSlot.timeRange}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs italic">
+                                    ไม่มีข้อมูลเวลา
                                 </span>
-                            ))
-                        ) : (
-                            <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded text-xs italic">
-                                ไม่มีข้อมูลเวลาเรียน
-                            </span>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span>หน่วยกิต: {subject.credit}</span>
-                        <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-full text-xs">
-                            รับ {current.availableSeats} คน
-                        </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3 pt-2">
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>{subject.credit} หน่วยกิต</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>รับ {current.availableSeats}</span>
+                        </div>
                     </div>
                 </div>
             </div>

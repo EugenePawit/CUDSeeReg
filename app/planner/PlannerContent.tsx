@@ -380,74 +380,65 @@ export default function PlannerPage() {
     }, [modalOpen]);
 
     return (
-        <div className="min-h-screen">
-            <header className="glass-card sticky top-0 z-40 border-b border-white/20">
-                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-display font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">CUDSeeReg</h1>
-                        <p className="text-xs text-slate-600">ระบบช่วยเลือกวิชาเลือก</p>
-                    </div>
-                    <nav className="flex gap-2">
-                        <Link href="/" className="px-4 py-2 rounded-lg text-slate-600 hover:bg-pink-100 font-medium interactive-press">รายวิชา</Link>
-                        <Link href="/planner" className="px-4 py-2 rounded-lg bg-pink-100 text-pink-700 font-medium interactive-press">วางแผนตาราง</Link>
-                    </nav>
-                </div>
-            </header>
+        <div className="min-h-screen flex flex-col pt-32 pb-12">
+            <main className="container mx-auto px-4 max-w-7xl flex-grow flex flex-col z-10 w-full relative">
+                <h1 className="text-5xl md:text-6xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-8 drop-shadow-sm">
+                    วางแผนตารางเรียน
+                </h1>
 
-            <main className="container mx-auto px-4 py-8 max-w-7xl">
-                <h1 className="text-4xl font-display font-bold text-slate-900 mb-6">วางแผนตารางเรียน</h1>
-
-                <div className="glass-card p-4 rounded-xl mb-6">
-                    <h2 className="text-lg font-semibold mb-4">เลือกตารางพื้นฐาน</h2>
-                    <div className="flex flex-wrap gap-4 items-end">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm text-slate-600">ระดับชั้น</label>
+                <div className="glass-card shadow-glass p-6 rounded-bento backdrop-blur-2xl mb-8 relative z-20">
+                    <h2 className="text-xl font-bold mb-5 text-slate-800 drop-shadow-sm">เลือกตารางพื้นฐาน</h2>
+                    <div className="flex flex-wrap gap-6 items-end">
+                        <div className="flex flex-col gap-2 w-full sm:w-auto">
+                            <label className="text-sm text-slate-600 font-medium">ระดับชั้น</label>
                             <div className="relative">
                                 <select
                                     value={parsedFromStore.grade}
                                     onChange={(e) => handleGradeChange(e.target.value)}
-                                    className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 interactive-press"
+                                    className="appearance-none w-full sm:w-48 bg-white border border-slate-200 rounded-xl px-5 py-3 pr-10 text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 transition-colors"
                                 >
                                     {GRADES.map((grade) => (
-                                        <option key={grade} value={grade}>ม.{grade}</option>
+                                        <option key={grade} value={grade} className="text-slate-900 bg-white">ม.{grade}</option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm text-slate-600">แผนการเรียน</label>
+                        <div className="flex flex-col gap-2 w-full sm:w-auto">
+                            <label className="text-sm text-slate-600 font-medium">แผนการเรียน</label>
                             <div className="relative">
                                 <select
                                     value={parsedFromStore.program}
                                     onChange={(e) => handleProgramChange(e.target.value)}
-                                    className="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 interactive-press"
+                                    className="appearance-none w-full sm:w-48 bg-white border border-slate-200 rounded-xl px-5 py-3 pr-10 text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 transition-colors"
                                 >
                                     {programs.map((program) => (
-                                        <option key={program.value} value={program.value}>{program.label}</option>
+                                        <option key={program.value} value={program.value} className="text-slate-900 bg-white">{program.label}</option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {!baseTimetable ? (
-                    <div className="glass-card p-12 rounded-xl text-center">
-                        <p className="text-slate-600 text-lg">กรุณาเลือกตารางพื้นฐานด้านบน</p>
+                    <div className="glass-card p-12 shadow-glass backdrop-blur-2xl rounded-bento text-center border-slate-200 z-20">
+                        <p className="text-slate-500 text-lg font-medium">กรุณาเลือกตารางพื้นฐานด้านบน</p>
                     </div>
                 ) : (
                     <>
-                        <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <div className="flex flex-wrap justify-between items-center mb-6 gap-4 z-20 relative">
                             <div>
-                                <p className="text-sm text-slate-600">คลิกที่ช่อง <span className="text-purple-600 font-medium">วิชาเลือก</span> เพื่อเพิ่มวิชา</p>
-                                {feedback && <p className="text-xs text-emerald-700 mt-1">{feedback}</p>}
+                                <p className="text-slate-600 font-medium tracking-wide">
+                                    คลิกที่ช่อง <span className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md mx-1 border border-pink-200">วิชาเลือก</span> เพื่อเพิ่มวิชา
+                                </p>
+                                {feedback && <p className="text-sm text-emerald-600 mt-2 font-medium bg-emerald-50 px-3 py-1 rounded-full">{feedback}</p>}
                             </div>
-                            <div className="flex flex-wrap gap-2">
-                                <button onClick={handleCopyShareLink} className="btn-secondary flex items-center gap-2 interactive-press">
-                                    {didCopyShareLink ? <Check size={18} /> : <Share2 size={18} />}
+                            <div className="flex flex-wrap gap-3">
+                                <button onClick={handleCopyShareLink} className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm">
+                                    {didCopyShareLink ? <Check size={18} className="text-pink-600" /> : <Share2 size={18} />}
                                     {didCopyShareLink ? 'คัดลอกแล้ว' : 'แชร์ตาราง'}
                                 </button>
                                 <button onClick={clearAllElectives} className="btn-secondary flex items-center gap-2 interactive-press">
@@ -459,15 +450,15 @@ export default function PlannerPage() {
                             </div>
                         </div>
 
-                        <div ref={timetableRef} className="glass-card p-6 rounded-xl overflow-x-auto">
+                        <div ref={timetableRef} className="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 z-20 relative text-slate-800">
                             <table className="w-full border-collapse min-w-[1200px] table-fixed">
                                 <thead>
                                     <tr>
-                                        <th className="border border-slate-200 bg-slate-100 p-2 w-24 min-w-[6rem]">วัน</th>
+                                        <th className="border border-slate-200 bg-slate-100 p-2 w-24 min-w-[6rem] text-slate-700">วัน</th>
                                         {PERIODS.map((period) => (
                                             <React.Fragment key={period}>
-                                                <th className="border border-slate-200 bg-slate-100 p-2 text-center">
-                                                    <div className="font-medium">{period}</div>
+                                                <th className="border border-slate-200 bg-slate-100 p-2 text-center text-slate-700">
+                                                    <div className="font-medium text-slate-800">{period}</div>
                                                     <div className="text-xs text-slate-500">{PERIOD_TIMES[period]}</div>
                                                 </th>
                                                 {period === 2 && (
@@ -495,11 +486,11 @@ export default function PlannerPage() {
                                                 const elective = selectedElectives[day]?.[period];
 
                                                 const cellContent = (() => {
-                                                    if (!entry) return <td key={period} className="border border-slate-200 p-2 bg-slate-50" />;
+                                                    if (!entry) return <td key={period} className="border border-slate-200 p-2 bg-slate-50 backdrop-blur-sm" />;
 
                                                     if (entry.type === 'break') {
                                                         return (
-                                                            <td key={period} className="border border-slate-200 cell-break p-2 text-center text-sm h-24 align-middle">
+                                                            <td key={period} className="border border-slate-200 bg-amber-50 text-amber-700 p-2 text-center text-sm h-24 align-middle">
                                                                 {period === 5 ? 'พักเที่ยง' : 'พัก'}
                                                             </td>
                                                         );
@@ -507,18 +498,18 @@ export default function PlannerPage() {
 
                                                     if (entry.type === 'core') {
                                                         return (
-                                                            <td key={period} className="border border-slate-200 bg-slate-50 p-2 text-center text-sm h-24 align-middle whitespace-normal">
-                                                                {entry.code !== entry.name && <div>{entry.code}</div>}
-                                                                <div className="font-medium text-slate-700">{entry.name}</div>
+                                                            <td key={period} className="border border-slate-200 bg-white p-2 text-center text-sm h-24 align-middle whitespace-normal shadow-sm">
+                                                                {entry.code !== entry.name && <div className="text-slate-500 font-mono text-xs mb-1">{entry.code}</div>}
+                                                                <div className="font-semibold text-slate-800 tracking-wide">{entry.name}</div>
                                                             </td>
                                                         );
                                                     }
 
                                                     if (elective) {
                                                         return (
-                                                            <td key={period} className="border border-slate-200 cell-selected p-2 relative group h-24 align-middle interactive-press">
+                                                            <td key={period} className="border border-slate-200 bg-emerald-100 text-emerald-800 p-2 relative group h-24 align-middle interactive-press backdrop-blur-md">
                                                                 <div className="text-[10px] font-mono text-emerald-600 whitespace-nowrap">{elective.code} {elective.group && `กลุ่ม ${elective.group}`}</div>
-                                                                <div className="text-xs font-medium text-emerald-900">{elective.name}</div>
+                                                                <div className="text-xs font-semibold text-emerald-900 mt-1 leading-tight">{elective.name}</div>
                                                                 <button
                                                                     onClick={(event) => {
                                                                         event.stopPropagation();
@@ -536,11 +527,11 @@ export default function PlannerPage() {
                                                         <td
                                                             key={period}
                                                             onClick={() => handleSlotClick(day, period)}
-                                                            className="border border-slate-200 cell-elective p-2 hover:bg-purple-50 cursor-pointer transition-colors group relative h-24 align-middle interactive-press"
+                                                            className="border border-slate-200 bg-purple-50 text-purple-700 p-2 hover:bg-purple-100 cursor-pointer transition-colors group relative h-24 align-middle interactive-press backdrop-blur-md"
                                                         >
-                                                            <div className="flex flex-col items-center justify-center h-full text-slate-400 group-hover:text-purple-500">
+                                                            <div className="flex flex-col items-center justify-center h-full text-purple-400 group-hover:text-purple-600">
                                                                 <Plus size={20} />
-                                                                <span className="text-xs mt-1">วิชาเลือก</span>
+                                                                <span className="text-xs mt-1 font-medium tracking-wide">วิชาเลือก</span>
                                                             </div>
                                                         </td>
                                                     );
@@ -550,12 +541,12 @@ export default function PlannerPage() {
                                                     <React.Fragment key={period}>
                                                         {cellContent}
                                                         {period === 2 && (
-                                                            <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
+                                                            <td className="border border-slate-200 bg-slate-50 text-center text-xs text-slate-500 h-24 align-middle">
                                                                 พัก
                                                             </td>
                                                         )}
                                                         {period === 6 && (
-                                                            <td className="border border-slate-200 bg-slate-100 call-break text-center text-xs text-slate-400 h-24 align-middle">
+                                                            <td className="border border-slate-200 bg-slate-50 text-center text-xs text-slate-500 h-24 align-middle">
                                                                 พัก
                                                             </td>
                                                         )}
@@ -583,8 +574,8 @@ export default function PlannerPage() {
                 onSelectSubject={handleSelectSubject}
             />
 
-            <footer className="glass-card border-t border-white/20 py-6 mt-12">
-                <div className="container mx-auto px-4 text-center text-sm text-slate-600">
+            <footer className="w-full border-t border-slate-200 py-6 mt-12 z-20 relative">
+                <div className="container mx-auto px-4 text-center text-sm text-slate-500">
                     <p className="mt-1">CUDSeeReg © 2026</p>
                 </div>
             </footer>
