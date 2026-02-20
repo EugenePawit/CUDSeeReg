@@ -15,8 +15,10 @@ export default function FloatingNav() {
         setIsMounted(true);
     }, []);
 
-    // Transform values based on scroll
-    const navWidth = useTransform(scrollY, [0, 100], ["100%", "70%"]);
+    // Transform values based on scroll. On mobile, we might not want it to shrink as much.
+    // Framer Motion useTransform doesn't support media queries directly, 
+    // so we'll rely on CSS max-width and internal responsive padding.
+    const navWidth = useTransform(scrollY, [0, 100], ["100%", "85%"]);
     const navY = useTransform(scrollY, [0, 100], [0, 10]);
     const navBg = useTransform(
         scrollY,
@@ -38,7 +40,7 @@ export default function FloatingNav() {
             style={{ y: navY }}
         >
             <motion.div
-                className="flex items-center justify-between px-6 py-3 rounded-full shadow-glass pointer-events-auto border"
+                className="flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass pointer-events-auto border overflow-x-auto no-scrollbar"
                 style={{
                     width: navWidth,
                     maxWidth: '1200px',
@@ -50,17 +52,17 @@ export default function FloatingNav() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
             >
-                <Link href="/" className="flex items-center gap-2">
-                    <span className="text-xl font-black tracking-tight text-slate-900 drop-shadow-sm">
+                <Link href="/" className="flex items-center gap-2 shrink-0">
+                    <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 drop-shadow-sm">
                         CUD<span className="text-pink-600">See</span>Reg
                     </span>
                 </Link>
 
-                <nav className="flex items-center gap-1 sm:gap-2">
+                <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar overflow-y-hidden">
                     <MagneticButton>
                         <Link
                             href="/"
-                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${pathname === '/' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${pathname === '/' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                                 }`}
                         >
                             ค้นหาวิชา
@@ -69,7 +71,7 @@ export default function FloatingNav() {
                     <MagneticButton>
                         <Link
                             href="/planner"
-                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${pathname === '/planner' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${pathname === '/planner' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                                 }`}
                         >
                             จัดตาราง
@@ -78,7 +80,7 @@ export default function FloatingNav() {
                     <MagneticButton>
                         <Link
                             href="/presentation"
-                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${pathname === '/presentation' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${pathname === '/presentation' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                                 }`}
                         >
                             เกี่ยวกับระบบ
