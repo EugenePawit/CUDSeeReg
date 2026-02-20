@@ -343,18 +343,20 @@ const SubjectCard = memo(function SubjectCard({ subject, description, onViewDeta
 
     return (
         <>
-            <div ref={cardRef} className="w-full h-full p-6 relative flex flex-col justify-between z-30">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        const rect = cardRef.current?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect();
-                        onViewDetails(subject, selectedGroup, rect);
-                    }}
-                    className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors interactive-press z-40"
+            <div
+                ref={cardRef}
+                className="w-full h-full p-6 relative flex flex-col justify-between z-30 cursor-pointer group"
+                onClick={(e) => {
+                    const rect = cardRef.current?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect();
+                    onViewDetails(subject, selectedGroup, rect);
+                }}
+            >
+                <div
+                    className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 group-hover:bg-pink-100 flex items-center justify-center text-slate-600 group-hover:text-pink-600 transition-all duration-300 group-hover:scale-110 z-40 shadow-sm"
                     aria-label="Show details"
                 >
                     <span className="text-sm font-bold font-sans">i</span>
-                </button>
+                </div>
 
                 <div className="mb-4 pr-10">
                     <div className="text-sm font-mono tracking-widest text-pink-500 font-semibold mb-1 uppercase drop-shadow-sm">{subject.code}</div>
@@ -365,8 +367,9 @@ const SubjectCard = memo(function SubjectCard({ subject, description, onViewDeta
                     <div className="mb-5 relative z-40">
                         <select
                             value={selectedGroup}
+                            onClick={(e) => e.stopPropagation()}
                             onChange={(event) => setSelectedGroup(Number(event.target.value))}
-                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 transition-colors"
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 transition-colors relative z-50"
                         >
                             {subject.groups.map((group, groupIndex) => (
                                 <option key={`${group.group}-${groupIndex}`} value={groupIndex} className="text-slate-900 bg-white">

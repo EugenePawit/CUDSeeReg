@@ -9,7 +9,9 @@ CUDSeeReg is a web application designed to help students discover elective subje
 - **Styling**: Tailwind CSS
 - **State Management**: Zustand
 - **Icons**: Lucide React
+- **Animations**: Framer Motion
 - **Export**: html2canvas
+- **Layout**: Bento Grid & Light Glassmorphism
 
 ## Project Structure
 ### Core Directories (`app/`)
@@ -17,7 +19,9 @@ CUDSeeReg is a web application designed to help students discover elective subje
   - `HomeContent.tsx`: Main logic for the Browse/Home page, including search and subject cards.
 - **`planner/`**: Dedicated route for the Timetable Planner.
   - `PlannerContent.tsx`: Main planner logic, grid rendering, and state orchestration.
-  - `PlannerModal.tsx`: Modal for selecting electives within specific time slots.
+  - `PlannerModal.tsx`: Modal for selecting electives within specific time slots. Uses `createPortal` for viewport positioning.
+- **`presentation/`**: Dedicated route for project presentation.
+  - `page.tsx`: Displays problem statement, tech stack, and feature walkthrough in Thai.
 - **`lib/`**: Business logic and utilities.
   - `dataFetcher.ts`: Services to fetch subject data and descriptions from external GitHub repositories. Includes caching logic.
   - `baseTimetables.ts`: Definitions for core schedules (e.g., Grade 1, Grade 4-6 base structures).
@@ -43,8 +47,12 @@ CUDSeeReg is a web application designed to help students discover elective subje
 
 ## Conventions
 - **Component Architecture**: Major features (Browsing, Planning) are encapsulated in large "Content" components (`HomeContent`, `PlannerContent`) to separate client logic from server layouts.
-- **Styling**: Use standard Tailwind CSS classes. Custom colors for days (e.g., `bg-yellow-100`) are often mapped dynamically based on day names.
-- **Modals**: Prefer creating separate components for complex modals (e.g., `PlannerModal`) to keep parent components maintainable.
+- **Styling & Design**: 
+  - Uses a **Light Mode** theme with vibrant pastel accents.
+  - Core UI follows a **Bento Grid** layout with glassmorphism cards (`.glass-card`).
+  - Standardized day colors (e.g., Pink for Tuesday, Blue for Friday) are used across all components.
+- **Modals**: Complex modals (e.g., `PlannerModal`) use `createPortal` to render into `document.body`, escaping transform contexts from Framer Motion page transitions to maintain fixed positioning.
+- **Animations**: Fluid motion using **Framer Motion** (Page transitions, Staggered entrance animations, and Magnetic buttons).
 - **Type Safety**: strict utilization of interfaces from `app/types/`. All subject data manipulations should respect `FlattenedSubject` structure.
 
 ## Cache Keys
