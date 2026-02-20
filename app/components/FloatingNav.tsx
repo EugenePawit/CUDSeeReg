@@ -75,6 +75,15 @@ export default function FloatingNav() {
                             จัดตาราง
                         </Link>
                     </MagneticButton>
+                    <MagneticButton>
+                        <Link
+                            href="/presentation"
+                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${pathname === '/presentation' ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                                }`}
+                        >
+                            เกี่ยวกับระบบ
+                        </Link>
+                    </MagneticButton>
                 </nav>
             </motion.div>
         </motion.header>
