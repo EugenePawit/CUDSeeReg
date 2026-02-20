@@ -9,12 +9,12 @@ export default function PresentationPage() {
     return (
         <div className="min-h-screen flex flex-col pt-32 pb-12">
             <main className="container mx-auto px-4 max-w-7xl flex-grow flex flex-col z-10 w-full relative">
-                <div className="flex flex-col mb-16 max-w-3xl">
+                <div className="flex flex-col mb-16 w-full">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                        className="text-5xl md:text-7xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-6 drop-shadow-sm leading-tight pb-2"
+                        className="text-5xl md:text-7xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-6 drop-shadow-sm leading-normal pb-4"
                     >
                         โครงงาน CUDSeeReg
                     </motion.h1>
@@ -22,7 +22,7 @@ export default function PresentationPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
-                        className="text-slate-600 font-medium text-lg leading-relaxed"
+                        className="text-slate-600 font-medium text-lg md:text-xl leading-relaxed w-full"
                     >
                         ระบบช่วยจัดการและวางแผนการลงทะเบียนวิชาเลือกสำหรับนักเรียนโรงเรียนสาธิตจุฬาลงกรณ์มหาวิทยาลัย ฝ่ายมัธยม
                     </motion.p>
