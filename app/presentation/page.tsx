@@ -257,7 +257,7 @@ export default function PresentationPage() {
                                     <img
                                         src={`/photos/${member.photo}`}
                                         alt={member.name}
-                                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                                        className="w-full h-full object-cover transition-all duration-500"
                                     />
                                 </div>
                                 <div className="p-5 text-center mt-auto">
