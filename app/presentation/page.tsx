@@ -111,7 +111,7 @@ export default function PresentationPage() {
                         transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
                         className="text-3xl md:text-5xl font-sans font-black tracking-tight text-slate-800 mb-4 drop-shadow-sm"
                     >
-                        ฟีเจอร์หลัก (Key Features)
+                        ฟีเจอร์หลัก
                     </motion.h2>
                 </div>
 
@@ -240,7 +240,7 @@ export default function PresentationPage() {
                         transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
                         className="text-3xl md:text-5xl font-sans font-black tracking-tight text-slate-800 mb-4 drop-shadow-sm"
                     >
-                        คณะผู้จัดทำ (Members)
+                        สมาชิก
                     </motion.h2>
                 </div>
 
