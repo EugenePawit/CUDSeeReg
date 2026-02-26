@@ -233,6 +233,41 @@ export default function PresentationPage() {
                     </StaggerItem>
                 </StaggerContainer>
 
+                <div className="flex flex-col mb-10 mt-8 w-full">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                        className="text-3xl md:text-5xl font-sans font-black tracking-tight text-slate-800 mb-4 drop-shadow-sm"
+                    >
+                        คณะผู้จัดทำ (Members)
+                    </motion.h2>
+                </div>
+
+                <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    {[
+                        { name: "ภาวิต โกวิทานุพงศ์ 5/4", photo: "eugene.jpg" },
+                        { name: "รณภัทร ศรีวรวิไล 5/4", photo: "pie.jpg" },
+                        { name: "ธันวิน จินตนาภักดี 5/4", photo: "bob.jpg" },
+                        { name: "ฐสุ มีลาภอุดมชัย 5/4", photo: "leo.jpg" }
+                    ].map((member, index) => (
+                        <StaggerItem key={index} className="w-full h-full relative z-10">
+                            <TiltCard className="w-full h-full glass-card hover:border-pink-300 transition-colors overflow-hidden flex flex-col">
+                                <div className="aspect-[3/4] w-full overflow-hidden">
+                                    <img
+                                        src={`/photos/${member.photo}`}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                                    />
+                                </div>
+                                <div className="p-5 text-center mt-auto">
+                                    <p className="text-slate-800 font-bold leading-tight">{member.name}</p>
+                                </div>
+                            </TiltCard>
+                        </StaggerItem>
+                    ))}
+                </StaggerContainer>
+
                 {/* Footer Component reuse */}
                 <footer className="w-full border-t border-slate-200 py-6 mt-12 z-20 relative">
                     <div className="container mx-auto px-4 text-center text-sm text-slate-500">
