@@ -390,7 +390,7 @@ const getBreakContent = (cell: CellType) => {
 <template>
     <div class="min-h-screen flex flex-col pt-32 pb-12">
         <main class="container mx-auto px-4 max-w-7xl flex-grow flex flex-col z-10 w-full relative">
-            <h1 class="text-5xl md:text-6xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-8 drop-shadow-sm">
+            <h1 class="text-5xl md:text-6xl font-kanit font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-8 drop-shadow-sm">
                 วางแผนตารางเรียน
             </h1>
 

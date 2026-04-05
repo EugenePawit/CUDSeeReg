@@ -161,10 +161,10 @@ onUnmounted(() => {
         <main class="container mx-auto px-4 max-w-7xl flex-grow flex flex-col z-10 w-full relative">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
                 <div>
-                    <h1 class="text-5xl md:text-7xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-3 drop-shadow-sm">
+                    <h1 class="text-5xl md:text-7xl font-kanit font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-3 drop-shadow-sm">
                         รายวิชาเรียน
                     </h1>
-                    <p class="text-slate-600 font-medium text-lg tracking-wide">สำรวจและวางแผนวิชาเลือกที่เปิดสอน</p>
+                    <p class="text-slate-600 font-kanit font-normal text-lg tracking-wide">สำรวจและวางแผนวิชาเลือกที่เปิดสอน</p>
                 </div>
             </div>
 
