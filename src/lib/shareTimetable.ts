@@ -1,4 +1,4 @@
-import type { FlattenedSubject, UserTimetable } from '@/types/subject';
+import { FlattenedSubject, UserTimetable } from '../types/subject';
 
 export interface SharedSubjectRef {
     c: string;
@@ -32,7 +32,7 @@ function toBase64Url(bytes: Uint8Array): string {
     for (const byte of bytes) {
         binary += String.fromCharCode(byte);
     }
-    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 }
 
 function fromBase64Url(input: string): Uint8Array {
