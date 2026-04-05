@@ -63,7 +63,6 @@ function makeSubjectIdentity(subject: FlattenedSubject): string {
 }
 
 const route = useRoute();
-const router = useRouter();
 const timetableStore = useTimetableStore();
 const { baseTimetableId, selectedElectives } = storeToRefs(timetableStore);
 
@@ -484,17 +483,17 @@ const removeElective = (day: string, period: number) => {
                                         v-else-if="getCellContent(day, period).type === 'break'"
                                         class="border border-slate-200 bg-amber-50 text-amber-700 p-2 text-center text-sm h-24 align-middle"
                                     >
-                                        {{ getCellContent(day, period).content }}
+                                        {{ (getCellContent(day, period).content as string) }}
                                     </td>
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'core'"
                                         class="border border-slate-200 bg-white p-2 text-center text-sm h-24 align-middle whitespace-normal shadow-sm"
                                     >
-                                        <div v-if="getCellContent(day, period).content?.code !== getCellContent(day, period).content?.name" class="text-slate-500 font-mono text-xs mb-1">
-                                            {{ getCellContent(day, period).content?.code }}
+                                        <div class="text-slate-500 font-mono text-xs mb-1">
+                                            {{ (getCellContent(day, period).content as {code: string; name: string}).code }}
                                         </div>
                                         <div class="font-semibold text-slate-800 tracking-wide">
-                                            {{ getCellContent(day, period).content?.name }}
+                                            {{ (getCellContent(day, period).content as {code: string; name: string}).name }}
                                         </div>
                                     </td>
                                     <td
@@ -502,11 +501,11 @@ const removeElective = (day: string, period: number) => {
                                         class="border border-slate-200 bg-emerald-100 text-emerald-800 p-2 relative group h-24 align-middle interactive-press backdrop-blur-md"
                                     >
                                         <div class="text-[10px] font-mono text-emerald-600 whitespace-nowrap">
-                                            {{ getCellContent(day, period).content?.code }}
-                                            <span v-if="getCellContent(day, period).content?.group"> กลุ่ม {{ getCellContent(day, period).content?.group }}</span>
+                                            {{ (getCellContent(day, period).content as FlattenedSubject).code }}
+                                            <span v-if="(getCellContent(day, period).content as FlattenedSubject).group"> กลุ่ม {{ (getCellContent(day, period).content as FlattenedSubject).group }}</span>
                                         </div>
                                         <div class="text-xs font-semibold text-emerald-900 mt-1 leading-tight">
-                                            {{ getCellContent(day, period).content?.name }}
+                                            {{ (getCellContent(day, period).content as FlattenedSubject).name }}
                                         </div>
                                         <button
                                             @click.stop="removeElective(day, period)"
