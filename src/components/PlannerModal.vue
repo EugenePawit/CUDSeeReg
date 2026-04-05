@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { X } from 'lucide-vue-next';
 import { DAY_NAMES_TH } from '@/lib/baseTimetables';
 import type { FlattenedSubject, BaseTimetable } from '@/types/subject';

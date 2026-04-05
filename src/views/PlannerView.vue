@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed, watch, onUnmounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { Plus, X, Download, Trash2, ChevronDown, Share2, Check } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { useTimetableStore } from '@/stores/timetable';
@@ -12,7 +12,7 @@ import {
     encodeTimetableShare,
     resolveSharedSubjects,
 } from '@/lib/shareTimetable';
-import type { FlattenedSubject, BaseTimetable } from '@/types/subject';
+import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
 
 const DAY_COLORS: Record<string, string> = {
@@ -338,7 +338,13 @@ onUnmounted(() => {
     window.removeEventListener('keydown', handleEsc);
 });
 
-const getCellContent = (day: string, period: number) => {
+type CellType = { type: 'empty'; content: null } |
+    { type: 'break'; content: string } |
+    { type: 'core'; content: { code: string; name: string } } |
+    { type: 'elective'; content: FlattenedSubject } |
+    { type: 'elective-empty'; content: null };
+
+const getCellContent = (day: string, period: number): CellType => {
     const entry = baseTimetable.value?.schedule[day]?.[period];
     const elective = selectedElectives.value[day]?.[period];
 
