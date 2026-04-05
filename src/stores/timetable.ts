@@ -1,17 +1,6 @@
 import { defineStore } from 'pinia';
 import type { FlattenedSubject, UserTimetable } from '@/types/subject';
 
-interface TimetableState {
-    baseTimetableId: string;
-    selectedElectives: UserTimetable;
-    setBaseTimetableId: (id: string) => void;
-    replaceTimetable: (baseTimetableId: string, subjects: FlattenedSubject[]) => void;
-    addElective: (day: string, period: number, subject: FlattenedSubject) => void;
-    removeElective: (day: string, period: number) => void;
-    clearAllElectives: () => void;
-    hasConflict: (subject: FlattenedSubject) => boolean;
-}
-
 export const useTimetableStore = defineStore('timetable', {
     state: () => ({
         baseTimetableId: '',
@@ -43,7 +32,7 @@ export const useTimetableStore = defineStore('timetable', {
             this.selectedElectives = selectedElectives;
         },
 
-        addElective(day: string, period: number, subject: FlattenedSubject) {
+        addElective(_day: string, _period: number, subject: FlattenedSubject) {
             const newElectives = { ...this.selectedElectives };
 
             subject.parsedTimeSlots.forEach(slot => {

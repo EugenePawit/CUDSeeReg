@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-
 // Placeholder for planner view - will be implemented in next phase
 </script>
 

@@ -42,7 +42,7 @@ export function parseThaiTime(classtime: string): ParsedTimeSlot[] {
     for (const part of parts) {
         // Try new format first: "พฤหัสบดี 5" (full Thai day name + space + period)
         let matched = false;
-        for (const [fullDay, dayInfo] of Object.entries(DAY_MAP)) {
+        for (const [fullDay] of Object.entries(DAY_MAP)) {
             if (part.startsWith(fullDay)) {
                 const rest = part.slice(fullDay.length).trim();
                 const periodMatch = rest.match(/^(\d+)(?:-(\d+))?/);

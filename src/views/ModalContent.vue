@@ -22,11 +22,6 @@ const currentGroup = computed(() => {
     if (!props.data) return null;
     return props.data.subject.groups[props.data.groupIndex] ?? props.data.subject.groups[0];
 });
-
-const hasMultipleGroups = computed(() => {
-    if (!props.data) return false;
-    return props.data.subject.groups.length > 1;
-});
 </script>
 
 <template>

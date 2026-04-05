@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, defineComponent, h, mergeProps } from 'vue';
+import { ref, computed, onMounted, defineComponent, h } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useWindowScroll } from '@vueuse/core';
 
