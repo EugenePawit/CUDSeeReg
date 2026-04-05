@@ -70,8 +70,8 @@ const handleCardClick = (e: MouseEvent) => {
 
         <div class="mt-auto">
             <div class="text-sm text-slate-600 space-y-3 font-medium">
-                <div v-if="!hasMultipleGroups" class="text-slate-700">
-                    <span class="text-slate-500 mr-2">อาจารย์:</span>{{ current.instructor }}
+                <div v-if="!hasMultipleGroups" class="text-slate-700 font-medium">
+                    กลุ่ม 1 - {{ current.instructor }}
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <template v-if="current.parsedTimeSlots.length > 0">
