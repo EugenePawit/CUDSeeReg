@@ -369,6 +369,22 @@ const getCellContent = (day: string, period: number): CellType => {
 const removeElective = (day: string, period: number) => {
     timetableStore.removeElective(day, period);
 };
+
+// Helper functions for template type safety
+const getCoreContent = (cell: CellType) => {
+    if (cell.type === 'core') return cell.content;
+    return null;
+};
+
+const getElectiveContent = (cell: CellType) => {
+    if (cell.type === 'elective') return cell.content;
+    return null;
+};
+
+const getBreakContent = (cell: CellType) => {
+    if (cell.type === 'break') return cell.content;
+    return null;
+};
 </script>
 
 <template>
@@ -483,17 +499,17 @@ const removeElective = (day: string, period: number) => {
                                         v-else-if="getCellContent(day, period).type === 'break'"
                                         class="border border-slate-200 bg-amber-50 text-amber-700 p-2 text-center text-sm h-24 align-middle"
                                     >
-                                        {{ (getCellContent(day, period).content as string) }}
+                                        {{ getBreakContent(getCellContent(day, period)) }}
                                     </td>
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'core'"
                                         class="border border-slate-200 bg-white p-2 text-center text-sm h-24 align-middle whitespace-normal shadow-sm"
                                     >
                                         <div class="text-slate-500 font-mono text-xs mb-1">
-                                            {{ (getCellContent(day, period).content as {code: string; name: string}).code }}
+                                            {{ getCoreContent(getCellContent(day, period))?.code }}
                                         </div>
                                         <div class="font-semibold text-slate-800 tracking-wide">
-                                            {{ (getCellContent(day, period).content as {code: string; name: string}).name }}
+                                            {{ getCoreContent(getCellContent(day, period))?.name }}
                                         </div>
                                     </td>
                                     <td
@@ -501,11 +517,11 @@ const removeElective = (day: string, period: number) => {
                                         class="border border-slate-200 bg-emerald-100 text-emerald-800 p-2 relative group h-24 align-middle interactive-press backdrop-blur-md"
                                     >
                                         <div class="text-[10px] font-mono text-emerald-600 whitespace-nowrap">
-                                            {{ (getCellContent(day, period).content as FlattenedSubject).code }}
-                                            <span v-if="(getCellContent(day, period).content as FlattenedSubject).group"> กลุ่ม {{ (getCellContent(day, period).content as FlattenedSubject).group }}</span>
+                                            {{ getElectiveContent(getCellContent(day, period))?.code }}
+                                            <span v-if="getElectiveContent(getCellContent(day, period))?.group"> กลุ่ม {{ getElectiveContent(getCellContent(day, period))?.group }}</span>
                                         </div>
                                         <div class="text-xs font-semibold text-emerald-900 mt-1 leading-tight">
-                                            {{ (getCellContent(day, period).content as FlattenedSubject).name }}
+                                            {{ getElectiveContent(getCellContent(day, period))?.name }}
                                         </div>
                                         <button
                                             @click.stop="removeElective(day, period)"
