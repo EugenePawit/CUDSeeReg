@@ -105,6 +105,9 @@ const slotDisplay = computed(() => {
                                     <div class="text-xs font-mono tracking-wider text-pink-600 mb-1">
                                         {{ subject.code }}
                                         <span v-if="subject.group"> กลุ่ม {{ subject.group }}</span>
+                                        <span class="ml-2 px-2 py-0.5 bg-pink-100 text-pink-700 rounded-md font-semibold">
+                                            {{ subject.credit }} หน่วยกิต
+                                        </span>
                                     </div>
                                     <div class="font-bold text-slate-800 text-lg tracking-tight leading-tight mb-1">{{ subject.name }}</div>
                                     <div class="text-sm text-slate-500 font-medium">{{ subject.instructor }}</div>
