@@ -91,7 +91,7 @@ const baseTimetable = computed(() => {
 });
 
 const shareToken = computed(() => {
-    return route.query.tt as string | undefined;
+    return (route.query.t as string) || (route.query.tt as string);
 });
 
 const decodedSharePayload = computed(() => decodeTimetableShare(shareToken.value ?? null));
@@ -150,24 +150,24 @@ watch([shareToken, decodedSharePayload], () => {
     }
 }, { immediate: true });
 
-watch([pendingSharedPayload, shareToken, baseTimetableId, subjectsGrade, loading], () => {
-    if (!pendingSharedPayload.value || !shareToken.value) {
+// Watch for when to apply shared payload - waits for all conditions
+watch([pendingSharedPayload, () => baseTimetableId.value, () => subjectsGrade.value, () => loading.value], ([pend, , grade, load]) => {
+    if (!pend || !shareToken.value) {
         return;
     }
-    if (pendingSharedPayload.value.b !== baseTimetableId.value) {
+    if (pend.b !== baseTimetableId.value) {
+        return;
+    }
+    const expectedGrade = BASE_TIMETABLES[pend.b]?.grade;
+    if (typeof expectedGrade === 'number' && grade !== expectedGrade) {
+        return;
+    }
+    if (load) {
         return;
     }
 
-    const expectedGrade = BASE_TIMETABLES[pendingSharedPayload.value.b]?.grade;
-    if (typeof expectedGrade === 'number' && subjectsGrade.value !== expectedGrade) {
-        return;
-    }
-    if (loading.value) {
-        return;
-    }
-
-    const { resolved, missing } = resolveSharedSubjects(pendingSharedPayload.value.s, subjects.value);
-    timetableStore.replaceTimetable(pendingSharedPayload.value.b, resolved);
+    const { resolved, missing } = resolveSharedSubjects(pend.s, subjects.value);
+    timetableStore.replaceTimetable(pend.b, resolved);
     pendingSharedPayload.value = null;
     appliedShareTokenRef.value = shareToken.value;
 
@@ -176,7 +176,7 @@ watch([pendingSharedPayload, shareToken, baseTimetableId, subjectsGrade, loading
     } else {
         setTransientFeedback(`นำเข้าตารางแล้ว ${resolved.length} วิชา`);
     }
-});
+}, { flush: 'post' });
 
 const occupiedSlots = computed(() => {
     const occupied = new Set<string>();
@@ -200,6 +200,24 @@ const selectedSubjectKeys = computed(() => {
         }
     }
     return keys;
+});
+
+const totalCredits = computed(() => {
+    let credits = 0;
+    const seen = new Set<string>();
+    for (const day of Object.keys(selectedElectives.value)) {
+        for (const periodKey of Object.keys(selectedElectives.value[day])) {
+            const subject = selectedElectives.value[day]?.[Number(periodKey)];
+            if (subject) {
+                const key = makeSubjectIdentity(subject);
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    credits += parseFloat(subject.credit) || 0;
+                }
+            }
+        }
+    }
+    return credits;
 });
 
 const normalizedSearch = computed(() => searchQuery.value.trim().toLowerCase());
@@ -290,8 +308,8 @@ const handleCopyShareLink = async () => {
         return;
     }
 
-    const params = new URLSearchParams(route.query as Record<string, string>);
-    params.set('tt', token);
+    const params = new URLSearchParams();
+    params.set('t', token);
 
     const url = `${window.location.origin}${route.path}?${params.toString()}`;
 
@@ -446,7 +464,10 @@ const getBreakContent = (cell: CellType) => {
                             {{ feedback }}
                         </p>
                     </div>
-                    <div class="flex flex-wrap gap-3">
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <div v-if="totalCredits > 0" class="px-4 py-2 bg-pink-50 border border-pink-200 rounded-xl text-pink-700 font-semibold text-sm shadow-sm">
+                            {{ totalCredits }} หน่วยกิต
+                        </div>
                         <button
                             @click="handleCopyShareLink"
                             class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm"
@@ -533,7 +554,12 @@ const getBreakContent = (cell: CellType) => {
                                     <td
                                         v-else
                                         @click="handleSlotClick(day, period)"
-                                        class="border border-slate-200 bg-purple-50 text-purple-700 p-2 hover:bg-purple-100 cursor-pointer transition-colors group relative h-24 align-middle interactive-press backdrop-blur-md"
+                                        @keydown.enter="handleSlotClick(day, period)"
+                                        @keydown.space.prevent="handleSlotClick(day, period)"
+                                        tabindex="0"
+                                        role="button"
+                                        :aria-label="`เพิ่มวิชาเลือก วัน${day} คาบ${period}`"
+                                        class="border border-slate-200 bg-purple-50 text-purple-700 p-2 hover:bg-purple-100 cursor-pointer transition-colors group relative h-24 align-middle interactive-press backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-inset"
                                     >
                                         <div class="flex flex-col items-center justify-center h-full text-purple-400 group-hover:text-purple-600">
                                             <Plus :size="20" />

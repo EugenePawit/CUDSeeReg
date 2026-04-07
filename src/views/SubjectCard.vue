@@ -28,13 +28,25 @@ const handleCardClick = (e: MouseEvent) => {
     const rect = cardRef.value?.getBoundingClientRect() || (e.currentTarget as HTMLElement).getBoundingClientRect();
     emit('view-details', props.subject, selectedGroup.value, rect);
 };
+
+const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const rect = cardRef.value?.getBoundingClientRect();
+        emit('view-details', props.subject, selectedGroup.value, rect);
+    }
+};
 </script>
 
 <template>
     <div
         ref="cardRef"
-        class="w-full h-full p-6 relative flex flex-col justify-between z-30 cursor-pointer group"
+        class="w-full h-full p-6 relative flex flex-col justify-between z-30 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 rounded-bento"
+        tabindex="0"
+        role="button"
+        :aria-label="`ดูรายละเอียด ${subject.name}`"
         @click="handleCardClick"
+        @keydown="handleKeydown"
     >
         <div
             class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 group-hover:bg-pink-100 flex items-center justify-center text-slate-600 group-hover:text-pink-600 transition-all duration-300 group-hover:scale-110 z-40 shadow-sm"

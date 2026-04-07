@@ -26,6 +26,8 @@ const loading = ref(false);
 const search = ref('');
 const deferredSearch = ref('');
 const descriptions = ref<Record<string, string>>({});
+const filterDay = ref<string>('all');
+const filterTimeSlot = ref<string>('all');
 const modalData = ref<{
     subject: GroupedSubject;
     groupIndex: number;
@@ -55,13 +57,41 @@ const gradeValue = computed(() => {
 const normalizedSearch = computed(() => normalizeText(deferredSearch.value));
 
 const filteredSubjects = computed(() => {
-    if (!normalizedSearch.value) {
-        return subjects.value;
-    }
     return subjects.value.filter((subject) => {
         const firstGroup = subject.groups[0];
-        const haystack = `${subject.code} ${subject.name} ${firstGroup?.instructor ?? ''}`.toLowerCase();
-        return haystack.includes(normalizedSearch.value);
+
+        // Search filter
+        if (normalizedSearch.value) {
+            const haystack = `${subject.code} ${subject.name} ${firstGroup?.instructor ?? ''}`.toLowerCase();
+            if (!haystack.includes(normalizedSearch.value)) {
+                return false;
+            }
+        }
+
+        // Day filter
+        if (filterDay.value !== 'all') {
+            const hasDay = subject.groups.some(g =>
+                g.parsedTimeSlots.some(slot => slot.day === filterDay.value)
+            );
+            if (!hasDay) return false;
+        }
+
+        // Time slot filter
+        if (filterTimeSlot.value !== 'all') {
+            const hasTimeSlot = subject.groups.some(g =>
+                g.parsedTimeSlots.some(slot => {
+                    if (filterTimeSlot.value === 'morning') {
+                        return slot.periods.every(p => p <= 4);
+                    } else if (filterTimeSlot.value === 'afternoon') {
+                        return slot.periods.every(p => p >= 5);
+                    }
+                    return true;
+                })
+            );
+            if (!hasTimeSlot) return false;
+        }
+
+        return true;
     });
 });
 
@@ -196,6 +226,42 @@ onUnmounted(() => {
                         class="w-full pl-14 pr-6 py-4 bg-transparent text-slate-800 placeholder-slate-400 focus:outline-none text-base border-none ring-0 outline-none"
                     />
                 </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-4 mb-6 z-20 relative">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-slate-600 font-medium">วัน:</label>
+                    <select
+                        v-model="filterDay"
+                        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 cursor-pointer hover:bg-slate-50 transition-colors"
+                    >
+                        <option value="all" class="text-slate-900 bg-white">ทุกวัน</option>
+                        <option value="Monday" class="text-slate-900 bg-white">จันทร์</option>
+                        <option value="Tuesday" class="text-slate-900 bg-white">อังคาร</option>
+                        <option value="Wednesday" class="text-slate-900 bg-white">พุธ</option>
+                        <option value="Thursday" class="text-slate-900 bg-white">พฤหัสบดี</option>
+                        <option value="Friday" class="text-slate-900 bg-white">ศุกร์</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-slate-600 font-medium">เวลา:</label>
+                    <select
+                        v-model="filterTimeSlot"
+                        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 cursor-pointer hover:bg-slate-50 transition-colors"
+                    >
+                        <option value="all" class="text-slate-900 bg-white">ทุกเวลา</option>
+                        <option value="morning" class="text-slate-900 bg-white">เช้า (คาบ 1-4)</option>
+                        <option value="afternoon" class="text-slate-900 bg-white">บ่าย (คาบ 5+)</option>
+                    </select>
+                </div>
+                <button
+                    v-if="filterDay !== 'all' || filterTimeSlot !== 'all'"
+                    @click="filterDay = 'all'; filterTimeSlot = 'all'"
+                    class="text-sm text-pink-600 hover:text-pink-700 font-medium px-3 py-2 hover:bg-pink-50 rounded-xl transition-colors"
+                >
+                    ล้างตัวกรอง
+                </button>
             </div>
 
             <div v-if="loading" class="flex justify-center py-32 flex-grow items-center">

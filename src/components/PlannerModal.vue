@@ -36,6 +36,13 @@ const handleSelectSubject = (subject: FlattenedSubject) => {
     emit('selectSubject', subject);
 };
 
+const handleSubjectKeydown = (e: KeyboardEvent, subject: FlattenedSubject) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        emit('selectSubject', subject);
+    }
+};
+
 const slotDisplay = computed(() => {
     if (!props.selectedSlot) return '';
     return `${DAY_NAMES_TH[props.selectedSlot.day]} คาบ ${props.selectedSlot.period}`;
@@ -86,7 +93,11 @@ const slotDisplay = computed(() => {
                             v-for="(subject, index) in filteredSubjects"
                             :key="`${subject.code}-${subject.group}-${index}`"
                             @click="handleSelectSubject(subject)"
-                            class="stagger-item p-5 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 hover:border-pink-300 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-sm active:scale-[0.98]"
+                            @keydown="handleSubjectKeydown($event, subject)"
+                            tabindex="0"
+                            role="button"
+                            :aria-label="`เลือก ${subject.name}`"
+                            class="stagger-item p-5 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 hover:border-pink-300 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-sm active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2"
                             :style="{ animationDelay: `${Math.min(index * 0.03, 0.2)}s` }"
                         >
                             <div class="flex justify-between items-start gap-4">
