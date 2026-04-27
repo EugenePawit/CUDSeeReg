@@ -1,0 +1,10 @@
+# Replace yourdomain.com with your actual domain before deploying
+yourdomain.com {
+    root * /usr/share/nginx/html
+    encode gzip
+    try_files {path} /index.html
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+    }
+}
