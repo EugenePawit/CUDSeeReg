@@ -1,10 +1,10 @@
-# Serve over HTTP (Cloudflare Tunnel handles HTTPS)
-# Cloudflare Tunnel forwards traffic to this port
+# Cloudflare Tunnel handles HTTPS - serve over HTTP on port 8080
 
 :8080 {
     root * /usr/share/nginx/html
     encode gzip
     try_files {path} /index.html
+    file_server
     header {
         X-Frame-Options "SAMEORIGIN"
         X-Content-Type-Options "nosniff"
