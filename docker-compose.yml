@@ -2,14 +2,5 @@ services:
   cudseereg:
     build: .
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy-data:/data
-      - caddy-config:/config
+      - "8080:8080"
     restart: unless-stopped
-
-volumes:
-  caddy-data:
-  caddy-config:

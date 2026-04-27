@@ -8,5 +8,5 @@ RUN npm run build
 FROM caddy:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY Caddyfile /etc/caddy/Caddyfile
-EXPOSE 80 443
+EXPOSE 8080
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

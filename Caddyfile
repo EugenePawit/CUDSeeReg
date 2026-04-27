@@ -1,5 +1,7 @@
-# Replace yourdomain.com with your actual domain before deploying
-yourdomain.com {
+# Serve over HTTP (Cloudflare Tunnel handles HTTPS)
+# Cloudflare Tunnel forwards traffic to this port
+
+:8080 {
     root * /usr/share/nginx/html
     encode gzip
     try_files {path} /index.html
