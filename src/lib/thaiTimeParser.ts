@@ -31,7 +31,7 @@ export const PERIOD_TIMES: Record<number, string> = {
 };
 
 export function parseThaiTime(classtime: string): ParsedTimeSlot[] {
-    if (!classtime || classtime.trim() === '') return [];
+    if (!classtime || classtime.trim() === '' || classtime.trim().toLowerCase() === 'nan') return [];
 
     const slots: ParsedTimeSlot[] = [];
     const parts = classtime.split(',').map(p => p.trim());
