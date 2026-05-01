@@ -14,12 +14,12 @@ export interface SharedTimetablePayload {
 
 // Map base timetable IDs to single bytes for ultra-compact encoding
 const BASE_ID_TO_BYTE: Record<string, number> = {
-    'M1-EP': 0, 'M1-MEP': 1, 'M1-IEP': 2, 'M1-Science': 3, 'M1-3': 4, 'M1-4': 5,
-    'M2-EP': 10, 'M2-MEP': 11, 'M2-IEP': 12, 'M2-Science': 13, 'M2-3': 14, 'M2-4': 15,
-    'M3-EP': 20, 'M3-MEP': 21, 'M3-IEP': 22, 'M3-Science': 23, 'M3-3': 24, 'M3-4': 25,
-    'M4-EP': 30, 'M4-MEP': 31, 'M4-IEP': 32, 'M4-Science': 33,
-    'M5-EP': 40, 'M5-MEP': 41, 'M5-IEP': 42, 'M5-Science': 43,
-    'M6-EP': 50, 'M6-MEP': 51, 'M6-IEP': 52, 'M6-Science': 53,
+    'M1-EP': 0, 'M1-Normal': 1,
+    'M2-EP': 2, 'M2-Normal': 3,
+    'M3-EP': 4, 'M3-Normal': 5,
+    'M4-Science': 6, 'M4-Arts': 7,
+    'M5-Science': 8, 'M5-Arts': 9,
+    'M6-Science': 10, 'M6-Arts': 11,
 };
 
 const BYTE_TO_BASE_ID: Record<number, string> = Object.fromEntries(
