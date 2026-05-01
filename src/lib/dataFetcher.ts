@@ -170,7 +170,7 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
                     enrollment,
                     electiveQuantity: electiveQty,
                     updatedElectiveQuantity: updatedQty,
-                    note: notes[i] || notes[0] || '',
+                    note: (notes[i] || notes[0] || '').replace(/^-+$/, '') || '',
                     parsedTimeSlots: parseThaiTime(classtime),
                     availableSeats: parseInt(updatedQty, 10) || parseInt(electiveQty, 10) || parseInt(enrollment || '0', 10),
                 });
@@ -190,7 +190,7 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
                 enrollment,
                 electiveQuantity: electiveQty,
                 updatedElectiveQuantity: updatedQty,
-                note: subject.note as string,
+                note: (subject.note as string || '').replace(/^-+$/, '') || '',
                 parsedTimeSlots: parseThaiTime(classtime),
                 availableSeats: parseInt(updatedQty, 10) || parseInt(electiveQty, 10) || parseInt(enrollment || '0', 10),
             });

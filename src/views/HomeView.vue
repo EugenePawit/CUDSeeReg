@@ -49,7 +49,7 @@ watch(search, (newVal) => {
 const gradeValue = computed(() => {
     const g = route.query.grade as string;
     const parsed = g ? parseInt(g, 10) : null;
-    return parsed && parsed >= 1 && parsed <= 6 ? parsed : 5;
+    return parsed && parsed >= 1 && parsed <= 6 ? parsed : 6;
 });
 
 const normalizedSearch = computed(() => normalizeText(deferredSearch.value));
