@@ -126,7 +126,7 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
         const description = cells[descriptionCellIndex]?.trim() || '';
 
         // Only store if we have a code (indicates new subject row)
-        if (code && description) {
+        if (code) {
             descriptions[code] = description;
         }
     }

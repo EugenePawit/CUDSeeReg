@@ -93,10 +93,20 @@ const updateModalPosition = (anchor?: DOMRect) => {
     const maxLeft = window.innerWidth - modalWidth - 16;
     left = Math.min(left, maxLeft);
 
-    // Prefer above the card, but flip to below if it would go off the top
+    const modalHeight = 500;
+    const padding = 16;
+    // Default: position above the card
     let top = anchor.top - 48;
-    if (top < 10) {
+
+    // Check if modal would go above viewport when above card
+    if (top < padding) {
+        // Flip to below card
         top = anchor.bottom + 12;
+    }
+
+    // Check if modal would go below viewport when below card
+    if (top + modalHeight > window.innerHeight - padding) {
+        top = window.innerHeight - modalHeight - padding;
     }
 
     modalPositionStyle.value = {
