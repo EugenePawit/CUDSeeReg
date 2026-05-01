@@ -102,7 +102,7 @@ export async function fetchSubjectDescriptions(grade: number): Promise<Record<st
 
     // Find header row
     let headerLineIdx = -1;
-    for (let i = 0; i < Math.min(5, lines.length); i++) {
+    for (let i = 0; i < lines.length; i++) {
         if (lines[i].includes('รหัสวิชา') && lines[i].includes('ชื่อรายวิชา')) {
             headerLineIdx = i;
             break;
