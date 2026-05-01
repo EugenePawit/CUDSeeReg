@@ -295,18 +295,26 @@ const handleExport = async () => {
     }
     const html2canvas = (await import('html2canvas')).default;
 
-    // Scroll to top to capture full content
-    window.scrollTo(0, 0);
+    // Get the full content dimensions
+    const el = timetableRef.value;
+    const fullWidth = el.scrollWidth;
+    const fullHeight = el.scrollHeight;
 
-    // Wait for scroll to complete then capture
+    // Scroll to top to ensure capture starts from beginning
+    window.scrollTo(0, 0);
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const canvas = await html2canvas(timetableRef.value, {
+    const canvas = await html2canvas(el, {
         scale: 2,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
+        width: fullWidth,
+        height: fullHeight,
         useCORS: true,
+        allowTaint: true,
         scrollX: 0,
-        scrollY: -window.scrollY,
+        scrollY: 0,
+        windowWidth: fullWidth,
+        windowHeight: fullHeight,
     });
     const link = document.createElement('a');
     link.download = `timetable-${baseTimetable.value?.label || 'cudseereg'}.png`;
