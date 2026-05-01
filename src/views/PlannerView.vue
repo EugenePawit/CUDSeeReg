@@ -294,7 +294,20 @@ const handleExport = async () => {
         return;
     }
     const html2canvas = (await import('html2canvas')).default;
-    const canvas = await html2canvas(timetableRef.value, { scale: 2, backgroundColor: '#fff' });
+
+    // Scroll to top to capture full content
+    window.scrollTo(0, 0);
+
+    // Wait for scroll to complete then capture
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const canvas = await html2canvas(timetableRef.value, {
+        scale: 2,
+        backgroundColor: '#fff',
+        useCORS: true,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+    });
     const link = document.createElement('a');
     link.download = `timetable-${baseTimetable.value?.label || 'cudseereg'}.png`;
     link.href = canvas.toDataURL('image/png');
