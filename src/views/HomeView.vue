@@ -88,15 +88,14 @@ const updateModalPosition = (anchor?: DOMRect) => {
     const cardCenter = anchor.left + (anchor.width / 2);
     const modalWidth = 448;
     let left = cardCenter - (modalWidth / 2);
-    const modalHeight = 480; // approximate modal height
-    let top = anchor.top - 48;
 
     left = Math.max(16, left);
     const maxLeft = window.innerWidth - modalWidth - 16;
     left = Math.min(left, maxLeft);
 
-    // If modal would extend below viewport, flip to below the card
-    if (anchor.bottom + modalHeight > window.innerHeight - 20) {
+    // Prefer above the card, but flip to below if it would go off the top
+    let top = anchor.top - 48;
+    if (top < 10) {
         top = anchor.bottom + 12;
     }
 
