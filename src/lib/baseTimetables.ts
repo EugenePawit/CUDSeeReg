@@ -16,6 +16,7 @@ export const PERIODS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
     // M.1 EP
+    // Elective slots: Wed 7-8, Thurs 5-6
     'M1-EP': {
         id: 'M1-EP', label: 'ม.1 EP', grade: 1, schedule: createSchedule({
             Monday: {
@@ -31,8 +32,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Elective', type: 'elective' },
-                2: { code: '', name: 'Elective', type: 'elective' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
                 3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: '', type: 'core' },
@@ -48,8 +49,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: '', type: 'core' },
                 6: { code: '', name: '', type: 'core' },
-                7: { code: '', name: '', type: 'core' },
-                8: { code: '', name: '', type: 'core' }
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
             },
             Thursday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
@@ -76,6 +77,7 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         })
     },
     // M.1 Normal
+    // Elective slots: Mon 7-8, Wed 7-8, Thurs 5-6, Fri 1-2
     'M1-Normal': {
         id: 'M1-Normal', label: 'ม.1 ปกติ', grade: 1, schedule: createSchedule({
             Monday: {
@@ -91,8 +93,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
             },
             Tuesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Elective', type: 'elective' },
-                2: { code: '', name: 'Elective', type: 'elective' },
+                1: { code: '', name: '', type: 'core' },
+                2: { code: '', name: '', type: 'core' },
                 3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: '', type: 'core' },
@@ -124,8 +126,8 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
             },
             Friday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: '', type: 'core' },
-                2: { code: '', name: '', type: 'core' },
+                1: { code: '', name: 'Elective', type: 'elective' },
+                2: { code: '', name: 'Elective', type: 'elective' },
                 3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: '', type: 'core' },
@@ -136,6 +138,7 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         })
     },
     // M.2 EP
+    // Elective slots: Wed 2-3, Thurs 5-6
     'M2-EP': {
         id: 'M2-EP', label: 'ม.2 EP', grade: 2, schedule: createSchedule({
             Monday: {
@@ -155,16 +158,16 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: '', type: 'core' },
                 3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Elective', type: 'elective' },
-                6: { code: '', name: 'Elective', type: 'elective' },
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
                 7: { code: '', name: '', type: 'core' },
                 8: { code: '', name: '', type: 'core' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
                 1: { code: '', name: '', type: 'core' },
-                2: { code: '', name: '', type: 'core' },
-                3: { code: '', name: '', type: 'core' },
+                2: { code: '', name: 'Elective', type: 'elective' },
+                3: { code: '', name: 'Elective', type: 'elective' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: '', type: 'core' },
                 6: { code: '', name: '', type: 'core' },
@@ -196,6 +199,7 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
         })
     },
     // M.2 Normal
+    // Elective slots: Tue 7-8, Wed 2-3, Thurs 5-6, Fri 5-6
     'M2-Normal': {
         id: 'M2-Normal', label: 'ม.2 ปกติ', grade: 2, schedule: createSchedule({
             Monday: {
@@ -215,16 +219,16 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: '', type: 'core' },
                 3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: 'Elective', type: 'elective' },
-                6: { code: '', name: 'Elective', type: 'elective' },
-                7: { code: '', name: '', type: 'core' },
-                8: { code: '', name: '', type: 'core' }
+                5: { code: '', name: '', type: 'core' },
+                6: { code: '', name: '', type: 'core' },
+                7: { code: '', name: 'Elective', type: 'elective' },
+                8: { code: '', name: 'Elective', type: 'elective' }
             },
             Wednesday: {
                 0: { code: '', name: 'Homeroom', type: 'core' },
-                1: { code: '', name: 'Elective', type: 'elective' },
+                1: { code: '', name: '', type: 'core' },
                 2: { code: '', name: 'Elective', type: 'elective' },
-                3: { code: '', name: '', type: 'core' },
+                3: { code: '', name: 'Elective', type: 'elective' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
                 5: { code: '', name: '', type: 'core' },
                 6: { code: '', name: '', type: 'core' },
@@ -248,10 +252,10 @@ export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
                 2: { code: '', name: '', type: 'core' },
                 3: { code: '', name: '', type: 'core' },
                 4: { code: '', name: 'พักเที่ยง', type: 'break' },
-                5: { code: '', name: '', type: 'core' },
-                6: { code: '', name: '', type: 'core' },
-                7: { code: '', name: 'Elective', type: 'elective' },
-                8: { code: '', name: 'Elective', type: 'elective' }
+                5: { code: '', name: 'Elective', type: 'elective' },
+                6: { code: '', name: 'Elective', type: 'elective' },
+                7: { code: '', name: '', type: 'core' },
+                8: { code: '', name: '', type: 'core' }
             }
         })
     },
