@@ -10,6 +10,7 @@ export interface SharedTimetablePayload {
     v: 1;
     b: string;
     s: SharedSubjectRef[];
+    n?: string; // optional student name
 }
 
 // Map base timetable IDs to single bytes for ultra-compact encoding
@@ -97,7 +98,7 @@ export function extractSharedSubjects(selectedElectives: UserTimetable): SharedS
     return refs;
 }
 
-export function encodeTimetableShare(baseTimetableId: string, selectedElectives: UserTimetable): string | null {
+export function encodeTimetableShare(baseTimetableId: string, selectedElectives: UserTimetable, studentName?: string): string | null {
     if (!baseTimetableId) {
         return null;
     }
@@ -140,7 +141,24 @@ export function encodeTimetableShare(baseTimetableId: string, selectedElectives:
         }
     }
 
+    // Encode student name if present (appended after subjects for backwards compat)
+    if (studentName && studentName.trim()) {
+        parts.push(...encodeString(studentName.trim()));
+    } else {
+        parts.push(0); // zero-length string = no name
+    }
+
     return toBase64Url(new Uint8Array(parts));
+}
+
+function decodeStudentName(bytes: Uint8Array, offset: number): string {
+    if (offset >= bytes.length) return '';
+    try {
+        const result = decodeString(bytes, offset);
+        return result.value || '';
+    } catch {
+        return '';
+    }
 }
 
 export function decodeTimetableShare(token: string | null): SharedTimetablePayload | null {
@@ -216,10 +234,17 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
             }
         }
 
+        // Read student name (v2 only, appended after subjects)
+        let studentName = '';
+        if (version === 2 && offset < bytes.length) {
+            studentName = decodeStudentName(bytes, offset);
+        }
+
         return {
             v: 1,
             b: baseTimetableId,
             s: subjects,
+            n: studentName || undefined,
         };
     } catch {
         return null;

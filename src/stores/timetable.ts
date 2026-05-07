@@ -1,13 +1,21 @@
 import { defineStore } from 'pinia';
 import type { FlattenedSubject, UserTimetable } from '@/types/subject';
 
+const STUDENT_NAME_KEY = 'cudseereg_student_name';
+
 export const useTimetableStore = defineStore('timetable', {
     state: () => ({
         baseTimetableId: '',
         selectedElectives: {} as UserTimetable,
+        studentName: localStorage.getItem(STUDENT_NAME_KEY) ?? '',
     }),
 
     actions: {
+        setStudentName(name: string) {
+            this.studentName = name;
+            localStorage.setItem(STUDENT_NAME_KEY, name);
+        },
+
         setBaseTimetableId(id: string) {
             if (this.baseTimetableId === id) return;
             this.baseTimetableId = id;

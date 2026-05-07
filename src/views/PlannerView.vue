@@ -11,6 +11,7 @@ import {
     decodeTimetableShare,
     encodeTimetableShare,
     resolveSharedSubjects,
+    type SharedTimetablePayload,
 } from '@/lib/shareTimetable';
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
@@ -64,7 +65,7 @@ function makeSubjectIdentity(subject: FlattenedSubject): string {
 
 const route = useRoute();
 const timetableStore = useTimetableStore();
-const { baseTimetableId, selectedElectives } = storeToRefs(timetableStore);
+const { baseTimetableId, selectedElectives, studentName } = storeToRefs(timetableStore);
 
 const modalOpen = ref(false);
 const selectedSlot = ref<{ day: string; period: number } | null>(null);
@@ -78,7 +79,7 @@ const didCopyShareLink = ref(false);
 const timetableRef = ref<HTMLElement | null>(null);
 const feedbackTimeoutRef = ref<number | null>(null);
 const appliedShareTokenRef = ref<string | null>(null);
-const pendingSharedPayload = ref<{ b: string; s: Array<{ c: string; g: string; t: string }> } | null>(null);
+const pendingSharedPayload = ref<SharedTimetablePayload | null>(null);
 
 const parsedFromStore = computed(() => {
     return parseBaseTimetableId(baseTimetableId.value) ?? { grade: '1', program: 'EP' };
@@ -168,6 +169,9 @@ watch([pendingSharedPayload, () => baseTimetableId.value, () => subjectsGrade.va
 
     const { resolved, missing } = resolveSharedSubjects(pend.s, subjects.value);
     timetableStore.replaceTimetable(pend.b, resolved);
+    if (pend.n) {
+        timetableStore.setStudentName(pend.n);
+    }
     pendingSharedPayload.value = null;
     appliedShareTokenRef.value = shareToken.value;
 
@@ -323,7 +327,7 @@ const handleExport = async () => {
 };
 
 const handleCopyShareLink = async () => {
-    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value);
+    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value);
     if (!token) {
         setTransientFeedback('ไม่สามารถสร้างลิงก์แชร์ได้');
         return;
@@ -513,6 +517,18 @@ const getBreakContent = (cell: CellType) => {
                 </div>
 
                 <div ref="timetableRef" class="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 z-20 relative text-slate-800">
+                    <!-- Student name: shown always, editable inline, captured in export -->
+                    <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-200">
+                        <input
+                            type="text"
+                            :value="studentName"
+                            @input="timetableStore.setStudentName(($event.target as HTMLInputElement).value)"
+                            placeholder="ชื่อ"
+                            maxlength="60"
+                            class="font-kanit font-semibold text-lg text-slate-800 bg-transparent border-none focus:outline-none placeholder-slate-300 min-w-0 flex-1"
+                        />
+                        <div class="text-xs text-slate-400 shrink-0">{{ baseTimetable?.label }}</div>
+                    </div>
                     <table class="w-full border-collapse min-w-[1200px] table-fixed">
                         <thead>
                             <tr>
