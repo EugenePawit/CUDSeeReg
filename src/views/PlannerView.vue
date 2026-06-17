@@ -92,6 +92,10 @@ const baseTimetable = computed(() => {
 });
 
 const shareToken = computed(() => {
+    const hashToken = route.hash.startsWith('#') ? route.hash.slice(1) : route.hash;
+    if (hashToken) {
+        return hashToken;
+    }
     return (route.query.t as string) || (route.query.tt as string);
 });
 
@@ -333,10 +337,7 @@ const handleCopyShareLink = async () => {
         return;
     }
 
-    const params = new URLSearchParams();
-    params.set('t', token);
-
-    const url = `${window.location.origin}${route.path}?${params.toString()}`;
+    const url = `${window.location.origin}${route.path}#${token}`;
 
     try {
         await navigator.clipboard.writeText(url);

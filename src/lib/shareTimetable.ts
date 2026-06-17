@@ -62,6 +62,28 @@ function decodeString(bytes: Uint8Array, offset: number): { value: string; nextO
     return { value, nextOffset: offset + 1 + len };
 }
 
+function encodeGroup(group: string): number[] {
+    if (!group) {
+        return [0];
+    }
+
+    const numericGroup = Number(group);
+    if (/^\d+$/.test(group) && Number.isInteger(numericGroup) && numericGroup <= 127 && String(numericGroup) === group) {
+        return [0x80 | numericGroup];
+    }
+
+    return encodeString(group);
+}
+
+function decodeGroup(bytes: Uint8Array, offset: number): { value: string; nextOffset: number } {
+    const marker = bytes[offset];
+    if (marker >= 0x80) {
+        return { value: String(marker & 0x7f), nextOffset: offset + 1 };
+    }
+
+    return decodeString(bytes, offset);
+}
+
 function subjectIdentity(subject: FlattenedSubject): SharedSubjectRef {
     return {
         c: subject.code,
@@ -104,6 +126,35 @@ export function encodeTimetableShare(baseTimetableId: string, selectedElectives:
     }
 
     const subjects = extractSharedSubjects(selectedElectives);
+    const baseIdByte = BASE_ID_TO_BYTE[baseTimetableId];
+    const count = Math.min(subjects.length, 255);
+
+    if (baseIdByte !== undefined) {
+        // Compact binary format v3:
+        // [header:1][subjects...][studentName?]
+        // Header is 64 + (baseId * 16) + subject count for common 0-15 subject shares.
+        // If there are more than 15 subjects: [48 + baseId][count:1][subjects...]
+        // Each subject: [code:string][group:compact]
+        const parts: number[] = [];
+
+        if (count <= 15) {
+            parts.push(64 + (baseIdByte * 16) + count);
+        } else {
+            parts.push(48 + baseIdByte, count);
+        }
+
+        for (let i = 0; i < count; i++) {
+            const subj = subjects[i];
+            parts.push(...encodeString(subj.c));
+            parts.push(...encodeGroup(subj.g || ''));
+        }
+
+        if (studentName && studentName.trim()) {
+            parts.push(...encodeString(studentName.trim()));
+        }
+
+        return toBase64Url(new Uint8Array(parts));
+    }
 
     // Ultra-compact binary format v2:
     // [version:1][baseIdByte:1][count:1][subjects...]
@@ -114,17 +165,11 @@ export function encodeTimetableShare(baseTimetableId: string, selectedElectives:
     parts.push(2);
 
     // Base timetable ID as single byte
-    const baseIdByte = BASE_ID_TO_BYTE[baseTimetableId];
-    if (baseIdByte === undefined) {
-        // Fallback: encode as string with v1 marker
-        parts[0] = 1;
-        parts.push(...encodeString(baseTimetableId));
-    } else {
-        parts.push(baseIdByte);
-    }
+    // Fallback: encode unknown base IDs as string with v1 marker
+    parts[0] = 1;
+    parts.push(...encodeString(baseTimetableId));
 
     // Subject count (max 255)
-    const count = Math.min(subjects.length, 255);
     parts.push(count);
 
     // Encode each subject (code + group only, skip classtime)
@@ -169,21 +214,76 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
     try {
         const bytes = fromBase64Url(token);
 
-        if (bytes.length < 3) {
+        if (bytes.length < 1) {
             return null;
         }
 
         let offset = 0;
+        let count: number;
+        let baseTimetableId: string;
+
+        const firstByte = bytes[offset++];
+
+        if (firstByte >= 64 || (firstByte >= 48 && firstByte < 60)) {
+            let baseIdByte: number;
+
+            if (firstByte >= 64) {
+                const packedHeader = firstByte - 64;
+                baseIdByte = Math.floor(packedHeader / 16);
+                count = packedHeader % 16;
+            } else {
+                baseIdByte = firstByte - 48;
+                if (offset >= bytes.length) {
+                    return null;
+                }
+                count = bytes[offset++];
+            }
+
+            baseTimetableId = BYTE_TO_BASE_ID[baseIdByte];
+            if (!baseTimetableId) {
+                return null;
+            }
+
+            const subjects: SharedSubjectRef[] = [];
+            for (let i = 0; i < count && offset < bytes.length; i++) {
+                try {
+                    const codeResult = decodeString(bytes, offset);
+                    offset = codeResult.nextOffset;
+
+                    const groupResult = decodeGroup(bytes, offset);
+                    offset = groupResult.nextOffset;
+
+                    subjects.push({
+                        c: codeResult.value,
+                        g: groupResult.value,
+                        t: '',
+                    });
+                } catch {
+                    break;
+                }
+            }
+
+            const studentName = offset < bytes.length ? decodeStudentName(bytes, offset) : '';
+
+            return {
+                v: 1,
+                b: baseTimetableId,
+                s: subjects,
+                n: studentName || undefined,
+            };
+        }
+
+        if (bytes.length < 3) {
+            return null;
+        }
 
         // Read version
-        const version = bytes[offset++];
+        const version = firstByte;
         if (version !== 1 && version !== 2) {
             return null;
         }
 
         // Read base timetable ID
-        let baseTimetableId: string;
-
         if (version === 2) {
             // V2: Single byte base ID
             const baseIdByte = bytes[offset++];
@@ -203,7 +303,7 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
         }
 
         // Read subject count
-        const count = bytes[offset++];
+        count = bytes[offset++];
         const subjects: SharedSubjectRef[] = [];
 
         // Read each subject
