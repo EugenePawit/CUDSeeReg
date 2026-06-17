@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Search } from 'lucide-vue-next';
 import { fetchSubjects, flattenSubjects, groupSubjectsByCode, fetchSubjectDescriptions } from '@/lib/dataFetcher';
@@ -35,6 +35,12 @@ const modalData = ref<{
 const isMounted = ref(false);
 const isMobile = ref(false);
 const modalPositionStyle = ref<Record<string, string>>({});
+const modalPanelRef = ref<HTMLElement | null>(null);
+
+const MODAL_MARGIN = 16;
+const MODAL_MAX_WIDTH = 448;
+let modalPositionFrame: number | null = null;
+let modalPositionTimeout: ReturnType<typeof setTimeout> | null = null;
 
 // Debounce search
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -74,8 +80,8 @@ const handleGradeChange = (nextGrade: number) => {
 
 // Handle view details modal
 const handleViewDetails = (subject: GroupedSubject, groupIndex: number, rect?: DOMRect) => {
-    updateModalPosition(rect);
     modalData.value = { subject, groupIndex, description: descriptions.value[subject.code] || '', anchor: rect };
+    scheduleModalPositionUpdate(rect);
 };
 
 // Update modal position based on anchor
@@ -85,28 +91,54 @@ const updateModalPosition = (anchor?: DOMRect) => {
         return;
     }
 
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const modalWidth = Math.min(MODAL_MAX_WIDTH, viewportWidth - (MODAL_MARGIN * 2));
+    const panel = modalPanelRef.value;
+    const measuredHeight = panel ? Math.max(panel.getBoundingClientRect().height, panel.scrollHeight) : 520;
+    const modalHeight = Math.min(measuredHeight, viewportHeight - (MODAL_MARGIN * 2));
     const cardCenter = anchor.left + (anchor.width / 2);
-    const modalWidth = 448;
     let left = cardCenter - (modalWidth / 2);
 
-    left = Math.max(16, left);
-    const maxLeft = window.innerWidth - modalWidth - 16;
+    left = Math.max(MODAL_MARGIN, left);
+    const maxLeft = viewportWidth - modalWidth - MODAL_MARGIN;
     left = Math.min(left, maxLeft);
 
-    // Prefer above the card, flip to below if it would go off the top
-    let top = anchor.top - 48;
-    if (top < 16) {
-        top = anchor.bottom + 16;
-    }
+    let top = anchor.top + (anchor.height / 2) - (modalHeight / 2);
+    top = Math.max(MODAL_MARGIN, top);
+    const maxTop = viewportHeight - modalHeight - MODAL_MARGIN;
+    top = Math.min(top, Math.max(MODAL_MARGIN, maxTop));
 
     modalPositionStyle.value = {
         position: 'fixed',
         top: `${top}px`,
         left: `${left}px`,
-        width: '100%',
+        width: `${modalWidth}px`,
         maxWidth: '28rem',
+        maxHeight: `calc(100vh - ${MODAL_MARGIN * 2}px)`,
+        overflowY: 'auto',
         margin: '0',
     };
+};
+
+const scheduleModalPositionUpdate = (anchor?: DOMRect) => {
+    if (modalPositionFrame !== null) {
+        window.cancelAnimationFrame(modalPositionFrame);
+    }
+    if (modalPositionTimeout !== null) {
+        clearTimeout(modalPositionTimeout);
+    }
+
+    nextTick(() => {
+        updateModalPosition(anchor);
+        modalPositionFrame = window.requestAnimationFrame(() => {
+            updateModalPosition(anchor);
+        });
+        modalPositionTimeout = setTimeout(() => {
+            updateModalPosition(anchor);
+            modalPositionTimeout = null;
+        }, 350);
+    });
 };
 
 // Modal close
@@ -114,11 +146,22 @@ const closeModal = () => {
     modalData.value = null;
 };
 
+const selectModalGroup = (idx: number) => {
+    if (!modalData.value) return;
+    modalData.value.groupIndex = idx;
+    scheduleModalPositionUpdate(modalData.value.anchor);
+};
+
 // Keyboard handler for Escape
 const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
         closeModal();
     }
+};
+
+const handleResize = () => {
+    isMobile.value = window.innerWidth < 768;
+    updateModalPosition(modalData.value?.anchor);
 };
 
 watch(modalData, (newVal) => {
@@ -150,14 +193,15 @@ watch(gradeValue, async (newGrade) => {
 onMounted(() => {
     isMounted.value = true;
     isMobile.value = window.innerWidth < 768;
-    window.addEventListener('resize', () => {
-        isMobile.value = window.innerWidth < 768;
-    });
+    window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
     window.removeEventListener('keydown', handleKeydown);
+    window.removeEventListener('resize', handleResize);
     if (searchTimeout) clearTimeout(searchTimeout);
+    if (modalPositionFrame !== null) window.cancelAnimationFrame(modalPositionFrame);
+    if (modalPositionTimeout !== null) clearTimeout(modalPositionTimeout);
 });
 </script>
 
@@ -236,10 +280,9 @@ onUnmounted(() => {
         <Teleport to="body">
             <div
                 v-if="modalData && isMounted"
-                :class="[
-                    'modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4',
-                    modalData.anchor && !isMobile ? 'bg-black/20 block overflow-y-auto' : 'bg-black/50'
-                ]"
+                :class="modalData.anchor && !isMobile
+                    ? 'modal-overlay fixed inset-0 z-[100] bg-black/20'
+                    : 'modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4'"
                 @click="closeModal"
             >
                 <div
@@ -257,6 +300,7 @@ onUnmounted(() => {
                 </div>
                 <div
                     v-else
+                    ref="modalPanelRef"
                     class="modal-content bg-white rounded-2xl p-6 shadow-2xl border border-white/40"
                     :style="modalPositionStyle"
                     @click.stop
@@ -266,7 +310,7 @@ onUnmounted(() => {
                         :descriptions="descriptions"
                         :day-colors="DAY_COLORS"
                         @close="closeModal"
-                        @select-group="(idx: number) => { if (modalData) modalData.groupIndex = idx; }"
+                        @select-group="selectModalGroup"
                     />
                 </div>
             </div>
