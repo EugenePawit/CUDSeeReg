@@ -92,11 +92,20 @@ const baseTimetable = computed(() => {
 });
 
 const shareToken = computed(() => {
+    const queryToken = route.query.s || route.query.t || route.query.tt;
+    if (typeof queryToken === 'string' && queryToken) {
+        return queryToken;
+    }
+    if (Array.isArray(queryToken) && typeof queryToken[0] === 'string' && queryToken[0]) {
+        return queryToken[0];
+    }
+
     const hashToken = route.hash.startsWith('#') ? route.hash.slice(1) : route.hash;
     if (hashToken) {
         return hashToken;
     }
-    return (route.query.t as string) || (route.query.tt as string);
+
+    return undefined;
 });
 
 const decodedSharePayload = computed(() => decodeTimetableShare(shareToken.value ?? null));
@@ -331,13 +340,13 @@ const handleExport = async () => {
 };
 
 const handleCopyShareLink = async () => {
-    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value);
+    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value, subjects.value);
     if (!token) {
         setTransientFeedback('ไม่สามารถสร้างลิงก์แชร์ได้');
         return;
     }
 
-    const url = `${window.location.origin}${route.path}#${token}`;
+    const url = `${window.location.origin}/p?s=${token}`;
 
     try {
         await navigator.clipboard.writeText(url);

@@ -11,6 +11,7 @@ const router = createRouter({
         },
         {
             path: '/planner',
+            alias: '/p',
             name: 'planner',
             component: () => import('@/views/PlannerView.vue'),
         },

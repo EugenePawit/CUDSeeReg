@@ -4,6 +4,7 @@ export interface SharedSubjectRef {
     c: string;
     g: string;
     t: string;
+    i?: number;
 }
 
 export interface SharedTimetablePayload {
@@ -62,19 +63,6 @@ function decodeString(bytes: Uint8Array, offset: number): { value: string; nextO
     return { value, nextOffset: offset + 1 + len };
 }
 
-function encodeGroup(group: string): number[] {
-    if (!group) {
-        return [0];
-    }
-
-    const numericGroup = Number(group);
-    if (/^\d+$/.test(group) && Number.isInteger(numericGroup) && numericGroup <= 127 && String(numericGroup) === group) {
-        return [0x80 | numericGroup];
-    }
-
-    return encodeString(group);
-}
-
 function decodeGroup(bytes: Uint8Array, offset: number): { value: string; nextOffset: number } {
     const marker = bytes[offset];
     if (marker >= 0x80) {
@@ -82,6 +70,27 @@ function decodeGroup(bytes: Uint8Array, offset: number): { value: string; nextOf
     }
 
     return decodeString(bytes, offset);
+}
+
+function encodeSubjectIndex(index: number): number[] {
+    if (index < 128) {
+        return [index];
+    }
+
+    return [0x80 | (index & 0x7f), index >> 7];
+}
+
+function decodeSubjectIndex(bytes: Uint8Array, offset: number): { value: number; nextOffset: number } {
+    const first = bytes[offset];
+    if (first < 0x80) {
+        return { value: first, nextOffset: offset + 1 };
+    }
+
+    if (offset + 1 >= bytes.length) {
+        throw new Error('Missing subject index byte');
+    }
+
+    return { value: (first & 0x7f) | (bytes[offset + 1] << 7), nextOffset: offset + 2 };
 }
 
 function subjectIdentity(subject: FlattenedSubject): SharedSubjectRef {
@@ -120,77 +129,84 @@ export function extractSharedSubjects(selectedElectives: UserTimetable): SharedS
     return refs;
 }
 
-export function encodeTimetableShare(baseTimetableId: string, selectedElectives: UserTimetable, studentName?: string): string | null {
+function findCatalogIndex(subject: FlattenedSubject, catalog: FlattenedSubject[]): number {
+    const exactKey = subjectRefKey(subjectIdentity(subject));
+    const codeAndGroupKey = `${subject.code}||${subject.group}`;
+
+    let fallbackIndex = -1;
+    for (let i = 0; i < catalog.length; i++) {
+        const catalogSubject = catalog[i];
+        const catalogRef = subjectIdentity(catalogSubject);
+        if (subjectRefKey(catalogRef) === exactKey) {
+            return i;
+        }
+        if (fallbackIndex === -1 && `${catalogSubject.code}||${catalogSubject.group}` === codeAndGroupKey) {
+            fallbackIndex = i;
+        }
+    }
+
+    return fallbackIndex;
+}
+
+function extractSharedSubjectIndexes(selectedElectives: UserTimetable, catalog: FlattenedSubject[]): number[] | null {
+    const seen = new Set<number>();
+    const indexes: number[] = [];
+
+    for (const day of Object.keys(selectedElectives)) {
+        for (const periodKey of Object.keys(selectedElectives[day])) {
+            const period = Number(periodKey);
+            const subject = selectedElectives[day]?.[period];
+            if (!subject) {
+                continue;
+            }
+
+            const index = findCatalogIndex(subject, catalog);
+            if (index < 0 || index > 0x3fff) {
+                return null;
+            }
+            if (seen.has(index)) {
+                continue;
+            }
+            seen.add(index);
+            indexes.push(index);
+        }
+    }
+
+    return indexes;
+}
+
+export function encodeTimetableShare(
+    baseTimetableId: string,
+    selectedElectives: UserTimetable,
+    studentName?: string,
+    catalog: FlattenedSubject[] = []
+): string | null {
     if (!baseTimetableId) {
         return null;
     }
 
-    const subjects = extractSharedSubjects(selectedElectives);
     const baseIdByte = BASE_ID_TO_BYTE[baseTimetableId];
-    const count = Math.min(subjects.length, 255);
-
-    if (baseIdByte !== undefined) {
-        // Compact binary format v3:
-        // [header:1][subjects...][studentName?]
-        // Header is 64 + (baseId * 16) + subject count for common 0-15 subject shares.
-        // If there are more than 15 subjects: [48 + baseId][count:1][subjects...]
-        // Each subject: [code:string][group:compact]
-        const parts: number[] = [];
-
-        if (count <= 15) {
-            parts.push(64 + (baseIdByte * 16) + count);
-        } else {
-            parts.push(48 + baseIdByte, count);
-        }
-
-        for (let i = 0; i < count; i++) {
-            const subj = subjects[i];
-            parts.push(...encodeString(subj.c));
-            parts.push(...encodeGroup(subj.g || ''));
-        }
-
-        if (studentName && studentName.trim()) {
-            parts.push(...encodeString(studentName.trim()));
-        }
-
-        return toBase64Url(new Uint8Array(parts));
+    if (baseIdByte === undefined || catalog.length === 0) {
+        return null;
     }
 
-    // Ultra-compact binary format v2:
-    // [version:1][baseIdByte:1][count:1][subjects...]
-    // Each subject: [code:string][group:string] (removed classtime - redundant)
-    const parts: number[] = [];
+    const subjectIndexes = extractSharedSubjectIndexes(selectedElectives, catalog);
+    if (!subjectIndexes) {
+        return null;
+    }
 
-    // Version byte (v2 for new format)
-    parts.push(2);
+    // Current generated format:
+    // [16 + baseId:1][count:1][catalog indexes...][studentName?]
+    // Current grade catalogs fit in one byte per subject; two-byte indexes are supported.
+    const count = Math.min(subjectIndexes.length, 255);
+    const parts: number[] = [16 + baseIdByte, count];
 
-    // Base timetable ID as single byte
-    // Fallback: encode unknown base IDs as string with v1 marker
-    parts[0] = 1;
-    parts.push(...encodeString(baseTimetableId));
-
-    // Subject count (max 255)
-    parts.push(count);
-
-    // Encode each subject (code + group only, skip classtime)
     for (let i = 0; i < count; i++) {
-        const subj = subjects[i];
-        parts.push(...encodeString(subj.c));  // code
-
-        // Optimize group encoding - single digit = 1 byte
-        const group = subj.g || '';
-        if (group.length === 1 && group >= '0' && group <= '9') {
-            parts.push(1, group.charCodeAt(0));
-        } else {
-            parts.push(...encodeString(group));
-        }
+        parts.push(...encodeSubjectIndex(subjectIndexes[i]));
     }
 
-    // Encode student name if present (appended after subjects for backwards compat)
     if (studentName && studentName.trim()) {
         parts.push(...encodeString(studentName.trim()));
-    } else {
-        parts.push(0); // zero-length string = no name
     }
 
     return toBase64Url(new Uint8Array(parts));
@@ -223,6 +239,45 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
         let baseTimetableId: string;
 
         const firstByte = bytes[offset++];
+
+        if (firstByte >= 16 && firstByte < 28) {
+            const baseIdByte = firstByte - 16;
+            baseTimetableId = BYTE_TO_BASE_ID[baseIdByte];
+            if (!baseTimetableId) {
+                return null;
+            }
+
+            if (offset >= bytes.length) {
+                return null;
+            }
+
+            count = bytes[offset++];
+
+            const subjects: SharedSubjectRef[] = [];
+            for (let i = 0; i < count && offset < bytes.length; i++) {
+                try {
+                    const indexResult = decodeSubjectIndex(bytes, offset);
+                    offset = indexResult.nextOffset;
+                    subjects.push({
+                        c: '',
+                        g: '',
+                        t: '',
+                        i: indexResult.value,
+                    });
+                } catch {
+                    break;
+                }
+            }
+
+            const studentName = offset < bytes.length ? decodeStudentName(bytes, offset) : '';
+
+            return {
+                v: 1,
+                b: baseTimetableId,
+                s: subjects,
+                n: studentName || undefined,
+            };
+        }
 
         if (firstByte >= 64 || (firstByte >= 48 && firstByte < 60)) {
             let baseIdByte: number;
@@ -370,6 +425,16 @@ export function resolveSharedSubjects(
     const missing: SharedSubjectRef[] = [];
 
     for (const ref of sharedRefs) {
+        if (typeof ref.i === 'number') {
+            const indexed = subjects[ref.i];
+            if (indexed) {
+                resolved.push(indexed);
+            } else {
+                missing.push(ref);
+            }
+            continue;
+        }
+
         const exact = byExact.get(subjectRefKey(ref));
         const fallbackGroup = byCodeAndGroup.get(`${ref.c}||${ref.g}`);
         const fallbackCode = byCode.get(ref.c);
