@@ -2,8 +2,6 @@
 import { ref, computed, onMounted, defineComponent, h } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useWindowScroll } from '@vueuse/core';
-import ThemeToggle from '@/components/ThemeToggle.vue';
-
 const route = useRoute();
 const { y: scrollY } = useWindowScroll();
 const isMounted = ref(false);
@@ -63,8 +61,8 @@ const MagneticButton = defineComponent({
         :style="{ transform: `translateY(${navY}px)` }"
     >
         <div
-            class="flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass dark:shadow-none pointer-events-auto border overflow-x-auto no-scrollbar transition-all duration-300"
-            :class="scrollY > 100 ? 'bg-white/70 dark:bg-slate-900/70 backdrop-blur-[24px] border-slate-200/50 dark:border-slate-700/50' : 'bg-transparent border-transparent'"
+            class="flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass dark:shadow-sm pointer-events-auto border overflow-x-auto no-scrollbar transition-all duration-300"
+            :class="scrollY > 100 ? 'bg-white/70 dark:bg-slate-900/80 backdrop-blur-[24px] border-slate-200/50 dark:border-slate-700/50' : 'bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border-white/50 dark:border-slate-700/50'"
             :style="{
                 width: navWidth,
                 maxWidth: '1200px'
@@ -117,5 +115,4 @@ const MagneticButton = defineComponent({
             <component :is="Component" :key="currentRoute.path" />
         </Transition>
     </RouterView>
-    <ThemeToggle v-if="isMounted" />
 </template>

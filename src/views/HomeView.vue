@@ -271,7 +271,8 @@ onUnmounted(() => {
         </main>
 
         <footer class="glass-card border-t border-white/20 py-6 mt-12">
-            <div class="container mx-auto px-4 text-center text-sm text-slate-600 dark:text-slate-400">
+            <div class="container mx-auto px-4 text-center text-sm text-slate-600 dark:text-slate-400 flex flex-col items-center justify-center gap-4">
+                <ThemeToggle />
                 <p class="mt-1">CUDSeeReg © 2026</p>
             </div>
         </footer>
@@ -321,11 +322,13 @@ onUnmounted(() => {
 <script lang="ts">
 import SubjectCard from './SubjectCard.vue';
 import ModalContent from './ModalContent.vue';
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
 export default {
     components: {
         SubjectCard,
         ModalContent,
+        ThemeToggle,
     },
 };
 </script>

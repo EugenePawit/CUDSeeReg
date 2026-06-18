@@ -23,7 +23,7 @@ const toggleMode = () => {
 <template>
   <button
     @click="toggleMode"
-    class="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-glass border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-pink-600 dark:hover:text-pink-400 transition-all interactive-press"
+    class="p-2.5 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-sm border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-pink-600 dark:hover:text-pink-400 transition-all interactive-press"
     aria-label="Toggle theme"
     title="Toggle theme"
   >
