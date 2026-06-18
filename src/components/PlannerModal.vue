@@ -53,21 +53,21 @@ const slotDisplay = computed(() => {
     <Teleport to="body">
         <div
             v-if="isOpen && selectedSlot && mounted"
-            class="modal-overlay fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 pt-10"
+            class="modal-overlay fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-start justify-center p-4 pt-10"
             @click="emit('close')"
         >
             <div
-                class="modal-content bg-white/90 backdrop-blur-3xl border border-slate-200 shadow-glass-lg rounded-bento max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+                class="modal-content bg-white/90 dark:bg-slate-800/90 backdrop-blur-3xl border border-slate-200 dark:border-slate-700 shadow-glass-lg rounded-bento max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
                 @click.stop
             >
-                <div class="p-6 border-b border-slate-200 bg-slate-50 shrink-0">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-black text-slate-800 drop-shadow-sm">
+                        <h2 class="text-xl font-black text-slate-800 dark:text-slate-200 drop-shadow-sm">
                             เลือกวิชา - {{ slotDisplay }}
                         </h2>
                         <button
                             @click="emit('close')"
-                            class="p-2 hover:bg-slate-200 rounded-full text-slate-500 hover:text-slate-700 transition-colors interactive-press"
+                            class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors interactive-press"
                         >
                             <X :size="20" />
                         </button>
@@ -77,7 +77,7 @@ const slotDisplay = computed(() => {
                         placeholder="ค้นหาวิชา (ชื่อวิชา, รหัสวิชา, อาจารย์)..."
                         :value="searchQuery"
                         @input="emit('searchChange', ($event.target as HTMLInputElement).value)"
-                        class="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/50 text-slate-800 placeholder-slate-400 shadow-sm"
+                        class="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/50 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
                         autofocus
                     />
                 </div>
@@ -85,7 +85,7 @@ const slotDisplay = computed(() => {
                     <div v-if="loading" class="flex justify-center py-12">
                         <div class="animate-spin w-10 h-10 border-4 border-pink-200 border-t-pink-500 rounded-full" />
                     </div>
-                    <p v-else-if="filteredSubjects.length === 0" class="text-center text-slate-500 py-12 font-medium">
+                    <p v-else-if="filteredSubjects.length === 0" class="text-center text-slate-500 dark:text-slate-400 py-12 font-medium">
                         ไม่พบวิชาที่เปิดสอนในคาบนี้
                     </p>
                     <div v-else class="space-y-4 p-2">
@@ -97,26 +97,26 @@ const slotDisplay = computed(() => {
                             tabindex="0"
                             role="button"
                             :aria-label="`เลือก ${subject.name}`"
-                            class="stagger-item p-5 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 hover:border-pink-300 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-sm active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2"
+                            class="stagger-item p-5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-pink-300 dark:hover:border-pink-700/50 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-sm active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2"
                             :style="{ animationDelay: `${Math.min(index * 0.03, 0.2)}s` }"
                         >
                             <div class="flex justify-between items-start gap-4">
                                 <div>
-                                    <div class="text-xs font-mono tracking-wider text-pink-600 mb-1">
+                                    <div class="text-xs font-mono tracking-wider text-pink-600 dark:text-pink-400 mb-1">
                                         {{ subject.code }}
                                         <span v-if="subject.group"> กลุ่ม {{ subject.group }}</span>
-                                        <span class="ml-2 px-2 py-0.5 bg-pink-100 text-pink-700 rounded-md font-semibold">
+                                        <span class="ml-2 px-2 py-0.5 bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 rounded-md font-semibold">
                                             {{ subject.credit }} หน่วยกิต
                                         </span>
                                     </div>
-                                    <div class="font-bold text-slate-800 text-lg tracking-tight leading-tight mb-1">{{ subject.name }}</div>
-                                    <div class="text-sm text-slate-500 font-medium">{{ subject.instructor }}</div>
+                                    <div class="font-bold text-slate-800 dark:text-slate-200 text-lg tracking-tight leading-tight mb-1">{{ subject.name }}</div>
+                                    <div class="text-sm text-slate-500 dark:text-slate-400 font-medium">{{ subject.instructor }}</div>
                                 </div>
                                 <div class="flex flex-col items-end gap-1 shrink-0">
                                     <span
                                         v-for="(timeSlot, timeIndex) in subject.parsedTimeSlots"
                                         :key="timeIndex"
-                                        :class="['px-2.5 py-1 rounded-lg text-xs font-semibold', DAY_COLORS[timeSlot.dayAbbrev] || 'bg-slate-100 text-slate-700']"
+                                        :class="['px-2.5 py-1 rounded-lg text-xs font-semibold', DAY_COLORS[timeSlot.dayAbbrev] || 'bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300']"
                                     >
                                         {{ timeSlot.dayAbbrev }}. {{ timeSlot.timeRange }}
                                     </span>

@@ -49,7 +49,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         @keydown="handleKeydown"
     >
         <div
-            class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 group-hover:bg-pink-100 flex items-center justify-center text-slate-600 group-hover:text-pink-600 transition-all duration-300 group-hover:scale-110 z-40 shadow-sm"
+            class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/40 flex items-center justify-center text-slate-600 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-300 transition-all duration-300 group-hover:scale-110 z-40 shadow-sm"
             aria-label="Show details"
         >
             <span class="text-sm font-bold font-sans">i</span>
@@ -57,33 +57,33 @@ const handleKeydown = (e: KeyboardEvent) => {
 
         <div class="mb-4 pr-10">
             <div class="text-sm font-mono tracking-widest text-pink-500 font-semibold mb-1 uppercase drop-shadow-sm">{{ subject.code }}</div>
-            <h3 class="text-2xl font-black text-slate-800 leading-tight tracking-tight drop-shadow-sm">{{ subject.name }}</h3>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-slate-200 leading-tight tracking-tight drop-shadow-sm">{{ subject.name }}</h3>
         </div>
 
         <div v-if="hasMultipleGroups" class="mb-5 relative z-40">
             <select
                 v-model="selectedGroup"
                 @click.stop
-                class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 transition-colors relative z-50"
+                class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors relative z-50"
             >
                 <option
                     v-for="(group, groupIndex) in subject.groups"
                     :key="`${group.group}-${groupIndex}`"
                     :value="groupIndex"
-                    class="text-slate-900 bg-white"
+                    class="text-slate-900 dark:text-slate-200 bg-white dark:bg-slate-800"
                 >
                     กลุ่ม {{ group.group }} - {{ group.instructor }}
                 </option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 dark:text-slate-500">
                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
             </div>
         </div>
 
         <div class="mt-auto">
-            <div class="text-sm text-slate-600 space-y-3 font-medium">
+            <div class="text-sm text-slate-600 dark:text-slate-400 space-y-3 font-medium">
                 <div v-if="!hasMultipleGroups" class="mb-5 relative z-40">
-            <div class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 relative">
+            <div class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-300 relative">
                 กลุ่ม 1 - {{ current.instructor }}
             </div>
         </div>
@@ -92,12 +92,12 @@ const handleKeydown = (e: KeyboardEvent) => {
                         <span
                             v-for="(timeSlot, timeIndex) in current.parsedTimeSlots"
                             :key="timeIndex"
-                            :class="['px-3 py-1 rounded-full text-xs font-semibold shadow-sm', dayColors[timeSlot.dayAbbrev] || 'bg-slate-100 text-slate-700']"
+                            :class="['px-3 py-1 rounded-full text-xs font-semibold shadow-sm', dayColors[timeSlot.dayAbbrev] || 'bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300']"
                         >
                             {{ timeSlot.dayAbbrev }}. {{ timeSlot.timeRange }}
                         </span>
                     </template>
-                    <span v-else class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs italic">
+                    <span v-else class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-xs italic">
                         ไม่มีข้อมูลเวลา
                     </span>
                 </div>

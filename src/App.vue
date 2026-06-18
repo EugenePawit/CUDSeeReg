@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, defineComponent, h } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useWindowScroll } from '@vueuse/core';
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
 const route = useRoute();
 const { y: scrollY } = useWindowScroll();
@@ -13,8 +14,6 @@ onMounted(() => {
 
 const navWidth = computed(() => scrollY.value > 100 ? '85%' : '100%');
 const navY = computed(() => Math.min(scrollY.value * 0.1, 10));
-const navBg = computed(() => scrollY.value > 100 ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0)');
-const navBlur = computed(() => scrollY.value > 100 ? 'blur(24px)' : 'blur(0px)');
 
 const isSearch = computed(() => route.name === 'search');
 const isPlanner = computed(() => route.name === 'planner');
@@ -64,17 +63,15 @@ const MagneticButton = defineComponent({
         :style="{ transform: `translateY(${navY}px)` }"
     >
         <div
-            class="flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass pointer-events-auto border overflow-x-auto no-scrollbar"
+            class="flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass dark:shadow-none pointer-events-auto border overflow-x-auto no-scrollbar transition-all duration-300"
+            :class="scrollY > 100 ? 'bg-white/70 dark:bg-slate-900/70 backdrop-blur-[24px] border-slate-200/50 dark:border-slate-700/50' : 'bg-transparent border-transparent'"
             :style="{
                 width: navWidth,
-                maxWidth: '1200px',
-                backgroundColor: navBg,
-                backdropFilter: navBlur,
-                borderColor: 'rgba(0,0,0,0.05)'
+                maxWidth: '1200px'
             }"
         >
             <RouterLink to="/" class="flex items-center gap-2 shrink-0">
-                <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 drop-shadow-sm">
+                <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-sm">
                     CUD<span class="text-pink-600">See</span>Reg
                 </span>
             </RouterLink>
@@ -85,7 +82,7 @@ const MagneticButton = defineComponent({
                         to="/search"
                         :class="[
                             'px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
-                            isSearch ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            isSearch ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                         ]"
                     >
                         ค้นหาวิชา
@@ -96,7 +93,7 @@ const MagneticButton = defineComponent({
                         to="/"
                         :class="[
                             'px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
-                            isPlanner ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            isPlanner ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                         ]"
                     >
                         จัดตาราง
@@ -120,4 +117,5 @@ const MagneticButton = defineComponent({
             <component :is="Component" :key="currentRoute.path" />
         </Transition>
     </RouterView>
+    <ThemeToggle v-if="isMounted" />
 </template>

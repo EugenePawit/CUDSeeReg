@@ -448,17 +448,17 @@ const getBreakContent = (cell: CellType) => {
             </h1>
 
             <div class="glass-card shadow-glass p-6 rounded-bento backdrop-blur-2xl mb-8 relative z-20">
-                <h2 class="text-xl font-bold mb-5 text-slate-800 drop-shadow-sm">เลือกตารางพื้นฐาน</h2>
+                <h2 class="text-xl font-bold mb-5 text-slate-800 dark:text-slate-200 drop-shadow-sm">เลือกตารางพื้นฐาน</h2>
                 <div class="flex flex-wrap gap-6 items-end">
                     <div class="flex flex-col gap-2 w-full sm:w-auto">
-                        <label class="text-sm text-slate-600 font-medium">ระดับชั้น</label>
+                        <label class="text-sm text-slate-600 dark:text-slate-400 font-medium">ระดับชั้น</label>
                         <div class="relative">
                             <select
                                 :value="parsedFromStore.grade"
                                 @change="handleGradeChange(($event.target as HTMLSelectElement).value)"
-                                class="appearance-none w-full sm:w-48 bg-white border border-slate-200 rounded-xl px-5 py-3 pr-10 text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 transition-colors"
+                                class="appearance-none w-full sm:w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-3 pr-10 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors"
                             >
-                                <option v-for="grade in GRADES" :key="grade" :value="grade" class="text-slate-900 bg-white">
+                                <option v-for="grade in GRADES" :key="grade" :value="grade" class="text-slate-900 dark:text-slate-200 bg-white dark:bg-slate-800">
                                     ม.{{ grade }}
                                 </option>
                             </select>
@@ -467,14 +467,14 @@ const getBreakContent = (cell: CellType) => {
                     </div>
 
                     <div class="flex flex-col gap-2 w-full sm:w-auto">
-                        <label class="text-sm text-slate-600 font-medium">แผนการเรียน</label>
+                        <label class="text-sm text-slate-600 dark:text-slate-400 font-medium">แผนการเรียน</label>
                         <div class="relative">
                             <select
                                 :value="parsedFromStore.program"
                                 @change="handleProgramChange(($event.target as HTMLSelectElement).value)"
-                                class="appearance-none w-full sm:w-48 bg-white border border-slate-200 rounded-xl px-5 py-3 pr-10 text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 transition-colors"
+                                class="appearance-none w-full sm:w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-3 pr-10 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors"
                             >
-                                <option v-for="program in programs" :key="program.value" :value="program.value" class="text-slate-900 bg-white">
+                                <option v-for="program in programs" :key="program.value" :value="program.value" class="text-slate-900 dark:text-slate-200 bg-white dark:bg-slate-800">
                                     {{ program.label }}
                                 </option>
                             </select>
@@ -485,27 +485,27 @@ const getBreakContent = (cell: CellType) => {
             </div>
 
             <template v-if="!baseTimetable">
-                <div class="glass-card p-12 shadow-glass backdrop-blur-2xl rounded-bento text-center border-slate-200 z-20">
-                    <p class="text-slate-500 text-lg font-medium">กรุณาเลือกตารางพื้นฐานด้านบน</p>
+                <div class="glass-card p-12 shadow-glass backdrop-blur-2xl rounded-bento text-center border-slate-200 dark:border-slate-700 z-20">
+                    <p class="text-slate-500 dark:text-slate-400 text-lg font-medium">กรุณาเลือกตารางพื้นฐานด้านบน</p>
                 </div>
             </template>
             <template v-else>
                 <div class="flex flex-wrap justify-between items-center mb-6 gap-4 z-20 relative">
                     <div>
-                        <p class="text-slate-600 font-medium tracking-wide">
-                            คลิกที่ช่อง <span class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md mx-1 border border-pink-200">วิชาเลือก</span> เพื่อเพิ่มวิชา
+                        <p class="text-slate-600 dark:text-slate-400 font-medium tracking-wide">
+                            คลิกที่ช่อง <span class="bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded-md mx-1 border border-pink-200 dark:border-pink-800">วิชาเลือก</span> เพื่อเพิ่มวิชา
                         </p>
-                        <p v-if="feedback" class="text-sm text-emerald-600 mt-2 font-medium bg-emerald-50 px-3 py-1 rounded-full">
+                        <p v-if="feedback" class="text-sm text-emerald-600 dark:text-emerald-400 mt-2 font-medium bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
                             {{ feedback }}
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-3 items-center">
-                        <div v-if="totalCredits > 0" class="px-4 py-2 bg-pink-50 border border-pink-200 rounded-xl text-pink-700 font-semibold text-sm shadow-sm">
+                        <div v-if="totalCredits > 0" class="px-4 py-2 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl text-pink-700 dark:text-pink-300 font-semibold text-sm shadow-sm">
                             {{ totalCredits }} หน่วยกิต
                         </div>
                         <button
                             @click="handleCopyShareLink"
-                            class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm"
+                            class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm"
                         >
                             <Check v-if="didCopyShareLink" :size="18" class="text-pink-600" />
                             <Share2 v-else :size="18" />
@@ -526,74 +526,74 @@ const getBreakContent = (cell: CellType) => {
                     </div>
                 </div>
 
-                <div ref="timetableRef" class="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 z-20 relative text-slate-800">
+                <div ref="timetableRef" class="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 dark:border-slate-700 z-20 relative text-slate-800 dark:text-slate-200">
                     <!-- Student name: shown always, editable inline, captured in export -->
-                    <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-200">
+                    <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-200 dark:border-slate-700">
                         <input
                             type="text"
                             :value="studentName"
                             @input="timetableStore.setStudentName(($event.target as HTMLInputElement).value)"
                             placeholder="ชื่อ"
                             maxlength="60"
-                            class="font-kanit font-semibold text-lg text-slate-800 bg-transparent border-none focus:outline-none placeholder-slate-300 min-w-0 flex-1"
+                            class="font-kanit font-semibold text-lg text-slate-800 dark:text-slate-200 bg-transparent border-none focus:outline-none placeholder-slate-300 dark:placeholder-slate-500 min-w-0 flex-1"
                         />
-                        <div class="text-xs text-slate-400 shrink-0">{{ baseTimetable?.label }}</div>
+                        <div class="text-xs text-slate-400 dark:text-slate-500 shrink-0">{{ baseTimetable?.label }}</div>
                     </div>
                     <table class="w-full border-collapse min-w-[1200px] table-fixed">
                         <thead>
                             <tr>
-                                <th class="border border-slate-200 bg-slate-100 p-2 w-24 min-w-[6rem] text-slate-700">วัน</th>
+                                <th class="border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 p-2 w-24 min-w-[6rem] text-slate-700 dark:text-slate-300">วัน</th>
                                 <th
                                     v-for="period in PERIODS"
                                     :key="period"
-                                    class="border border-slate-200 bg-slate-100 p-2 text-center text-slate-700"
+                                    class="border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 p-2 text-center text-slate-700 dark:text-slate-300"
                                 >
-                                    <div class="font-medium text-slate-800">{{ period }}</div>
-                                    <div class="text-xs text-slate-500">{{ PERIOD_TIMES[period] }}</div>
+                                    <div class="font-medium text-slate-800 dark:text-slate-200">{{ period }}</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400">{{ PERIOD_TIMES[period] }}</div>
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="day in DAYS" :key="day">
-                                <td :class="['border border-slate-200 p-2 text-center font-medium', DAY_COLORS[day]]">
+                                <td :class="['border border-slate-200 dark:border-slate-700 p-2 text-center font-medium', DAY_COLORS[day]]">
                                     {{ DAY_NAMES_TH[day] }}
                                 </td>
                                 <template v-for="period in PERIODS" :key="period">
                                     <td
                                         v-if="getCellContent(day, period).type === 'empty'"
-                                        class="border border-slate-200 p-2 bg-slate-50 backdrop-blur-sm"
+                                        class="border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800/20 backdrop-blur-sm"
                                     />
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'break'"
-                                        class="border border-slate-200 bg-amber-50 text-amber-700 p-2 text-center text-sm h-24 align-middle"
+                                        class="border border-slate-200 dark:border-slate-700 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 p-2 text-center text-sm h-24 align-middle"
                                     >
                                         {{ getBreakContent(getCellContent(day, period)) }}
                                     </td>
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'core'"
-                                        class="border border-slate-200 bg-white p-2 text-center text-sm h-24 align-middle whitespace-normal shadow-sm"
+                                        class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 p-2 text-center text-sm h-24 align-middle whitespace-normal shadow-sm dark:shadow-none"
                                     >
-                                        <div class="text-slate-500 font-mono text-xs mb-1">
+                                        <div class="text-slate-500 dark:text-slate-400 font-mono text-xs mb-1">
                                             {{ getCoreContent(getCellContent(day, period))?.code }}
                                         </div>
-                                        <div class="font-semibold text-slate-800 tracking-wide">
+                                        <div class="font-semibold text-slate-800 dark:text-slate-200 tracking-wide">
                                             {{ getCoreContent(getCellContent(day, period))?.name }}
                                         </div>
                                     </td>
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'elective'"
-                                        class="border border-slate-200 bg-emerald-100 text-emerald-800 p-2 relative group h-24 align-middle interactive-press backdrop-blur-md"
+                                        class="border border-slate-200 dark:border-slate-700 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 p-2 relative group h-24 align-middle interactive-press backdrop-blur-md"
                                     >
-                                        <div class="text-[10px] font-mono text-emerald-600 whitespace-nowrap">
+                                        <div class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                                             {{ getElectiveContent(getCellContent(day, period))?.code }}
                                             <span v-if="getElectiveContent(getCellContent(day, period))?.group"> กลุ่ม {{ getElectiveContent(getCellContent(day, period))?.group }}</span>
                                         </div>
-                                        <div class="text-xs font-semibold text-emerald-900 mt-1 leading-tight">
+                                        <div class="text-xs font-semibold text-emerald-900 dark:text-emerald-200 mt-1 leading-tight">
                                             {{ getElectiveContent(getCellContent(day, period))?.name }}
                                         </div>
                                         <button
                                             @click.stop="removeElective(day, period)"
-                                            class="absolute top-1 right-1 p-1 rounded-full bg-red-100 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 interactive-press"
+                                            class="absolute top-1 right-1 p-1 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 dark:hover:bg-red-800/50 interactive-press"
                                         >
                                             <X :size="12" />
                                         </button>
@@ -606,9 +606,9 @@ const getBreakContent = (cell: CellType) => {
                                         tabindex="0"
                                         role="button"
                                         :aria-label="`เพิ่มวิชาเลือก วัน${day} คาบ${period}`"
-                                        class="border border-slate-200 bg-purple-50 text-purple-700 p-2 hover:bg-purple-100 cursor-pointer transition-colors group relative h-24 align-middle interactive-press backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-inset"
+                                        class="border border-slate-200 dark:border-slate-700 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 p-2 hover:bg-purple-100 dark:hover:bg-purple-900/40 cursor-pointer transition-colors group relative h-24 align-middle interactive-press backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-inset"
                                     >
-                                        <div class="flex flex-col items-center justify-center h-full text-purple-400 group-hover:text-purple-600">
+                                        <div class="flex flex-col items-center justify-center h-full text-purple-400 dark:text-purple-500 group-hover:text-purple-600 dark:group-hover:text-purple-300">
                                             <Plus :size="20" />
                                             <span class="text-xs mt-1 font-medium tracking-wide">วิชาเลือก</span>
                                         </div>
@@ -633,8 +633,8 @@ const getBreakContent = (cell: CellType) => {
             @select-subject="handleSelectSubject"
         />
 
-        <footer class="w-full border-t border-slate-200 py-6 mt-12 z-20 relative">
-            <div class="container mx-auto px-4 text-center text-sm text-slate-500">
+        <footer class="w-full border-t border-slate-200 dark:border-slate-700 py-6 mt-12 z-20 relative">
+            <div class="container mx-auto px-4 text-center text-sm text-slate-500 dark:text-slate-400">
                 <p class="mt-1">CUDSeeReg © 2026</p>
             </div>
         </footer>

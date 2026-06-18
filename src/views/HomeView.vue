@@ -213,7 +213,7 @@ onUnmounted(() => {
                     <h1 class="text-5xl md:text-7xl font-kanit font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-rose-400 mb-3 drop-shadow-sm">
                         รายวิชาเรียน
                     </h1>
-                    <p class="text-slate-600 font-kanit font-normal text-lg tracking-wide">สำรวจและวางแผนวิชาเลือกที่เปิดสอน</p>
+                    <p class="text-slate-600 dark:text-slate-400 font-kanit font-normal text-lg tracking-wide">สำรวจและวางแผนวิชาเลือกที่เปิดสอน</p>
                 </div>
             </div>
 
@@ -228,7 +228,7 @@ onUnmounted(() => {
                             'flex-1 py-3 rounded-full text-sm font-semibold transition-all duration-300',
                             gradeValue === itemGrade
                                 ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-md'
-                                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                         ]"
                     >
                         ม.{{ itemGrade }}
@@ -237,12 +237,12 @@ onUnmounted(() => {
 
                 <!-- Search Bar -->
                 <div class="md:col-span-7 glass-card shadow-glass relative rounded-full overflow-hidden flex items-center z-20">
-                    <Search class="absolute left-6 w-5 h-5 text-slate-400" />
+                    <Search class="absolute left-6 w-5 h-5 text-slate-400 dark:text-slate-500" />
                     <input
                         type="text"
                         placeholder="ค้นหาชื่อวิชา, รหัสวิชา, หรืออาจารย์ผู้สอน..."
                         v-model="search"
-                        class="w-full pl-14 pr-6 py-4 bg-transparent text-slate-800 placeholder-slate-400 focus:outline-none text-base border-none ring-0 outline-none"
+                        class="w-full pl-14 pr-6 py-4 bg-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-base border-none ring-0 outline-none"
                     />
                 </div>
             </div>
@@ -258,7 +258,7 @@ onUnmounted(() => {
                     class="col-span-1 w-full h-full relative z-10 stagger-item"
                     :style="{ animationDelay: `${index * 0.05}s` }"
                 >
-                    <TiltCard class="w-full h-full glass-card hover:border-pink-300 transition-colors">
+                    <TiltCard class="w-full h-full glass-card hover:border-pink-300 dark:hover:border-pink-700/50 transition-colors">
                         <SubjectCard
                             :subject="subject"
                             :description="descriptions[subject.code] || ''"
@@ -271,7 +271,7 @@ onUnmounted(() => {
         </main>
 
         <footer class="glass-card border-t border-white/20 py-6 mt-12">
-            <div class="container mx-auto px-4 text-center text-sm text-slate-600">
+            <div class="container mx-auto px-4 text-center text-sm text-slate-600 dark:text-slate-400">
                 <p class="mt-1">CUDSeeReg © 2026</p>
             </div>
         </footer>
@@ -281,13 +281,13 @@ onUnmounted(() => {
             <div
                 v-if="modalData && isMounted"
                 :class="modalData.anchor && !isMobile
-                    ? 'modal-overlay fixed inset-0 z-[100] bg-black/20'
-                    : 'modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4'"
+                    ? 'modal-overlay fixed inset-0 z-[100] bg-black/20 dark:bg-black/40'
+                    : 'modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/50 dark:bg-black/70 p-4'"
                 @click="closeModal"
             >
                 <div
                     v-if="!modalData.anchor || isMobile"
-                    class="modal-content bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/40"
+                    class="modal-content bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/40 dark:border-slate-700"
                     @click.stop
                 >
                     <ModalContent
@@ -301,7 +301,7 @@ onUnmounted(() => {
                 <div
                     v-else
                     ref="modalPanelRef"
-                    class="modal-content bg-white rounded-2xl p-6 shadow-2xl border border-white/40"
+                    class="modal-content bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-2xl border border-white/40 dark:border-slate-700"
                     :style="modalPositionStyle"
                     @click.stop
                 >

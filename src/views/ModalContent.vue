@@ -28,35 +28,35 @@ const currentGroup = computed(() => {
     <div v-if="data && currentGroup">
         <div class="flex justify-between items-start mb-4">
             <div>
-                <div class="text-sm font-mono text-pink-600 mb-1">{{ data.subject.code }}</div>
-                <h3 class="text-xl font-bold text-slate-900">{{ data.subject.name }}</h3>
+                <div class="text-sm font-mono text-pink-600 dark:text-pink-400 mb-1">{{ data.subject.code }}</div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ data.subject.name }}</h3>
             </div>
             <button
                 @click="emit('close')"
-                class="text-slate-400 hover:text-slate-600 text-2xl leading-none interactive-press"
+                class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 text-2xl leading-none interactive-press"
             >
                 ×
             </button>
         </div>
 
         <div class="space-y-3 text-sm">
-            <div class="grid grid-cols-2 gap-x-4 gap-y-2 pb-3 border-b border-slate-100">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-2 pb-3 border-b border-slate-100 dark:border-slate-700">
                 <div>
-                    <span class="text-slate-500 text-xs uppercase tracking-wider font-semibold">หน่วยกิต</span>
-                    <div class="font-medium text-slate-800">{{ data.subject.credit }}</div>
+                    <span class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">หน่วยกิต</span>
+                    <div class="font-medium text-slate-800 dark:text-slate-200">{{ data.subject.credit }}</div>
                 </div>
                 <div v-if="currentGroup.classPerWeek">
-                    <span class="text-slate-500 text-xs uppercase tracking-wider font-semibold">ชม./สัปดาห์</span>
-                    <div class="font-medium text-slate-800">{{ currentGroup.classPerWeek }}</div>
+                    <span class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">ชม./สัปดาห์</span>
+                    <div class="font-medium text-slate-800 dark:text-slate-200">{{ currentGroup.classPerWeek }}</div>
                 </div>
                 <div v-if="currentGroup.enrollment" class="col-span-2">
-                    <span class="text-slate-500 text-xs uppercase tracking-wider font-semibold">เปิดรับ</span>
-                    <div class="font-medium text-slate-800">{{ currentGroup.enrollment }}</div>
+                    <span class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">เปิดรับ</span>
+                    <div class="font-medium text-slate-800 dark:text-slate-200">{{ currentGroup.enrollment }}</div>
                 </div>
             </div>
 
             <div>
-                <div class="font-bold text-slate-800 mb-2">กลุ่มเรียน:</div>
+                <div class="font-bold text-slate-800 dark:text-slate-200 mb-2">กลุ่มเรียน:</div>
                 <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                     <div
                         v-for="(group, idx) in data.subject.groups"
@@ -64,17 +64,17 @@ const currentGroup = computed(() => {
                         :class="[
                             'p-3 rounded-lg border cursor-pointer transition-all duration-200',
                             idx === data.groupIndex
-                                ? 'bg-pink-50 border-pink-200 ring-1 ring-pink-200'
-                                : 'bg-slate-50 border-slate-100 hover:bg-white hover:border-pink-100 hover:shadow-sm'
+                                ? 'bg-pink-50 dark:bg-pink-900/30 border-pink-200 dark:border-pink-800 ring-1 ring-pink-200 dark:ring-pink-800'
+                                : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-700 hover:border-pink-100 dark:hover:border-pink-900/50 hover:shadow-sm dark:hover:shadow-none'
                         ]"
                         @click="emit('select-group', idx)"
                     >
                         <div class="flex justify-between items-start mb-1">
                             <div>
-                                <span class="font-semibold text-pink-700">กลุ่ม {{ group.group }}</span>
-                                <span class="text-slate-600 ml-2 text-sm">{{ group.instructor }}</span>
+                                <span class="font-semibold text-pink-700 dark:text-pink-400">กลุ่ม {{ group.group }}</span>
+                                <span class="text-slate-600 dark:text-slate-400 ml-2 text-sm">{{ group.instructor }}</span>
                             </div>
-                            <div class="text-xs font-medium text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-600">
                                 รับ {{ group.availableSeats }}
                             </div>
                         </div>
@@ -83,21 +83,21 @@ const currentGroup = computed(() => {
                                 <span
                                     v-for="(timeSlot, timeIndex) in group.parsedTimeSlots"
                                     :key="timeIndex"
-                                    :class="['px-2 py-1 rounded text-xs', dayColors[timeSlot.dayAbbrev] || 'bg-pink-100 text-pink-700']"
+                                    :class="['px-2 py-1 rounded text-xs', dayColors[timeSlot.dayAbbrev] || 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300']"
                                 >
                                     {{ timeSlot.dayAbbrev }}. {{ timeSlot.timeRange }}
                                 </span>
                             </template>
-                            <span v-else class="text-xs text-slate-400 italic">ไม่มีข้อมูลเวลา</span>
+                            <span v-else class="text-xs text-slate-400 dark:text-slate-500 italic">ไม่มีข้อมูลเวลา</span>
                         </div>
-                        <div v-if="group.note" class="text-xs text-amber-700 mt-2 bg-amber-50 p-1.5 rounded border border-amber-100">{{ group.note }}</div>
+                        <div v-if="group.note" class="text-xs text-amber-700 dark:text-amber-400 mt-2 bg-amber-50 dark:bg-amber-900/20 p-1.5 rounded border border-amber-100 dark:border-amber-900/40">{{ group.note }}</div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="(descriptions[data.subject.code] || data.description)?.trim()" class="pt-2 border-t border-slate-200">
-                <span class="font-medium text-slate-700">รายละเอียด:</span>
-                <p class="text-slate-600 mt-1 leading-relaxed">{{ descriptions[data.subject.code] || data.description }}</p>
+            <div v-if="(descriptions[data.subject.code] || data.description)?.trim()" class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                <span class="font-medium text-slate-700 dark:text-slate-300">รายละเอียด:</span>
+                <p class="text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">{{ descriptions[data.subject.code] || data.description }}</p>
             </div>
         </div>
     </div>
