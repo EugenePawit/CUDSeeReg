@@ -271,9 +271,9 @@ onUnmounted(() => {
         </main>
 
         <footer class="glass-card border-t border-white/20 py-6 mt-12">
-            <div class="container mx-auto px-4 text-center text-sm text-slate-600 dark:text-slate-400 flex flex-col items-center justify-center gap-4">
+            <div class="container mx-auto px-4 text-center text-sm text-slate-600 dark:text-slate-400 flex items-center justify-center gap-3">
+                <span>CUDSeeReg © 2026</span>
                 <ThemeToggle />
-                <p class="mt-1">CUDSeeReg © 2026</p>
             </div>
         </footer>
 

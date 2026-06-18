@@ -635,9 +635,9 @@ const getBreakContent = (cell: CellType) => {
         />
 
         <footer class="w-full border-t border-slate-200 dark:border-slate-700 py-6 mt-12 z-20 relative">
-            <div class="container mx-auto px-4 text-center text-sm text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center gap-4">
+            <div class="container mx-auto px-4 text-center text-sm text-slate-500 dark:text-slate-400 flex items-center justify-center gap-3">
+                <span>CUDSeeReg © 2026</span>
                 <ThemeToggle />
-                <p class="mt-1">CUDSeeReg © 2026</p>
             </div>
         </footer>
     </div>
