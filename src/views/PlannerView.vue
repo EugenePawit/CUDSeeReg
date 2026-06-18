@@ -346,7 +346,7 @@ const handleCopyShareLink = async () => {
         return;
     }
 
-    const url = `${window.location.origin}/planner?s=${token}`;
+    const url = `${window.location.origin}/?s=${token}`;
 
     try {
         await navigator.clipboard.writeText(url);

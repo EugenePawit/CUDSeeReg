@@ -16,8 +16,8 @@ const navY = computed(() => Math.min(scrollY.value * 0.1, 10));
 const navBg = computed(() => scrollY.value > 100 ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0)');
 const navBlur = computed(() => scrollY.value > 100 ? 'blur(24px)' : 'blur(0px)');
 
-const isHome = computed(() => route.path === '/');
-const isPlanner = computed(() => route.path === '/planner');
+const isSearch = computed(() => route.name === 'search');
+const isPlanner = computed(() => route.name === 'planner');
 
 // MagneticButton component
 const MagneticButton = defineComponent({
@@ -82,10 +82,10 @@ const MagneticButton = defineComponent({
             <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar overflow-y-hidden">
                 <MagneticButton>
                     <RouterLink
-                        to="/"
+                        to="/search"
                         :class="[
                             'px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
-                            isHome ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            isSearch ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                         ]"
                     >
                         ค้นหาวิชา
@@ -93,7 +93,7 @@ const MagneticButton = defineComponent({
                 </MagneticButton>
                 <MagneticButton>
                     <RouterLink
-                        to="/planner"
+                        to="/"
                         :class="[
                             'px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
                             isPlanner ? 'bg-pink-100 text-pink-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'

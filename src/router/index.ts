@@ -6,14 +6,14 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            name: 'home',
-            component: HomeView,
-        },
-        {
-            path: '/planner',
-            alias: '/p',
+            alias: ['/planner', '/p'],
             name: 'planner',
             component: () => import('@/views/PlannerView.vue'),
+        },
+        {
+            path: '/search',
+            name: 'search',
+            component: HomeView,
         },
     ],
 });
