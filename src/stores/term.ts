@@ -31,6 +31,16 @@ export const useTermStore = defineStore('term', {
     getters: {
         currentTerm: (state): Term =>
             state.terms.find(t => t.id === state.activeTerm) ?? state.terms[0],
+
+        // The term that the live CUD data set represents. Falls back to the
+        // first term if no term is explicitly marked default.
+        defaultTermId: (state): string =>
+            (state.terms.find(t => t.isDefault) ?? state.terms[0])?.id ?? '',
+
+        // True when the active term is the one the live data belongs to.
+        isLiveDataTerm(): boolean {
+            return this.activeTerm === this.defaultTermId;
+        },
     },
 
     actions: {

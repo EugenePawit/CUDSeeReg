@@ -137,6 +137,50 @@ const deleteSubject = (index: number) => {
     adminStore.deleteSubject(subjectsTermId.value, subjectsGrade.value, index);
 };
 
+// Elective class-time slots available for the selected grade, derived from the
+// elective cells of every timetable for that grade. Contiguous elective periods
+// on the same day are grouped into a single block (e.g. "พฤหัสบดี 5-6").
+const electiveSlotOptions = computed(() => {
+    const grade = subjectsGrade.value;
+    const seen = new Set<string>();
+    const result: { value: string; sort: number }[] = [];
+    const timetables = Object.values(allTimetables.value).filter((tt) => String(tt.grade) === grade);
+
+    DAYS.forEach((day, dayIndex) => {
+        for (const tt of timetables) {
+            const sched = tt.schedule[day] ?? {};
+            let run: number[] = [];
+            const flush = () => {
+                if (run.length === 0) return;
+                const start = run[0];
+                const end = run[run.length - 1];
+                const thaiDay = DAY_NAMES_TH[day];
+                const value = start === end ? `${thaiDay} ${start}` : `${thaiDay} ${start}-${end}`;
+                if (!seen.has(value)) {
+                    seen.add(value);
+                    result.push({ value, sort: dayIndex * 100 + start });
+                }
+                run = [];
+            };
+            for (const period of PERIODS) {
+                if (sched[period]?.type === 'elective') run.push(period);
+                else flush();
+            }
+            flush();
+        }
+    });
+
+    return result.sort((a, b) => a.sort - b.sort).map((o) => o.value);
+});
+
+// Ensure an existing/custom class time is still selectable when editing.
+const classtimeOptions = computed(() => {
+    const opts = [...electiveSlotOptions.value];
+    const current = subjectForm.classtime;
+    if (current && !opts.includes(current)) opts.unshift(current);
+    return opts;
+});
+
 // ─── Subject Import ──────────────────────────────────────────────────────────
 const subjectFileRef = ref<HTMLInputElement | null>(null);
 const subjectImportMsg = ref('');
@@ -702,7 +746,31 @@ const handleImport = (e: Event) => {
                                         { key: 'credit', label: 'Credits', placeholder: '1.0' },
                                         { key: 'group', label: 'Group', placeholder: '1' },
                                         { key: 'instructor', label: 'Instructor', placeholder: 'Instructor name' },
-                                        { key: 'classtime', label: 'Class time', placeholder: 'e.g. จ.7-8' },
+                                    ] as const)" :key="field.key" class="flex flex-col gap-1">
+                                        <label class="text-xs text-slate-600 dark:text-slate-400">{{ field.label }}</label>
+                                        <input
+                                            v-model="(subjectForm as any)[field.key]"
+                                            :placeholder="field.placeholder"
+                                            class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+                                        />
+                                    </div>
+
+                                    <!-- Class time: elective slots for the selected grade -->
+                                    <div class="flex flex-col gap-1">
+                                        <label class="text-xs text-slate-600 dark:text-slate-400">Class time (elective slot)</label>
+                                        <select
+                                            v-model="subjectForm.classtime"
+                                            class="appearance-none px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 cursor-pointer"
+                                        >
+                                            <option value="" disabled>Select a slot…</option>
+                                            <option v-for="slot in classtimeOptions" :key="slot" :value="slot">{{ slot }}</option>
+                                        </select>
+                                        <p v-if="electiveSlotOptions.length === 0" class="text-[11px] text-amber-600 dark:text-amber-400">
+                                            No elective slots defined for M.{{ subjectsGrade }} timetables.
+                                        </p>
+                                    </div>
+
+                                    <div v-for="field in ([
                                         { key: 'classroom', label: 'Classroom', placeholder: 'e.g. Room 101' },
                                         { key: 'enrollment', label: 'Capacity', placeholder: '30' },
                                         { key: 'electiveQuantity', label: 'Elective seats', placeholder: '30' },

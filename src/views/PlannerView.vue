@@ -145,8 +145,11 @@ watch([baseTimetable, () => termStore.activeTerm], async ([newBaseTimetable]) =>
 
     try {
         const data = await fetchSubjects(newBaseTimetable.grade);
+        // Live CUD data only applies to its published (default) term; other
+        // terms rely solely on admin-managed subjects.
+        const liveData = termStore.isLiveDataTerm ? data : [];
         const customRaw = adminStore.getSubjects(termStore.activeTerm, String(newBaseTimetable.grade));
-        subjects.value = flattenSubjects([...data, ...customRaw]);
+        subjects.value = flattenSubjects([...liveData, ...customRaw]);
         subjectsGrade.value = newBaseTimetable.grade;
     } catch (err) {
         console.error('Failed to fetch subjects:', err);
