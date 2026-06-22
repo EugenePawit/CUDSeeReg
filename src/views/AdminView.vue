@@ -3,8 +3,9 @@ import { ref, computed, reactive, watch } from 'vue';
 import {
     Lock, LogOut, Plus, Trash2, Edit2, Save, X, Check,
     Settings, BookOpen, CalendarDays, Layout,
-    Eye, EyeOff, Upload, FileDown,
+    Eye, EyeOff, Upload, FileDown, Search,
 } from 'lucide-vue-next';
+import { fetchSubjects } from '@/lib/dataFetcher';
 import { useAdminStore } from '@/stores/admin';
 import { useTermStore } from '@/stores/term';
 import { BASE_TIMETABLES, DAYS, DAY_NAMES_TH, PERIODS } from '@/lib/baseTimetables';
@@ -86,6 +87,13 @@ const subjectsTermId = ref(termStore.activeTerm);
 const subjectsGrade = ref('6');
 const showAddSubjectForm = ref(false);
 const editingSubjectIndex = ref<number | null>(null);
+const subjectsLoading = ref(false);
+const liveSubjects = ref<Subject[]>([]);
+
+// Search and filter state
+const subjectSearch = ref('');
+const subjectFilterSlot = ref('');
+const subjectFilterSource = ref<'all' | 'live' | 'custom'>('all');
 
 const blankSubject = (): Subject => ({
     order: Date.now(),
@@ -105,15 +113,80 @@ const blankSubject = (): Subject => ({
 
 const subjectForm = reactive(blankSubject());
 
+// Admin-managed subjects for the selected term+grade (used for CRUD indexing).
 const customSubjectsList = computed(() =>
     adminStore.getSubjects(subjectsTermId.value, subjectsGrade.value)
 );
 
-// Pull the selected term+grade subjects from the API (no-op offline). Also
-// re-runs once the backend finishes hydrating (dataRevision).
+// Merged list: live CUD catalog subjects (default term only) + custom subjects.
+// Re-computes reactively when the store changes so CRUD updates show instantly.
+const allSubjectsRaw = computed(() => [
+    ...liveSubjects.value.map((s) => ({ subject: s, isCustom: false as const, customIndex: undefined as number | undefined })),
+    ...customSubjectsList.value.map((s, i) => ({ subject: s, isCustom: true as const, customIndex: i as number | undefined })),
+]);
+
+// Unique time slots across all subjects, for the filter dropdown.
+const availableSlots = computed(() => {
+    const slots = new Set<string>();
+    for (const { subject } of allSubjectsRaw.value) {
+        const ct = subject.classtime;
+        if (Array.isArray(ct)) ct.forEach((c) => c && slots.add(c));
+        else if (ct) slots.add(ct);
+    }
+    return [...slots].sort();
+});
+
+// Subjects visible after applying search + source + slot filters.
+const filteredSubjectsList = computed(() => {
+    const q = subjectSearch.value.trim().toLowerCase();
+    return allSubjectsRaw.value.filter(({ subject, isCustom }) => {
+        if (subjectFilterSource.value === 'live' && isCustom) return false;
+        if (subjectFilterSource.value === 'custom' && !isCustom) return false;
+        if (subjectFilterSlot.value) {
+            const ct = Array.isArray(subject.classtime)
+                ? subject.classtime.join(' ')
+                : subject.classtime || '';
+            if (!ct.includes(subjectFilterSlot.value)) return false;
+        }
+        if (q) {
+            const instructor = Array.isArray(subject.instructor)
+                ? subject.instructor.join(' ')
+                : subject.instructor || '';
+            const haystack = `${subject.code} ${subject.name} ${instructor}`.toLowerCase();
+            if (!haystack.includes(q)) return false;
+        }
+        return true;
+    });
+});
+
+const getSubjectClasstime = (s: Subject): string => {
+    if (Array.isArray(s.classtime)) return s.classtime.join(', ');
+    return s.classtime || '';
+};
+
+const getSubjectInstructor = (s: Subject): string => {
+    if (Array.isArray(s.instructor)) return s.instructor.join(', ');
+    return s.instructor || '';
+};
+
+// Pull subjects from API + live CUD catalog when term/grade/revision changes.
 watch(
     [subjectsTermId, subjectsGrade, () => termStore.dataRevision],
-    () => adminStore.ensureSubjects(subjectsTermId.value, subjectsGrade.value),
+    async () => {
+        subjectsLoading.value = true;
+        await adminStore.ensureSubjects(subjectsTermId.value, subjectsGrade.value);
+        const isDefaultTerm = subjectsTermId.value === termStore.defaultTermId;
+        if (isDefaultTerm) {
+            try {
+                liveSubjects.value = await fetchSubjects(Number(subjectsGrade.value));
+            } catch {
+                liveSubjects.value = [];
+            }
+        } else {
+            liveSubjects.value = [];
+        }
+        subjectsLoading.value = false;
+    },
     { immediate: true },
 );
 
@@ -123,10 +196,10 @@ const resetSubjectForm = () => {
     editingSubjectIndex.value = null;
 };
 
-const startEditSubject = (index: number) => {
-    const s = customSubjectsList.value[index];
+const startEditSubject = (customIndex: number) => {
+    const s = customSubjectsList.value[customIndex];
     Object.assign(subjectForm, JSON.parse(JSON.stringify(s)));
-    editingSubjectIndex.value = index;
+    editingSubjectIndex.value = customIndex;
     showAddSubjectForm.value = true;
 };
 
@@ -141,8 +214,8 @@ const saveSubject = () => {
     resetSubjectForm();
 };
 
-const deleteSubject = (index: number) => {
-    adminStore.deleteSubject(subjectsTermId.value, subjectsGrade.value, index);
+const deleteSubject = (customIndex: number) => {
+    adminStore.deleteSubject(subjectsTermId.value, subjectsGrade.value, customIndex);
 };
 
 // Elective class-time slots available for the selected grade, derived from the
@@ -644,10 +717,10 @@ const handleImport = (e: Event) => {
                 <!-- ═══ SUBJECTS TAB ════════════════════════════════════════════════ -->
                 <div v-else-if="activeTab === 'subjects'" class="space-y-4">
                     <div class="glass-card p-6 shadow-glass">
-                        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-5">Manage additional subjects</h2>
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-5">Subjects</h2>
 
-                        <!-- Selectors -->
-                        <div class="flex flex-wrap gap-4 mb-6">
+                        <!-- Selectors + Add button -->
+                        <div class="flex flex-wrap gap-4 mb-5">
                             <div class="flex flex-col gap-1.5">
                                 <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Term</label>
                                 <select
@@ -678,8 +751,47 @@ const handleImport = (e: Event) => {
                             </div>
                         </div>
 
+                        <!-- Search & Filters -->
+                        <div class="flex flex-wrap gap-3 mb-5">
+                            <div class="relative flex-1 min-w-[180px]">
+                                <Search :size="15" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                <input
+                                    v-model="subjectSearch"
+                                    type="text"
+                                    placeholder="Search code, name, instructor…"
+                                    class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+                                />
+                            </div>
+                            <select
+                                v-model="subjectFilterSlot"
+                                class="appearance-none px-3 py-2.5 pr-7 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 cursor-pointer"
+                            >
+                                <option value="">All time slots</option>
+                                <option v-for="slot in availableSlots" :key="slot" :value="slot">{{ slot }}</option>
+                            </select>
+                            <div class="flex items-center gap-1 p-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                                <button
+                                    v-for="opt in ([
+                                        { value: 'all', label: 'All' },
+                                        { value: 'live', label: 'CUD Catalog' },
+                                        { value: 'custom', label: 'Custom' },
+                                    ] as const)"
+                                    :key="opt.value"
+                                    @click="subjectFilterSource = opt.value"
+                                    :class="[
+                                        'px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
+                                        subjectFilterSource === opt.value
+                                            ? 'bg-pink-500 text-white shadow-sm'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                    ]"
+                                >
+                                    {{ opt.label }}
+                                </button>
+                            </div>
+                        </div>
+
                         <!-- Import panel -->
-                        <div class="mb-6 p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+                        <div class="mb-5 p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
                             <div class="flex items-start gap-3 mb-4">
                                 <div class="w-9 h-9 rounded-lg bg-pink-100 dark:bg-pink-900/40 flex items-center justify-center shrink-0">
                                     <Upload :size="17" class="text-pink-600 dark:text-pink-400" />
@@ -692,48 +804,22 @@ const handleImport = (e: Event) => {
                                     </p>
                                 </div>
                             </div>
-
                             <div class="flex flex-wrap gap-3">
-                                <button
-                                    @click="subjectFileRef?.click()"
-                                    class="btn-primary text-sm flex items-center gap-2 interactive-press"
-                                >
+                                <button @click="subjectFileRef?.click()" class="btn-primary text-sm flex items-center gap-2 interactive-press">
                                     <Upload :size="15" /> Choose file
                                 </button>
-                                <button
-                                    @click="downloadXlsxTemplate"
-                                    class="btn-secondary text-sm flex items-center gap-2 interactive-press"
-                                >
+                                <button @click="downloadXlsxTemplate" class="btn-secondary text-sm flex items-center gap-2 interactive-press">
                                     <FileDown :size="15" /> Example .xlsx
                                 </button>
-                                <button
-                                    @click="downloadCsvTemplate"
-                                    class="btn-secondary text-sm flex items-center gap-2 interactive-press"
-                                >
+                                <button @click="downloadCsvTemplate" class="btn-secondary text-sm flex items-center gap-2 interactive-press">
                                     <FileDown :size="15" /> Example .csv
                                 </button>
-                                <input
-                                    ref="subjectFileRef"
-                                    type="file"
-                                    accept=".csv,.xlsx,.xls"
-                                    class="hidden"
-                                    @change="handleSubjectImport"
-                                />
+                                <input ref="subjectFileRef" type="file" accept=".csv,.xlsx,.xls" class="hidden" @change="handleSubjectImport" />
                             </div>
-
                             <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">
-                                Columns:
-                                <span class="font-mono">{{ IMPORT_COLUMNS.join(', ') }}</span>
+                                Columns: <span class="font-mono">{{ IMPORT_COLUMNS.join(', ') }}</span>
                             </p>
-                            <p
-                                v-if="subjectImportMsg"
-                                :class="[
-                                    'text-xs mt-2 px-3 py-2 rounded-lg',
-                                    subjectImportError
-                                        ? 'bg-red-50 dark:bg-red-900/20 text-red-500'
-                                        : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'
-                                ]"
-                            >
+                            <p v-if="subjectImportMsg" :class="['text-xs mt-2 px-3 py-2 rounded-lg', subjectImportError ? 'bg-red-50 dark:bg-red-900/20 text-red-500' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400']">
                                 {{ subjectImportMsg }}
                             </p>
                         </div>
@@ -766,8 +852,6 @@ const handleImport = (e: Event) => {
                                             class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
                                         />
                                     </div>
-
-                                    <!-- Class time: elective slots for the selected grade -->
                                     <div class="flex flex-col gap-1">
                                         <label class="text-xs text-slate-600 dark:text-slate-400">Class time (elective slot)</label>
                                         <select
@@ -781,7 +865,6 @@ const handleImport = (e: Event) => {
                                             No elective slots defined for M.{{ subjectsGrade }} timetables.
                                         </p>
                                     </div>
-
                                     <div v-for="field in ([
                                         { key: 'classroom', label: 'Classroom', placeholder: 'e.g. Room 101' },
                                         { key: 'enrollment', label: 'Capacity', placeholder: '30' },
@@ -806,48 +889,73 @@ const handleImport = (e: Event) => {
                             </div>
                         </Transition>
 
-                        <!-- Subject List -->
-                        <div v-if="customSubjectsList.length === 0" class="text-center py-10 text-slate-400 dark:text-slate-500">
-                            <BookOpen :size="32" class="mx-auto mb-2 opacity-40" />
-                            <p class="text-sm">No additional subjects for M.{{ subjectsGrade }}, term {{ subjectsTermId }} yet.</p>
+                        <!-- Subject list (all: live catalog + custom) -->
+                        <div v-if="subjectsLoading" class="flex justify-center py-10">
+                            <div class="animate-spin w-8 h-8 border-2 border-pink-500/30 border-t-pink-500 rounded-full" />
                         </div>
-                        <div v-else class="overflow-x-auto">
-                            <table class="w-full text-sm min-w-[640px]">
-                                <thead>
-                                    <tr class="text-left border-b border-slate-200 dark:border-slate-700">
-                                        <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Code</th>
-                                        <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Name</th>
-                                        <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Credits</th>
-                                        <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Group</th>
-                                        <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Time</th>
-                                        <th class="pb-2 font-medium text-slate-600 dark:text-slate-400"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr
-                                        v-for="(subject, idx) in customSubjectsList"
-                                        :key="idx"
-                                        class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40"
-                                    >
-                                        <td class="py-3 pr-4 font-mono text-xs text-slate-500 dark:text-slate-400">{{ subject.code }}</td>
-                                        <td class="py-3 pr-4 font-medium text-slate-800 dark:text-slate-200">{{ subject.name }}</td>
-                                        <td class="py-3 pr-4 text-slate-600 dark:text-slate-400">{{ subject.credit }}</td>
-                                        <td class="py-3 pr-4 text-slate-600 dark:text-slate-400">{{ subject.group }}</td>
-                                        <td class="py-3 pr-4 text-slate-500 dark:text-slate-500 text-xs">{{ subject.classtime }}</td>
-                                        <td class="py-3">
-                                            <div class="flex gap-1">
-                                                <button @click="startEditSubject(idx)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                                                    <Edit2 :size="14" />
-                                                </button>
-                                                <button @click="deleteSubject(idx)" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-                                                    <Trash2 :size="14" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <template v-else>
+                            <div v-if="filteredSubjectsList.length === 0" class="text-center py-10 text-slate-400 dark:text-slate-500">
+                                <BookOpen :size="32" class="mx-auto mb-2 opacity-40" />
+                                <p class="text-sm">
+                                    {{ allSubjectsRaw.length === 0
+                                        ? `No subjects for M.${subjectsGrade}, term ${subjectsTermId} yet.`
+                                        : 'No subjects match your search or filters.' }}
+                                </p>
+                            </div>
+                            <template v-else>
+                                <p class="text-xs text-slate-400 dark:text-slate-500 mb-2">
+                                    Showing {{ filteredSubjectsList.length }} of {{ allSubjectsRaw.length }} subjects
+                                </p>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm min-w-[760px]">
+                                        <thead>
+                                            <tr class="text-left border-b border-slate-200 dark:border-slate-700">
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Code</th>
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Name</th>
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Credits</th>
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Instructor</th>
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Time</th>
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Source</th>
+                                                <th class="pb-2 font-medium text-slate-600 dark:text-slate-400"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr
+                                                v-for="item in filteredSubjectsList"
+                                                :key="`${item.subject.code}-${item.isCustom ? 'c' + item.customIndex : 'l'}`"
+                                                class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                                            >
+                                                <td class="py-3 pr-4 font-mono text-xs text-slate-500 dark:text-slate-400">{{ item.subject.code }}</td>
+                                                <td class="py-3 pr-4 font-medium text-slate-800 dark:text-slate-200">{{ item.subject.name }}</td>
+                                                <td class="py-3 pr-4 text-slate-600 dark:text-slate-400">{{ item.subject.credit }}</td>
+                                                <td class="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs max-w-[160px] truncate">{{ getSubjectInstructor(item.subject) }}</td>
+                                                <td class="py-3 pr-4 text-slate-500 dark:text-slate-500 text-xs">{{ getSubjectClasstime(item.subject) }}</td>
+                                                <td class="py-3 pr-4">
+                                                    <span :class="[
+                                                        'text-[10px] font-medium px-2 py-0.5 rounded-full',
+                                                        item.isCustom
+                                                            ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400'
+                                                            : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                                                    ]">
+                                                        {{ item.isCustom ? 'Custom' : 'CUD Catalog' }}
+                                                    </span>
+                                                </td>
+                                                <td class="py-3">
+                                                    <div v-if="item.isCustom" class="flex gap-1">
+                                                        <button @click="startEditSubject(item.customIndex!)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                            <Edit2 :size="14" />
+                                                        </button>
+                                                        <button @click="deleteSubject(item.customIndex!)" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                                            <Trash2 :size="14" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                        </template>
                     </div>
                 </div>
 
