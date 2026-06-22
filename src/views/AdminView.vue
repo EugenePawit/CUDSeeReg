@@ -87,8 +87,10 @@ const subjectsTermId = ref(termStore.activeTerm);
 const subjectsGrade = ref('6');
 const showAddSubjectForm = ref(false);
 const editingSubjectIndex = ref<number | null>(null);
+const editingSubject = ref<Subject | null>(null); // For live catalog subjects
 const subjectsLoading = ref(false);
 const liveSubjects = ref<Subject[]>([]);
+const deletedCodes = ref<Set<string>>(new Set()); // Deleted subject codes (for filtering)
 
 // Search and filter state
 const subjectSearch = ref('');
@@ -118,11 +120,14 @@ const customSubjectsList = computed(() =>
 );
 
 // Merged list: live CUD catalog subjects (default term only) + custom subjects.
-// Re-computes reactively when the store changes so CRUD updates show instantly.
-const allSubjectsRaw = computed(() => [
-    ...liveSubjects.value.map((s) => ({ subject: s, isCustom: false as const, customIndex: undefined as number | undefined })),
-    ...customSubjectsList.value.map((s, i) => ({ subject: s, isCustom: true as const, customIndex: i as number | undefined })),
-]);
+// Filters out deleted codes from the live catalog. Re-computes reactively when the store changes.
+const allSubjectsRaw = computed(() => {
+    const live = liveSubjects.value
+        .filter((s) => !deletedCodes.value.has(s.code))
+        .map((s) => ({ subject: s, isCustom: false as const, customIndex: undefined as number | undefined }));
+    const custom = customSubjectsList.value.map((s, i) => ({ subject: s, isCustom: true as const, customIndex: i as number | undefined }));
+    return [...live, ...custom];
+});
 
 // Unique time slots across all subjects, for the filter dropdown.
 const availableSlots = computed(() => {
@@ -172,6 +177,16 @@ watch(
     async () => {
         subjectsLoading.value = true;
         await adminStore.ensureSubjects(subjectsTermId.value, subjectsGrade.value);
+
+        // Load deleted codes for this term+grade
+        const deletedKey = `cudseereg_deleted_codes_${subjectsTermId.value}_${subjectsGrade.value}`;
+        try {
+            const stored = localStorage.getItem(deletedKey);
+            deletedCodes.value = stored ? new Set(JSON.parse(stored)) : new Set();
+        } catch {
+            deletedCodes.value = new Set();
+        }
+
         const isDefaultTerm = subjectsTermId.value === termStore.defaultTermId;
         if (isDefaultTerm) {
             try {
@@ -191,28 +206,49 @@ const resetSubjectForm = () => {
     Object.assign(subjectForm, blankSubject());
     showAddSubjectForm.value = false;
     editingSubjectIndex.value = null;
+    editingSubject.value = null;
 };
 
-const startEditSubject = (customIndex: number) => {
-    const s = customSubjectsList.value[customIndex];
-    Object.assign(subjectForm, JSON.parse(JSON.stringify(s)));
-    editingSubjectIndex.value = customIndex;
+const startEditSubject = (customIndex: number | null, subject?: Subject) => {
+    if (customIndex !== null) {
+        const s = customSubjectsList.value[customIndex];
+        Object.assign(subjectForm, JSON.parse(JSON.stringify(s)));
+        editingSubjectIndex.value = customIndex;
+        editingSubject.value = null;
+    } else if (subject) {
+        Object.assign(subjectForm, JSON.parse(JSON.stringify(subject)));
+        editingSubjectIndex.value = null;
+        editingSubject.value = subject;
+    }
     showAddSubjectForm.value = true;
 };
 
 const saveSubject = () => {
     const s: Subject = JSON.parse(JSON.stringify(subjectForm));
-    s.order = editingSubjectIndex.value !== null ? s.order : Date.now();
     if (editingSubjectIndex.value !== null) {
+        s.order = s.order;
         adminStore.updateSubject(subjectsTermId.value, subjectsGrade.value, editingSubjectIndex.value, s);
+    } else if (editingSubject.value) {
+        // Editing a live catalog subject - add as new custom subject
+        adminStore.addSubject(subjectsTermId.value, subjectsGrade.value, s);
     } else {
+        // Adding a new subject
+        s.order = Date.now();
         adminStore.addSubject(subjectsTermId.value, subjectsGrade.value, s);
     }
     resetSubjectForm();
 };
 
-const deleteSubject = (customIndex: number) => {
-    adminStore.deleteSubject(subjectsTermId.value, subjectsGrade.value, customIndex);
+const deleteSubject = (customIndex: number | null, subject?: Subject) => {
+    if (customIndex !== null) {
+        adminStore.deleteSubject(subjectsTermId.value, subjectsGrade.value, customIndex);
+    } else if (subject) {
+        // Delete a live catalog subject by adding its code to the deleted set
+        deletedCodes.value.add(subject.code);
+        // Persist to localStorage for this term+grade combination
+        const key = `cudseereg_deleted_codes_${subjectsTermId.value}_${subjectsGrade.value}`;
+        localStorage.setItem(key, JSON.stringify([...deletedCodes.value]));
+    }
 };
 
 // Elective class-time slots available for the selected grade, derived from the
@@ -813,7 +849,7 @@ const handleImport = (e: Event) => {
                         >
                             <div v-if="showAddSubjectForm" class="mb-6 p-5 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl">
                                 <h3 class="font-semibold text-sm text-pink-700 dark:text-pink-300 mb-4">
-                                    {{ editingSubjectIndex !== null ? 'Edit subject' : 'Add new subject' }}
+                                    {{ editingSubjectIndex !== null || editingSubject ? 'Edit subject' : 'Add new subject' }}
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                     <div v-for="field in ([
@@ -908,11 +944,11 @@ const handleImport = (e: Event) => {
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs max-w-[160px] truncate">{{ getSubjectInstructor(item.subject) }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-500 text-xs">{{ getSubjectClasstime(item.subject) }}</td>
                                                 <td class="py-3">
-                                                    <div v-if="item.isCustom" class="flex gap-1">
-                                                        <button @click="startEditSubject(item.customIndex!)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                    <div class="flex gap-1">
+                                                        <button @click="startEditSubject(item.customIndex ?? null, item.subject)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
                                                             <Edit2 :size="14" />
                                                         </button>
-                                                        <button @click="deleteSubject(item.customIndex!)" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                                        <button @click="deleteSubject(item.customIndex ?? null, item.subject)" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                                                             <Trash2 :size="14" />
                                                         </button>
                                                     </div>
