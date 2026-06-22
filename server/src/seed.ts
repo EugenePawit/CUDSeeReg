@@ -11,8 +11,8 @@ export async function seed(): Promise<void> {
     `;
     if (termCount === 0) {
         await sql`
-            INSERT INTO terms (id, label, year, semester, is_default)
-            VALUES ('2568/1', '2568/1', 2568, 1, true)
+            INSERT INTO terms (id, label, year, semester, is_default, "order")
+            VALUES ('2568/1', '2568/1', 2568, 1, true, 0)
         `;
         console.log('[seed] inserted default term 2568/1');
     }

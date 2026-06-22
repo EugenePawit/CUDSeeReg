@@ -21,8 +21,8 @@ app.get('/api/health', async (c) => {
 // ─── Terms ───────────────────────────────────────────────────────────────────
 app.get('/api/terms', async (c) => {
     const rows = await sql`
-        SELECT id, label, year, semester, is_default AS "isDefault"
-        FROM terms ORDER BY year, semester
+        SELECT id, label, year, semester, is_default AS "isDefault", "order"
+        FROM terms ORDER BY "order"
     `;
     return c.json(rows);
 });
@@ -34,9 +34,14 @@ app.post('/api/terms', async (c) => {
     }
     const existing = await sql`SELECT 1 FROM terms WHERE id = ${b.id}`;
     if (existing.length > 0) return c.json({ error: 'Term already exists' }, 409);
+
+    // Get the next order value
+    const [maxOrder] = await sql`SELECT COALESCE(MAX("order"), -1) + 1 AS next_order FROM terms`;
+    const nextOrder = (maxOrder as { next_order: number })?.next_order ?? 0;
+
     await sql`
-        INSERT INTO terms (id, label, year, semester, is_default)
-        VALUES (${b.id}, ${b.label ?? b.id}, ${b.year}, ${b.semester}, ${b.isDefault ?? false})
+        INSERT INTO terms (id, label, year, semester, is_default, "order")
+        VALUES (${b.id}, ${b.label ?? b.id}, ${b.year}, ${b.semester}, ${b.isDefault ?? false}, ${nextOrder})
     `;
     return c.json({ ok: true }, 201);
 });
