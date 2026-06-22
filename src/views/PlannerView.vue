@@ -132,7 +132,7 @@ const setTransientFeedback = (message: string) => {
     }, FEEDBACK_TIMEOUT_MS);
 };
 
-watch([baseTimetable, () => termStore.activeTerm], async ([newBaseTimetable]) => {
+watch([baseTimetable, () => termStore.activeTerm, () => termStore.dataRevision], async ([newBaseTimetable]) => {
     if (!newBaseTimetable) {
         subjects.value = [];
         subjectsGrade.value = null;
@@ -144,6 +144,7 @@ watch([baseTimetable, () => termStore.activeTerm], async ([newBaseTimetable]) =>
     subjectsGrade.value = null;
 
     try {
+        await adminStore.ensureSubjects(termStore.activeTerm, String(newBaseTimetable.grade));
         const data = await fetchSubjects(newBaseTimetable.grade);
         // Live CUD data only applies to its published (default) term; other
         // terms rely solely on admin-managed subjects.

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { api, isApiAvailable } from '@/lib/api';
 
 export interface Term {
     id: string;
@@ -25,7 +26,8 @@ export const useTermStore = defineStore('term', {
             const a = localStorage.getItem(ACTIVE_TERM_KEY);
             if (a) activeTerm = a;
         } catch {}
-        return { terms, activeTerm };
+        // Bumped after the API hydrates so data-loading watchers re-run.
+        return { terms, activeTerm, dataRevision: 0 };
     },
 
     getters: {
@@ -44,6 +46,24 @@ export const useTermStore = defineStore('term', {
     },
 
     actions: {
+        // Replace local terms with the server's set when the API is reachable.
+        // The active term is a client preference and is never sent to the server.
+        async hydrate() {
+            if (!isApiAvailable()) return;
+            try {
+                const terms = await api.listTerms();
+                if (terms.length > 0) {
+                    this.terms = terms;
+                    this._save();
+                    if (!this.terms.some(t => t.id === this.activeTerm)) {
+                        this.setActiveTerm(this.defaultTermId);
+                    }
+                }
+            } catch {
+                // keep localStorage state
+            }
+        },
+
         setActiveTerm(id: string) {
             if (this.terms.some(t => t.id === id)) {
                 this.activeTerm = id;
@@ -55,6 +75,7 @@ export const useTermStore = defineStore('term', {
             if (this.terms.some(t => t.id === term.id)) return false;
             this.terms.push({ ...term });
             this._save();
+            if (isApiAvailable()) api.createTerm({ ...term }).catch(() => {});
             return true;
         },
 
@@ -63,6 +84,7 @@ export const useTermStore = defineStore('term', {
             if (idx >= 0) {
                 this.terms[idx] = { ...this.terms[idx], ...updates };
                 this._save();
+                if (isApiAvailable()) api.updateTerm(id, updates).catch(() => {});
             }
         },
 
@@ -75,6 +97,7 @@ export const useTermStore = defineStore('term', {
                 localStorage.setItem(ACTIVE_TERM_KEY, this.activeTerm);
             }
             this._save();
+            if (isApiAvailable()) api.deleteTerm(id).catch(() => {});
         },
 
         _save() {

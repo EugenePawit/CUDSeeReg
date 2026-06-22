@@ -2,12 +2,16 @@
 import { ref, computed, onMounted, defineComponent, h } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useWindowScroll } from '@vueuse/core';
+import { bootstrapData } from '@/lib/bootstrap';
 const route = useRoute();
 const { y: scrollY } = useWindowScroll();
 const isMounted = ref(false);
 
 onMounted(() => {
     isMounted.value = true;
+    // Connect to the backend (if any) in the background; the UI already
+    // rendered from localStorage and updates reactively once data arrives.
+    void bootstrapData();
 });
 
 const navWidth = computed(() => scrollY.value > 100 ? '85%' : '100%');

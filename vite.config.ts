@@ -10,7 +10,12 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3000
+    port: 3000,
+    // Forward API calls to a locally running backend during development.
+    // If none is running, requests fail and the app falls back to localStorage.
+    proxy: {
+      '/api': { target: 'http://localhost:3001', changeOrigin: true },
+    },
   },
   build: {
     // Bump the warning limit: the only large chunk is xlsx, which is lazily

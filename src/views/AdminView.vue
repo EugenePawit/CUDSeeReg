@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, watch } from 'vue';
 import {
     Lock, LogOut, Plus, Trash2, Edit2, Save, X, Check,
     Settings, BookOpen, CalendarDays, Layout,
@@ -107,6 +107,14 @@ const subjectForm = reactive(blankSubject());
 
 const customSubjectsList = computed(() =>
     adminStore.getSubjects(subjectsTermId.value, subjectsGrade.value)
+);
+
+// Pull the selected term+grade subjects from the API (no-op offline). Also
+// re-runs once the backend finishes hydrating (dataRevision).
+watch(
+    [subjectsTermId, subjectsGrade, () => termStore.dataRevision],
+    () => adminStore.ensureSubjects(subjectsTermId.value, subjectsGrade.value),
+    { immediate: true },
 );
 
 const resetSubjectForm = () => {

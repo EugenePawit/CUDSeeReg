@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia';
 import type { Subject, BaseTimetable } from '@/types/subject';
+import { api, isApiAvailable, type StoredSubject } from '@/lib/api';
 
 const PASSWORD_KEY = 'cudseereg_admin_pw';
 const SESSION_KEY = 'cudseereg_admin_session';
 const CUSTOM_SUBJECTS_KEY = 'cudseereg_custom_subjects_v1';
 const CUSTOM_TIMETABLES_KEY = 'cudseereg_custom_timetables_v1';
 
-type SubjectsMap = Record<string, Record<string, Subject[]>>;
+// Subjects may carry a server row id (StoredSubject) once persisted to the API.
+type SubjectsMap = Record<string, Record<string, StoredSubject[]>>;
 
 function parseJson<T>(key: string, fallback: T): T {
     try {
@@ -56,37 +58,86 @@ export const useAdminStore = defineStore('admin', {
             return true;
         },
 
-        getSubjects(termId: string, grade: string): Subject[] {
+        getSubjects(termId: string, grade: string): StoredSubject[] {
             return this.customSubjects[termId]?.[grade] ?? [];
+        },
+
+        // Pull the authoritative subject list for a term+grade from the API
+        // (no-op offline). Views await this before reading getSubjects.
+        async ensureSubjects(termId: string, grade: string) {
+            if (!isApiAvailable()) return;
+            try {
+                const rows = await api.listSubjects(termId, grade);
+                if (!this.customSubjects[termId]) this.customSubjects[termId] = {};
+                this.customSubjects[termId][grade] = rows;
+                this._saveSubjects();
+            } catch {
+                // keep cached state
+            }
+        },
+
+        // Replace local timetables with the full server set (which already
+        // includes the seeded base timetables) when the API is reachable.
+        async hydrateTimetables() {
+            if (!isApiAvailable()) return;
+            try {
+                const list = await api.listTimetables();
+                const map: Record<string, BaseTimetable> = {};
+                for (const tt of list) map[tt.id] = tt;
+                this.customTimetables = map;
+                this._saveTimetables();
+            } catch {
+                // keep cached state
+            }
         },
 
         addSubject(termId: string, grade: string, subject: Subject) {
             if (!this.customSubjects[termId]) this.customSubjects[termId] = {};
             if (!this.customSubjects[termId][grade]) this.customSubjects[termId][grade] = [];
-            this.customSubjects[termId][grade].push(subject);
+            const stored: StoredSubject = { ...subject };
+            this.customSubjects[termId][grade].push(stored);
             this._saveSubjects();
+            if (isApiAvailable()) {
+                api.createSubject(termId, grade, subject)
+                    .then((saved) => {
+                        // Record the server id so later edits/deletes target the row.
+                        stored.id = saved.id;
+                        this._saveSubjects();
+                    })
+                    .catch(() => {});
+            }
         },
 
         updateSubject(termId: string, grade: string, index: number, subject: Subject) {
-            if (this.customSubjects[termId]?.[grade]?.[index] !== undefined) {
-                this.customSubjects[termId][grade][index] = subject;
-                this._saveSubjects();
+            const existing = this.customSubjects[termId]?.[grade]?.[index];
+            if (existing === undefined) return;
+            const stored: StoredSubject = { ...subject, id: existing.id };
+            this.customSubjects[termId][grade][index] = stored;
+            this._saveSubjects();
+            if (isApiAvailable() && stored.id !== undefined) {
+                api.updateSubject(stored.id, subject).catch(() => {});
             }
         },
 
         deleteSubject(termId: string, grade: string, index: number) {
+            const removed = this.customSubjects[termId]?.[grade]?.[index];
             this.customSubjects[termId]?.[grade]?.splice(index, 1);
             this._saveSubjects();
+            if (isApiAvailable() && removed?.id !== undefined) {
+                api.deleteSubject(removed.id).catch(() => {});
+            }
         },
 
         upsertTimetable(timetable: BaseTimetable) {
             this.customTimetables[timetable.id] = timetable;
             this._saveTimetables();
+            if (isApiAvailable()) api.upsertTimetable(timetable).catch(() => {});
         },
 
         deleteTimetable(id: string) {
             delete this.customTimetables[id];
             this._saveTimetables();
+            if (isApiAvailable()) api.deleteTimetable(id).catch(() => {});
         },
 
         _saveSubjects() {

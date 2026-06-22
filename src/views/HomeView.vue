@@ -176,12 +176,14 @@ watch(modalData, (newVal) => {
     }
 }, { immediate: true });
 
-// Load data when grade or active term changes
-watch([gradeValue, () => termStore.activeTerm], async ([newGrade]) => {
+// Load data when grade or active term changes (dataRevision re-triggers this
+// once the backend hydrates).
+watch([gradeValue, () => termStore.activeTerm, () => termStore.dataRevision], async ([newGrade]) => {
     if (!newGrade) return;
     loading.value = true;
 
     try {
+        await adminStore.ensureSubjects(termStore.activeTerm, String(newGrade));
         const [data, descs] = await Promise.all([fetchSubjects(newGrade), fetchSubjectDescriptions(newGrade)]);
         // The live CUD catalog only applies to the term it was published for
         // (the default term); other terms show only admin-managed subjects.

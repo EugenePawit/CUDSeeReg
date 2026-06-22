@@ -33,3 +33,6 @@ CLAUDE.md
 
 # Local tooling (machine-specific paths)
 .claude/
+
+# Local docker overrides (e.g. publishing the API port for testing)
+docker-compose.override.yml

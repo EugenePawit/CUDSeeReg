@@ -1,6 +1,36 @@
 services:
-  cudseereg:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cudseereg
+      POSTGRES_PASSWORD: cudseereg
+      POSTGRES_DB: cudseereg
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cudseereg -d cudseereg"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./server
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://cudseereg:cudseereg@db:5432/cudseereg
+      PORT: 3001
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
     build: .
+    restart: unless-stopped
     ports:
       - "8080:8080"
-    restart: unless-stopped
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
