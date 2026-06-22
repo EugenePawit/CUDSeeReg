@@ -718,6 +718,8 @@ const handleImport = (e: Event) => {
                                                 v-model="editingTermIdRef"
                                                 placeholder="ID (e.g. 2568/1)"
                                                 class="w-24 px-2 py-1 text-sm rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+                                                @keydown.enter="saveEditTerm"
+                                                @keydown.escape="editingTermId = null"
                                             />
                                             <input
                                                 v-model="editingTermLabel"
@@ -726,14 +728,6 @@ const handleImport = (e: Event) => {
                                                 @keydown.enter="saveEditTerm"
                                                 @keydown.escape="editingTermId = null"
                                             />
-                                            <div class="flex gap-1">
-                                                <button @click="saveEditTerm" class="text-pink-500 hover:text-pink-600">
-                                                    <Check :size="16" />
-                                                </button>
-                                                <button @click="editingTermId = null" class="text-slate-400 hover:text-slate-600">
-                                                    <X :size="16" />
-                                                </button>
-                                            </div>
                                         </div>
                                         <div v-else>
                                             <span class="font-medium text-slate-800 dark:text-slate-200">Term {{ term.label }}</span>
@@ -743,45 +737,54 @@ const handleImport = (e: Event) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-1">
                                     <button
-                                        v-if="term.id !== termStore.activeTerm"
+                                        v-if="editingTermId === term.id && term.id !== termStore.activeTerm"
                                         @click="termStore.setActiveTerm(term.id)"
                                         class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-pink-50 dark:hover:bg-pink-900/30 hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
                                     >
                                         Set as current
                                     </button>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <button
-                                        v-if="editingTermId !== term.id"
-                                        @click="startEditTerm(term.id, term.label)"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                                    >
-                                        <Edit2 :size="15" />
-                                    </button>
-                                    <button
-                                        @click="termStore.deleteTerm(term.id)"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                                    >
-                                        <Trash2 :size="15" />
-                                    </button>
-                                    <button
-                                        @click="termStore.reorderTerm(term.id, 'up')"
-                                        :disabled="termStore.terms.indexOf(term) === 0"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
-                                        title="Move up"
-                                    >
-                                        <ChevronUp :size="15" />
-                                    </button>
-                                    <button
-                                        @click="termStore.reorderTerm(term.id, 'down')"
-                                        :disabled="termStore.terms.indexOf(term) === termStore.terms.length - 1"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
-                                        title="Move down"
-                                    >
-                                        <ChevronDown :size="15" />
-                                    </button>
+                                    <template v-if="editingTermId === term.id">
+                                        <button @click="saveEditTerm" class="p-1.5 rounded-lg text-pink-500 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors" title="Save">
+                                            <Check :size="16" />
+                                        </button>
+                                        <button @click="editingTermId = null" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Cancel">
+                                            <X :size="16" />
+                                        </button>
+                                    </template>
+                                    <template v-else>
+                                        <button
+                                            @click="startEditTerm(term.id, term.label)"
+                                            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                            title="Edit"
+                                        >
+                                            <Edit2 :size="15" />
+                                        </button>
+                                        <button
+                                            @click="termStore.deleteTerm(term.id)"
+                                            class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                            title="Delete"
+                                        >
+                                            <Trash2 :size="15" />
+                                        </button>
+                                        <button
+                                            @click="termStore.reorderTerm(term.id, 'up')"
+                                            :disabled="termStore.terms.indexOf(term) === 0"
+                                            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
+                                            title="Move up"
+                                        >
+                                            <ChevronUp :size="15" />
+                                        </button>
+                                        <button
+                                            @click="termStore.reorderTerm(term.id, 'down')"
+                                            :disabled="termStore.terms.indexOf(term) === termStore.terms.length - 1"
+                                            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
+                                            title="Move down"
+                                        >
+                                            <ChevronDown :size="15" />
+                                        </button>
+                                    </template>
                                 </div>
                             </div>
                         </div>
