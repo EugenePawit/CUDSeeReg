@@ -4,6 +4,10 @@ node_modules/
 # Build output
 dist/
 
+# TypeScript incremental build cache (must not be committed — causes
+# nondeterministic "passes locally, fails in CI" builds)
+*.tsbuildinfo
+
 # IDE
 .idea/
 .vscode/

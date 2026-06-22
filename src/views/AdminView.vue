@@ -174,9 +174,13 @@ const electiveSlotOptions = computed(() => {
 });
 
 // Ensure an existing/custom class time is still selectable when editing.
+// Subject.classtime is typed string | string[]; the form only ever holds a
+// single string, so normalize before comparing.
 const classtimeOptions = computed(() => {
     const opts = [...electiveSlotOptions.value];
-    const current = subjectForm.classtime;
+    const current = Array.isArray(subjectForm.classtime)
+        ? subjectForm.classtime.join(', ')
+        : subjectForm.classtime;
     if (current && !opts.includes(current)) opts.unshift(current);
     return opts;
 });
