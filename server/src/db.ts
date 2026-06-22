@@ -33,7 +33,13 @@ export async function migrate(): Promise<void> {
         )
     `;
     await sql`
-        ALTER TABLE timetables ADD COLUMN IF NOT EXISTS term_id text NOT NULL DEFAULT '2568/1'
+        ALTER TABLE timetables ADD COLUMN IF NOT EXISTS term_id text
+    `;
+    await sql`
+        UPDATE timetables SET term_id = '2569/1' WHERE term_id IS NULL
+    `;
+    await sql`
+        ALTER TABLE timetables ALTER COLUMN term_id SET NOT NULL
     `;
     await sql`
         CREATE INDEX IF NOT EXISTS timetables_term_grade_idx

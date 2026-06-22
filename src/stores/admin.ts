@@ -78,13 +78,29 @@ export const useAdminStore = defineStore('admin', {
 
         // Replace local timetables with the full server set (which already
         // includes the seeded base timetables) when the API is reachable.
-        async hydrateTimetables(activeTermId?: string) {
+        async hydrateTimetables(termId?: string) {
             if (!isApiAvailable()) return;
             try {
-                const list = await api.listTimetables(activeTermId);
+                const list = await api.listTimetables(termId);
                 const map: Record<string, BaseTimetable> = {};
                 for (const tt of list) map[tt.id] = tt;
-                this.customTimetables = map;
+                if (termId) {
+                    // Update only timetables for this term, keeping other terms
+                    const nextTimetables = { ...this.customTimetables };
+                    // Remove existing ones for this term first
+                    for (const id of Object.keys(nextTimetables)) {
+                        if (nextTimetables[id].termId === termId) {
+                            delete nextTimetables[id];
+                        }
+                    }
+                    // Add the new/updated ones
+                    for (const tt of list) {
+                        nextTimetables[tt.id] = tt;
+                    }
+                    this.customTimetables = nextTimetables;
+                } else {
+                    this.customTimetables = map;
+                }
                 this._saveTimetables();
             } catch {
                 // keep cached state

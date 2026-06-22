@@ -58,7 +58,8 @@ export const api = {
     deleteTerm: (id: string) =>
         jsonRequest(`/terms/${enc(id)}`, { method: 'DELETE' }),
 
-    listTimetables: (term?: string) => jsonRequest<BaseTimetable[]>(term ? `/timetables?term=${enc(term)}` : '/timetables'),
+    listTimetables: (term?: string) =>
+        jsonRequest<BaseTimetable[]>(`/timetables${term ? `?term=${enc(term)}` : ''}`),
     upsertTimetable: (tt: BaseTimetable) =>
         jsonRequest(`/timetables/${enc(tt.id)}`, { method: 'PUT', body: JSON.stringify(tt) }),
     deleteTimetable: (id: string) =>
