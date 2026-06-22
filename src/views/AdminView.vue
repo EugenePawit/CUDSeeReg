@@ -368,6 +368,7 @@ const handleSubjectImport = async (e: Event) => {
 const timetableMode = ref<'list' | 'edit'>('list');
 const draftTimetable = ref<BaseTimetable | null>(null);
 const draftIsNew = ref(false);
+const timetablesTermId = ref(termStore.activeTerm);
 
 const newTTId = ref('');
 const newTTLabel = ref('');
@@ -376,10 +377,19 @@ const newTTCopyFrom = ref('');
 const showNewTTForm = ref(false);
 const newTTError = ref('');
 
-const allTimetables = computed<Record<string, BaseTimetable>>(() => ({
-    ...BASE_TIMETABLES,
-    ...adminStore.customTimetables,
-}));
+// Timetables for the selected term only (base + custom)
+const allTimetables = computed<Record<string, BaseTimetable>>(() => {
+    const base = Object.values(BASE_TIMETABLES).filter((tt) => tt.termId === timetablesTermId.value);
+    const custom = Object.values(adminStore.customTimetables).filter((tt) => tt.termId === timetablesTermId.value);
+    const map: Record<string, BaseTimetable> = {};
+    for (const tt of [...base, ...custom]) map[tt.id] = tt;
+    return map;
+});
+
+// Refresh timetables when term changes
+watch([timetablesTermId, () => termStore.dataRevision], async () => {
+    await adminStore.hydrateTimetables(timetablesTermId.value);
+}, { immediate: true });
 
 const editingCell = ref<{ day: string; period: number } | null>(null);
 const cellForm = reactive({ type: 'core' as 'core' | 'elective' | 'break', name: '', code: '' });
@@ -438,6 +448,7 @@ const startNewTimetable = () => {
         id: newTTId.value.trim(),
         label: newTTLabel.value.trim(),
         grade: newTTGrade.value,
+        termId: timetablesTermId.value,
         schedule,
     };
     draftIsNew.value = true;
@@ -1027,8 +1038,23 @@ const handleImport = (e: Event) => {
                 <div v-else-if="activeTab === 'timetables'">
                     <!-- List Mode -->
                     <div v-if="timetableMode === 'list'" class="glass-card p-6 shadow-glass">
-                        <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">All timetables</h2>
+                        </div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="flex flex-wrap gap-3">
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Term</label>
+                                    <select
+                                        v-model="timetablesTermId"
+                                        class="appearance-none px-4 py-2.5 pr-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 cursor-pointer"
+                                    >
+                                        <option v-for="term in termStore.terms" :key="term.id" :value="term.id">
+                                            Term {{ term.label }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
                             <button
                                 @click="showNewTTForm = !showNewTTForm"
                                 class="btn-primary text-sm flex items-center gap-2 interactive-press"
@@ -1097,11 +1123,7 @@ const handleImport = (e: Event) => {
                                     <button @click="openEditTimetable(id as string)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
                                         <Edit2 :size="16" />
                                     </button>
-                                    <button
-                                        v-if="!BASE_TIMETABLES[id]"
-                                        @click="deleteTimetable(id as string)"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                                    >
+                                    <button @click="deleteTimetable(id as string)" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                                         <Trash2 :size="16" />
                                     </button>
                                 </div>

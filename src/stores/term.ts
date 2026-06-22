@@ -15,13 +15,13 @@ const TERMS_KEY = 'cudseereg_terms_v1';
 const ACTIVE_TERM_KEY = 'cudseereg_active_term';
 
 const DEFAULT_TERMS: Term[] = [
-    { id: '2568/1', label: '2568/1', year: 2568, semester: 1, isDefault: true },
+    { id: '2569/1', label: '2569/1', year: 2568, semester: 1, isDefault: true },
 ];
 
 export const useTermStore = defineStore('term', {
     state: () => {
         let terms: Term[] = DEFAULT_TERMS;
-        let activeTerm = '2568/1';
+        let activeTerm = '2569/1';
         try {
             const s = localStorage.getItem(TERMS_KEY);
             if (s) terms = JSON.parse(s);

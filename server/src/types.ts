@@ -20,6 +20,7 @@ export interface Timetable {
     id: string;
     label: string;
     grade: number;
+    term_id: string;
     schedule: Record<string, Record<string, TimetableEntry>>;
 }
 

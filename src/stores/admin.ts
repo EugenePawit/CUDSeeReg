@@ -78,10 +78,10 @@ export const useAdminStore = defineStore('admin', {
 
         // Replace local timetables with the full server set (which already
         // includes the seeded base timetables) when the API is reachable.
-        async hydrateTimetables() {
+        async hydrateTimetables(activeTermId?: string) {
             if (!isApiAvailable()) return;
             try {
-                const list = await api.listTimetables();
+                const list = await api.listTimetables(activeTermId);
                 const map: Record<string, BaseTimetable> = {};
                 for (const tt of list) map[tt.id] = tt;
                 this.customTimetables = map;
@@ -129,6 +129,11 @@ export const useAdminStore = defineStore('admin', {
         },
 
         upsertTimetable(timetable: BaseTimetable) {
+            // Ensure termId is set
+            if (!timetable.termId) {
+                console.warn('[admin] upsertTimetable called without termId, skipping');
+                return;
+            }
             this.customTimetables[timetable.id] = timetable;
             this._saveTimetables();
             if (isApiAvailable()) api.upsertTimetable(timetable).catch(() => {});

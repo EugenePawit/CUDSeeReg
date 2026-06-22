@@ -28,8 +28,16 @@ export async function migrate(): Promise<void> {
             id       text PRIMARY KEY,
             label    text NOT NULL,
             grade    integer NOT NULL,
+            term_id  text NOT NULL,
             schedule jsonb NOT NULL
         )
+    `;
+    await sql`
+        ALTER TABLE timetables ADD COLUMN IF NOT EXISTS term_id text NOT NULL DEFAULT '2568/1'
+    `;
+    await sql`
+        CREATE INDEX IF NOT EXISTS timetables_term_grade_idx
+        ON timetables (term_id, grade)
     `;
     await sql`
         CREATE TABLE IF NOT EXISTS subjects (

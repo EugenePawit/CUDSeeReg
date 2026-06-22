@@ -95,22 +95,28 @@ app.put('/api/terms/:id/rename', async (c) => {
 
 // ─── Timetables ──────────────────────────────────────────────────────────────
 app.get('/api/timetables', async (c) => {
-    const rows = await sql`SELECT id, label, grade, schedule FROM timetables ORDER BY grade, id`;
+    const term = c.req.query('term');
+    if (term) {
+        const rows = await sql`SELECT id, label, grade, term_id AS "termId", schedule FROM timetables WHERE term_id = ${term} ORDER BY grade, id`;
+        return c.json(rows);
+    }
+    const rows = await sql`SELECT id, label, grade, term_id AS "termId", schedule FROM timetables ORDER BY grade, id`;
     return c.json(rows);
 });
 
 app.put('/api/timetables/:id', async (c) => {
     const id = c.req.param('id');
     const b = await c.req.json();
-    if (!b?.label || typeof b.grade !== 'number' || !b.schedule) {
-        return c.json({ error: 'label, grade and schedule are required' }, 400);
+    if (!b?.label || typeof b.grade !== 'number' || !b?.termId || !b.schedule) {
+        return c.json({ error: 'label, grade, termId and schedule are required' }, 400);
     }
     await sql`
-        INSERT INTO timetables (id, label, grade, schedule)
-        VALUES (${id}, ${b.label}, ${b.grade}, ${sql.json(b.schedule as never)})
+        INSERT INTO timetables (id, label, grade, term_id, schedule)
+        VALUES (${id}, ${b.label}, ${b.grade}, ${b.termId}, ${sql.json(b.schedule as never)})
         ON CONFLICT (id) DO UPDATE
             SET label = EXCLUDED.label,
                 grade = EXCLUDED.grade,
+                term_id = EXCLUDED.term_id,
                 schedule = EXCLUDED.schedule
     `;
     return c.json({ ok: true });

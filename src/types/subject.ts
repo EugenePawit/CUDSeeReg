@@ -52,6 +52,7 @@ export interface BaseTimetable {
     id: string;
     label: string;
     grade: number;
+    termId: string;
     schedule: {
         [day: string]: {
             [period: number]: BaseTimetableEntry;

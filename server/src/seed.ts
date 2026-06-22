@@ -12,9 +12,9 @@ export async function seed(): Promise<void> {
     if (termCount === 0) {
         await sql`
             INSERT INTO terms (id, label, year, semester, is_default, "order")
-            VALUES ('2568/1', '2568/1', 2568, 1, true, 0)
+            VALUES ('2569/1', '2569/1', 2569, 1, true, 0)
         `;
-        console.log('[seed] inserted default term 2568/1');
+        console.log('[seed] inserted default term 2569/1');
     }
 
     const [{ count: ttCount }] = await sql<{ count: number }[]>`
@@ -24,8 +24,8 @@ export async function seed(): Promise<void> {
         const timetables = Object.values(baseTimetables as Record<string, Timetable>);
         for (const tt of timetables) {
             await sql`
-                INSERT INTO timetables (id, label, grade, schedule)
-                VALUES (${tt.id}, ${tt.label}, ${tt.grade}, ${sql.json(tt.schedule as never)})
+                INSERT INTO timetables (id, label, grade, term_id, schedule)
+                VALUES (${tt.id}, ${tt.label}, ${tt.grade}, '2569/1', ${sql.json(tt.schedule as never)})
                 ON CONFLICT (id) DO NOTHING
             `;
         }
