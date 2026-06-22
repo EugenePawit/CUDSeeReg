@@ -117,6 +117,36 @@ export const useTermStore = defineStore('term', {
             }
         },
 
+        async renameTerm(oldId: string, newId: string, newLabel: string): Promise<boolean> {
+            // Check if new ID already exists
+            if (this.terms.some(t => t.id === newId)) return false;
+
+            const term = this.terms.find(t => t.id === oldId);
+            if (!term) return false;
+
+            // If API is available, use the rename endpoint
+            if (isApiAvailable()) {
+                try {
+                    await api.renameTerm(oldId, newId, newLabel);
+                    // Refresh terms from server
+                    await this.hydrate();
+                } catch {
+                    return false;
+                }
+            } else {
+                // LocalStorage-only update
+                const idx = this.terms.findIndex(t => t.id === oldId);
+                this.terms[idx] = { ...term, id: newId, label: newLabel };
+                if (this.activeTerm === oldId) {
+                    this.activeTerm = newId;
+                    localStorage.setItem(ACTIVE_TERM_KEY, newId);
+                }
+                this._save();
+            }
+
+            return true;
+        },
+
         _save() {
             localStorage.setItem(TERMS_KEY, JSON.stringify(this.terms));
         },

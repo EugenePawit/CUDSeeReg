@@ -62,6 +62,32 @@ app.delete('/api/terms/:id', async (c) => {
     return c.json({ ok: true });
 });
 
+// Rename a term (change ID) - migrates all associated subjects
+app.put('/api/terms/:id/rename', async (c) => {
+    const oldId = c.req.param('id');
+    const b = await c.req.json();
+    const { newId, newLabel } = b;
+    if (!newId || !newLabel) {
+        return c.json({ error: 'newId and newLabel are required' }, 400);
+    }
+    // Check if new ID already exists
+    const existing = await sql`SELECT 1 FROM terms WHERE id = ${newId}`;
+    if (existing.length > 0) return c.json({ error: 'Term ID already exists' }, 409);
+    // Get the original term
+    const [term] = await sql`SELECT * FROM terms WHERE id = ${oldId}`;
+    if (!term) return c.json({ error: 'Term not found' }, 404);
+    // Create new term with new ID
+    await sql`
+        INSERT INTO terms (id, label, year, semester, is_default, "order")
+        VALUES (${newId}, ${newLabel}, ${term.year}, ${term.semester}, ${term.is_default}, ${term.order})
+    `;
+    // Migrate subjects to new term ID
+    await sql`UPDATE subjects SET term_id = ${newId} WHERE term_id = ${oldId}`;
+    // Delete old term
+    await sql`DELETE FROM terms WHERE id = ${oldId}`;
+    return c.json({ ok: true });
+});
+
 // ─── Timetables ──────────────────────────────────────────────────────────────
 app.get('/api/timetables', async (c) => {
     const rows = await sql`SELECT id, label, grade, schedule FROM timetables ORDER BY grade, id`;

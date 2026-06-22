@@ -71,16 +71,31 @@ const addTerm = () => {
 
 const editingTermId = ref<string | null>(null);
 const editingTermLabel = ref('');
+const editingTermIdRef = ref('');
 
 const startEditTerm = (id: string, label: string) => {
     editingTermId.value = id;
     editingTermLabel.value = label;
+    editingTermIdRef.value = id;
 };
 
-const saveEditTerm = () => {
+const saveEditTerm = async () => {
     if (!editingTermId.value) return;
-    termStore.updateTerm(editingTermId.value, { label: editingTermLabel.value });
-    editingTermId.value = null;
+    const oldId = editingTermId.value;
+    const newId = editingTermIdRef.value.trim();
+    const newLabel = editingTermLabel.value.trim();
+
+    if (newId !== oldId) {
+        // ID changed - need to migrate
+        const success = await termStore.renameTerm(oldId, newId, newLabel);
+        if (success) {
+            editingTermId.value = null;
+        }
+        // If failed, keep editing to show error (could add error state)
+    } else {
+        termStore.updateTerm(oldId, { label: newLabel });
+        editingTermId.value = null;
+    }
 };
 
 // ─── Subjects Tab ────────────────────────────────────────────────────────────
@@ -698,26 +713,34 @@ const handleImport = (e: Event) => {
                                         ]"
                                     />
                                     <div>
-                                        <div v-if="editingTermId === term.id" class="flex items-center gap-2">
+                                        <div v-if="editingTermId === term.id" class="space-y-1">
+                                            <input
+                                                v-model="editingTermIdRef"
+                                                placeholder="ID (e.g. 2568/1)"
+                                                class="w-24 px-2 py-1 text-sm rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+                                            />
                                             <input
                                                 v-model="editingTermLabel"
+                                                placeholder="Label"
                                                 class="px-2 py-1 text-sm rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
                                                 @keydown.enter="saveEditTerm"
                                                 @keydown.escape="editingTermId = null"
                                             />
-                                            <button @click="saveEditTerm" class="text-pink-500 hover:text-pink-600">
-                                                <Check :size="16" />
-                                            </button>
-                                            <button @click="editingTermId = null" class="text-slate-400 hover:text-slate-600">
-                                                <X :size="16" />
-                                            </button>
+                                            <div class="flex gap-1">
+                                                <button @click="saveEditTerm" class="text-pink-500 hover:text-pink-600">
+                                                    <Check :size="16" />
+                                                </button>
+                                                <button @click="editingTermId = null" class="text-slate-400 hover:text-slate-600">
+                                                    <X :size="16" />
+                                                </button>
+                                            </div>
                                         </div>
                                         <div v-else>
                                             <span class="font-medium text-slate-800 dark:text-slate-200">Term {{ term.label }}</span>
                                             <span v-if="term.isDefault" class="ml-2 text-xs text-slate-400 dark:text-slate-500">(default)</span>
                                             <span v-if="term.id === termStore.activeTerm" class="ml-2 text-xs bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 px-2 py-0.5 rounded-full">Current</span>
+                                            <div class="text-xs text-slate-400 dark:text-slate-500">ID: {{ term.id }}</div>
                                         </div>
-                                        <div class="text-xs text-slate-400 dark:text-slate-500">ID: {{ term.id }}</div>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">

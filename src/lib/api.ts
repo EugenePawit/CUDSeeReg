@@ -53,6 +53,8 @@ export const api = {
         jsonRequest('/terms', { method: 'POST', body: JSON.stringify(t) }),
     updateTerm: (id: string, updates: Partial<Term>) =>
         jsonRequest(`/terms/${enc(id)}`, { method: 'PUT', body: JSON.stringify(updates) }),
+    renameTerm: (oldId: string, newId: string, newLabel: string) =>
+        jsonRequest(`/terms/${enc(oldId)}/rename`, { method: 'PUT', body: JSON.stringify({ newId, newLabel }) }),
     deleteTerm: (id: string) =>
         jsonRequest(`/terms/${enc(id)}`, { method: 'DELETE' }),
 
