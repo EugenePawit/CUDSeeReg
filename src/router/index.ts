@@ -15,6 +15,11 @@ const router = createRouter({
             name: 'search',
             component: HomeView,
         },
+        {
+            path: '/admin',
+            name: 'admin',
+            component: () => import('@/views/AdminView.vue'),
+        },
     ],
 });
 

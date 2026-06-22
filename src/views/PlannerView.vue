@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router';
 import { Plus, X, Download, Trash2, ChevronDown, Share2, Check } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { useTimetableStore } from '@/stores/timetable';
+import { useTermStore } from '@/stores/term';
+import { useAdminStore } from '@/stores/admin';
 import { BASE_TIMETABLES, DAYS, DAY_NAMES_TH, PERIODS } from '@/lib/baseTimetables';
 import { PERIOD_TIMES } from '@/lib/thaiTimeParser';
 import { fetchSubjects, flattenSubjects } from '@/lib/dataFetcher';
@@ -16,6 +18,7 @@ import {
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
+import TermSelector from '@/components/TermSelector.vue';
 
 const DAY_COLORS: Record<string, string> = {
     Monday: 'day-monday',
@@ -41,23 +44,19 @@ function getDefaultProgram(grade: string): string {
     return ['1', '2', '3'].includes(grade) ? 'EP' : 'Science';
 }
 
-function normalizeProgram(grade: string, program: string): string {
+function normalizeProgram(grade: string, program: string, customTimetables: Record<string, unknown> = {}): string {
     const options = PROGRAMS[grade] ?? [];
-    if (options.some((item) => item.value === program)) {
-        return program;
-    }
+    if (options.some((item) => item.value === program)) return program;
+    // Accept custom timetable programs
+    if (customTimetables[`M${grade}-${program}`]) return program;
     return getDefaultProgram(grade);
 }
 
 function parseBaseTimetableId(baseTimetableId: string): { grade: string; program: string } | null {
-    const match = baseTimetableId.match(/^M([1-6])-(EP|Normal|Science|Arts)$/);
-    if (!match) {
-        return null;
-    }
-    return {
-        grade: match[1],
-        program: match[2],
-    };
+    // Standard format: M1-EP, M4-Science, etc.
+    const match = baseTimetableId.match(/^M([1-6])-(.+)$/);
+    if (!match) return null;
+    return { grade: match[1], program: match[2] };
 }
 
 function makeSubjectIdentity(subject: FlattenedSubject): string {
@@ -66,7 +65,11 @@ function makeSubjectIdentity(subject: FlattenedSubject): string {
 
 const route = useRoute();
 const timetableStore = useTimetableStore();
+const termStore = useTermStore();
+const adminStore = useAdminStore();
 const { baseTimetableId, selectedElectives, studentName } = storeToRefs(timetableStore);
+
+const allTimetables = computed(() => ({ ...BASE_TIMETABLES, ...adminStore.customTimetables }));
 
 const modalOpen = ref(false);
 const selectedSlot = ref<{ day: string; period: number } | null>(null);
@@ -86,10 +89,18 @@ const parsedFromStore = computed(() => {
     return parseBaseTimetableId(baseTimetableId.value) ?? { grade: '1', program: 'EP' };
 });
 
-const programs = computed(() => PROGRAMS[parsedFromStore.value.grade] ?? []);
+const programs = computed(() => {
+    const grade = parsedFromStore.value.grade;
+    const standard = PROGRAMS[grade] ?? [];
+    // Also include custom timetables for this grade as program options
+    const custom = Object.values(adminStore.customTimetables)
+        .filter(tt => String(tt.grade) === grade)
+        .map(tt => ({ value: tt.id.replace(`M${grade}-`, ''), label: tt.label }));
+    return [...standard, ...custom];
+});
 
 const baseTimetable = computed(() => {
-    return baseTimetableId.value ? BASE_TIMETABLES[baseTimetableId.value] ?? null : null;
+    return baseTimetableId.value ? allTimetables.value[baseTimetableId.value] ?? null : null;
 });
 
 const shareToken = computed(() => {
@@ -121,7 +132,7 @@ const setTransientFeedback = (message: string) => {
     }, FEEDBACK_TIMEOUT_MS);
 };
 
-watch(baseTimetable, async (newBaseTimetable) => {
+watch([baseTimetable, () => termStore.activeTerm], async ([newBaseTimetable]) => {
     if (!newBaseTimetable) {
         subjects.value = [];
         subjectsGrade.value = null;
@@ -134,7 +145,8 @@ watch(baseTimetable, async (newBaseTimetable) => {
 
     try {
         const data = await fetchSubjects(newBaseTimetable.grade);
-        subjects.value = flattenSubjects(data);
+        const customRaw = adminStore.getSubjects(termStore.activeTerm, String(newBaseTimetable.grade));
+        subjects.value = flattenSubjects([...data, ...customRaw]);
         subjectsGrade.value = newBaseTimetable.grade;
     } catch (err) {
         console.error('Failed to fetch subjects:', err);
@@ -154,7 +166,7 @@ watch([shareToken, decodedSharePayload], () => {
     }
 
     const parsed = parseBaseTimetableId(decodedSharePayload.value.b);
-    if (!parsed || !BASE_TIMETABLES[decodedSharePayload.value.b]) {
+    if (!parsed || !allTimetables.value[decodedSharePayload.value.b]) {
         setTransientFeedback('ลิงก์แชร์ไม่ถูกต้อง');
         return;
     }
@@ -173,7 +185,7 @@ watch([pendingSharedPayload, () => baseTimetableId.value, () => subjectsGrade.va
     if (pend.b !== baseTimetableId.value) {
         return;
     }
-    const expectedGrade = BASE_TIMETABLES[pend.b]?.grade;
+    const expectedGrade = allTimetables.value[pend.b]?.grade;
     if (typeof expectedGrade === 'number' && grade !== expectedGrade) {
         return;
     }
@@ -275,7 +287,7 @@ const filteredSubjects = computed(() => {
 });
 
 const handleGradeChange = (nextGrade: string) => {
-    const nextProgram = normalizeProgram(nextGrade, parsedFromStore.value.program);
+    const nextProgram = normalizeProgram(nextGrade, parsedFromStore.value.program, adminStore.customTimetables);
     const nextBaseId = `M${nextGrade}-${nextProgram}`;
     timetableStore.setBaseTimetableId(nextBaseId);
 };
@@ -449,7 +461,10 @@ const getBreakContent = (cell: CellType) => {
             </h1>
 
             <div class="glass-card shadow-glass p-6 rounded-bento backdrop-blur-2xl mb-8 relative z-20">
-                <h2 class="text-xl font-bold mb-5 text-slate-800 dark:text-slate-200 drop-shadow-sm">เลือกตารางพื้นฐาน</h2>
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-200 drop-shadow-sm">เลือกตารางพื้นฐาน</h2>
+                    <TermSelector />
+                </div>
                 <div class="flex flex-wrap gap-6 items-end">
                     <div class="flex flex-col gap-2 w-full sm:w-auto">
                         <label class="text-sm text-slate-600 dark:text-slate-400 font-medium">ระดับชั้น</label>

@@ -5,6 +5,8 @@ import { Search } from 'lucide-vue-next';
 import { fetchSubjects, flattenSubjects, groupSubjectsByCode, fetchSubjectDescriptions } from '@/lib/dataFetcher';
 import type { GroupedSubject } from '@/types/subject';
 import TiltCard from '@/components/TiltCard.vue';
+import { useTermStore } from '@/stores/term';
+import { useAdminStore } from '@/stores/admin';
 
 const DAY_COLORS: Record<string, string> = {
     'จ': 'bg-yellow-100 text-yellow-700',
@@ -20,6 +22,8 @@ function normalizeText(input: string): string {
 
 const route = useRoute();
 const router = useRouter();
+const termStore = useTermStore();
+const adminStore = useAdminStore();
 
 const subjects = ref<GroupedSubject[]>([]);
 const loading = ref(false);
@@ -172,14 +176,16 @@ watch(modalData, (newVal) => {
     }
 }, { immediate: true });
 
-// Load data when grade changes
-watch(gradeValue, async (newGrade) => {
+// Load data when grade or active term changes
+watch([gradeValue, () => termStore.activeTerm], async ([newGrade]) => {
     if (!newGrade) return;
     loading.value = true;
 
     try {
         const [data, descs] = await Promise.all([fetchSubjects(newGrade), fetchSubjectDescriptions(newGrade)]);
-        const flattened = flattenSubjects(data);
+        const customRaw = adminStore.getSubjects(termStore.activeTerm, String(newGrade));
+        const merged = [...data, ...customRaw];
+        const flattened = flattenSubjects(merged);
         const grouped = groupSubjectsByCode(flattened);
         subjects.value = grouped;
         descriptions.value = descs;
@@ -215,6 +221,7 @@ onUnmounted(() => {
                     </h1>
                     <p class="text-slate-600 dark:text-slate-400 font-kanit font-normal text-lg tracking-wide">สำรวจและวางแผนวิชาเลือกที่เปิดสอน</p>
                 </div>
+                <TermSelector />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
@@ -323,12 +330,14 @@ onUnmounted(() => {
 import SubjectCard from './SubjectCard.vue';
 import ModalContent from './ModalContent.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
+import TermSelector from '@/components/TermSelector.vue';
 
 export default {
     components: {
         SubjectCard,
         ModalContent,
         ThemeToggle,
+        TermSelector,
     },
 };
 </script>
