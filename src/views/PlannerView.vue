@@ -72,8 +72,8 @@ const { baseTimetableId, selectedElectives, studentName } = storeToRefs(timetabl
 const allTimetables = computed(() => {
     const activeTerm = termStore.activeTerm;
     return {
-        ...Object.from(Object.entries(BASE_TIMETABLES).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
-        ...Object.from(Object.entries(adminStore.customTimetables).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+        ...Object.fromEntries(Object.entries(BASE_TIMETABLES).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+        ...Object.fromEntries(Object.entries(adminStore.customTimetables).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
     };
 });
 
