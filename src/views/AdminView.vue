@@ -728,6 +728,8 @@ const handleImport = (e: Event) => {
                                     >
                                         Set as current
                                     </button>
+                                </div>
+                                <div class="flex items-center gap-1">
                                     <button
                                         v-if="editingTermId !== term.id"
                                         @click="startEditTerm(term.id, term.label)"
@@ -741,8 +743,6 @@ const handleImport = (e: Event) => {
                                     >
                                         <Trash2 :size="15" />
                                     </button>
-                                </div>
-                                <div class="flex items-center gap-1">
                                     <button
                                         @click="termStore.reorderTerm(term.id, 'up')"
                                         :disabled="termStore.terms.indexOf(term) === 0"
