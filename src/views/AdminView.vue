@@ -85,13 +85,23 @@ const saveEditTerm = async () => {
     const newId = editingTermIdRef.value.trim();
     const newLabel = editingTermLabel.value.trim();
 
+    if (!newId) {
+        // ID is empty, keep editing
+        return;
+    }
+
+    if (!newLabel) {
+        // Label is empty, keep editing
+        return;
+    }
+
     if (newId !== oldId) {
         // ID changed - need to migrate
         const success = await termStore.renameTerm(oldId, newId, newLabel);
         if (success) {
             editingTermId.value = null;
         }
-        // If failed, keep editing to show error (could add error state)
+        // If failed, keep editing to show error
     } else {
         termStore.updateTerm(oldId, { label: newLabel });
         editingTermId.value = null;
