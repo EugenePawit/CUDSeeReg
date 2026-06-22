@@ -16,8 +16,12 @@ export async function migrate(): Promise<void> {
             label      text NOT NULL,
             year       integer NOT NULL,
             semester   integer NOT NULL,
-            is_default boolean NOT NULL DEFAULT false
+            is_default boolean NOT NULL DEFAULT false,
+            "order"    integer NOT NULL DEFAULT 0
         )
+    `;
+    await sql`
+        ALTER TABLE terms ADD COLUMN IF NOT EXISTS "order" integer NOT NULL DEFAULT 0
     `;
     await sql`
         CREATE TABLE IF NOT EXISTS timetables (

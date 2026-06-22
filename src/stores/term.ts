@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { api, isApiAvailable } from '@/lib/api';
+import { useAdminStore } from './admin';
 
 export interface Term {
     id: string;
@@ -98,6 +99,14 @@ export const useTermStore = defineStore('term', {
                 localStorage.setItem(ACTIVE_TERM_KEY, this.activeTerm);
             }
             this._save();
+            
+            // Clean up custom subjects in local storage
+            const adminStore = useAdminStore();
+            if (adminStore.customSubjects[id]) {
+                delete adminStore.customSubjects[id];
+                adminStore._saveSubjects();
+            }
+
             if (isApiAvailable()) api.deleteTerm(id).catch(() => {});
         },
 
@@ -142,6 +151,14 @@ export const useTermStore = defineStore('term', {
                     localStorage.setItem(ACTIVE_TERM_KEY, newId);
                 }
                 this._save();
+
+                // Migrate custom subjects under the old term ID
+                const adminStore = useAdminStore();
+                if (adminStore.customSubjects[oldId]) {
+                    adminStore.customSubjects[newId] = adminStore.customSubjects[oldId];
+                    delete adminStore.customSubjects[oldId];
+                    adminStore._saveSubjects();
+                }
             }
 
             return true;

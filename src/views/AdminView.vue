@@ -73,21 +73,24 @@ const editingTermId = ref<string | null>(null);
 const editingTermLabel = ref('');
 const editingTermIdRef = ref('');
 const isSavingTerm = ref(false);
+const termEditError = ref('');
 
 const startEditTerm = (id: string, label: string) => {
     editingTermId.value = id;
     editingTermLabel.value = label;
     editingTermIdRef.value = id;
+    termEditError.value = '';
 };
 
 const saveEditTerm = async () => {
     if (!editingTermId.value || isSavingTerm.value) return;
+    termEditError.value = '';
     const oldId = editingTermId.value;
     const newId = editingTermIdRef.value.trim();
     const newLabel = editingTermLabel.value.trim();
 
     if (!newId || !newLabel) {
-        // ID or label is empty, keep editing
+        termEditError.value = 'ID and Label are required';
         return;
     }
 
@@ -98,6 +101,8 @@ const saveEditTerm = async () => {
             const success = await termStore.renameTerm(oldId, newId, newLabel);
             if (success) {
                 editingTermId.value = null;
+            } else {
+                termEditError.value = 'Term ID already exists or failed to rename';
             }
             // If failed, keep editing
         } else {
@@ -739,6 +744,7 @@ const handleImport = (e: Event) => {
                                                 @keydown.enter="saveEditTerm"
                                                 @keydown.escape="editingTermId = null"
                                             />
+                                            <p v-if="termEditError" class="text-[10px] text-red-500 max-w-[180px] leading-tight">{{ termEditError }}</p>
                                         </div>
                                         <div v-else>
                                             <span class="font-medium text-slate-800 dark:text-slate-200">Term {{ term.label }}</span>
