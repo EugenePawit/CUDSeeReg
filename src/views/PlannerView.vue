@@ -69,7 +69,13 @@ const termStore = useTermStore();
 const adminStore = useAdminStore();
 const { baseTimetableId, selectedElectives, studentName } = storeToRefs(timetableStore);
 
-const allTimetables = computed(() => ({ ...BASE_TIMETABLES, ...adminStore.customTimetables }));
+const allTimetables = computed(() => {
+    const activeTerm = termStore.activeTerm;
+    return {
+        ...Object.from(Object.entries(BASE_TIMETABLES).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+        ...Object.from(Object.entries(adminStore.customTimetables).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+    };
+});
 
 const modalOpen = ref(false);
 const selectedSlot = ref<{ day: string; period: number } | null>(null);
@@ -91,10 +97,11 @@ const parsedFromStore = computed(() => {
 
 const programs = computed(() => {
     const grade = parsedFromStore.value.grade;
+    const activeTerm = termStore.activeTerm;
     const standard = PROGRAMS[grade] ?? [];
-    // Also include custom timetables for this grade as program options
+    // Also include custom timetables for this grade and term as program options
     const custom = Object.values(adminStore.customTimetables)
-        .filter(tt => String(tt.grade) === grade)
+        .filter(tt => String(tt.grade) === grade && tt.termId === activeTerm)
         .map(tt => ({ value: tt.id.replace(`M${grade}-`, ''), label: tt.label }));
     return [...standard, ...custom];
 });
