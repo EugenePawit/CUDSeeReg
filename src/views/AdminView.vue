@@ -93,7 +93,6 @@ const liveSubjects = ref<Subject[]>([]);
 // Search and filter state
 const subjectSearch = ref('');
 const subjectFilterSlot = ref('');
-const subjectFilterSource = ref<'all' | 'live' | 'custom'>('all');
 
 const blankSubject = (): Subject => ({
     order: Date.now(),
@@ -136,12 +135,10 @@ const availableSlots = computed(() => {
     return [...slots].sort();
 });
 
-// Subjects visible after applying search + source + slot filters.
+// Subjects visible after applying search + slot filters.
 const filteredSubjectsList = computed(() => {
     const q = subjectSearch.value.trim().toLowerCase();
-    return allSubjectsRaw.value.filter(({ subject, isCustom }) => {
-        if (subjectFilterSource.value === 'live' && isCustom) return false;
-        if (subjectFilterSource.value === 'custom' && !isCustom) return false;
+    return allSubjectsRaw.value.filter(({ subject }) => {
         if (subjectFilterSlot.value) {
             const ct = Array.isArray(subject.classtime)
                 ? subject.classtime.join(' ')
@@ -769,25 +766,6 @@ const handleImport = (e: Event) => {
                                 <option value="">All time slots</option>
                                 <option v-for="slot in availableSlots" :key="slot" :value="slot">{{ slot }}</option>
                             </select>
-                            <div class="flex items-center gap-1 p-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                                <button
-                                    v-for="opt in ([
-                                        { value: 'all', label: 'All' },
-                                        { value: 'live', label: 'CUD Catalog' },
-                                        { value: 'custom', label: 'Custom' },
-                                    ] as const)"
-                                    :key="opt.value"
-                                    @click="subjectFilterSource = opt.value"
-                                    :class="[
-                                        'px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
-                                        subjectFilterSource === opt.value
-                                            ? 'bg-pink-500 text-white shadow-sm'
-                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
-                                    ]"
-                                >
-                                    {{ opt.label }}
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Import panel -->
@@ -915,7 +893,6 @@ const handleImport = (e: Event) => {
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Credits</th>
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Instructor</th>
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Time</th>
-                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Source</th>
                                                 <th class="pb-2 font-medium text-slate-600 dark:text-slate-400"></th>
                                             </tr>
                                         </thead>
@@ -930,16 +907,6 @@ const handleImport = (e: Event) => {
                                                 <td class="py-3 pr-4 text-slate-600 dark:text-slate-400">{{ item.subject.credit }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs max-w-[160px] truncate">{{ getSubjectInstructor(item.subject) }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-500 text-xs">{{ getSubjectClasstime(item.subject) }}</td>
-                                                <td class="py-3 pr-4">
-                                                    <span :class="[
-                                                        'text-[10px] font-medium px-2 py-0.5 rounded-full',
-                                                        item.isCustom
-                                                            ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400'
-                                                            : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                                                    ]">
-                                                        {{ item.isCustom ? 'Custom' : 'CUD Catalog' }}
-                                                    </span>
-                                                </td>
                                                 <td class="py-3">
                                                     <div v-if="item.isCustom" class="flex gap-1">
                                                         <button @click="startEditSubject(item.customIndex!)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
