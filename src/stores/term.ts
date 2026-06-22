@@ -7,6 +7,7 @@ export interface Term {
     year: number;
     semester: number;
     isDefault?: boolean;
+    order?: number;
 }
 
 const TERMS_KEY = 'cudseereg_terms_v1';
@@ -90,7 +91,7 @@ export const useTermStore = defineStore('term', {
 
         deleteTerm(id: string) {
             const term = this.terms.find(t => t.id === id);
-            if (!term || term.isDefault) return;
+            if (!term) return;
             this.terms = this.terms.filter(t => t.id !== id);
             if (this.activeTerm === id) {
                 this.activeTerm = this.terms[0]?.id ?? '';
@@ -98,6 +99,22 @@ export const useTermStore = defineStore('term', {
             }
             this._save();
             if (isApiAvailable()) api.deleteTerm(id).catch(() => {});
+        },
+
+        reorderTerm(id: string, direction: 'up' | 'down') {
+            const idx = this.terms.findIndex(t => t.id === id);
+            if (idx < 0) return;
+            const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+            if (newIdx < 0 || newIdx >= this.terms.length) return;
+            const [moved] = this.terms.splice(idx, 1);
+            this.terms.splice(newIdx, 0, moved);
+            // Update order values to match array positions
+            this.terms.forEach((t, i) => t.order = i);
+            this._save();
+            if (isApiAvailable()) {
+                // Sync each term's order to the server
+                this.terms.forEach(t => api.updateTerm(t.id, { order: t.order }).catch(() => {}));
+            }
         },
 
         _save() {

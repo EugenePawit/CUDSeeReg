@@ -48,7 +48,8 @@ app.put('/api/terms/:id', async (c) => {
         UPDATE terms SET
             label = COALESCE(${b.label ?? null}, label),
             year = COALESCE(${b.year ?? null}, year),
-            semester = COALESCE(${b.semester ?? null}, semester)
+            semester = COALESCE(${b.semester ?? null}, semester),
+            "order" = COALESCE(${b.order ?? null}, "order")
         WHERE id = ${id}
     `;
     return c.json({ ok: true });
@@ -56,8 +57,6 @@ app.put('/api/terms/:id', async (c) => {
 
 app.delete('/api/terms/:id', async (c) => {
     const id = c.req.param('id');
-    const [term] = await sql`SELECT is_default AS "isDefault" FROM terms WHERE id = ${id}`;
-    if (term?.isDefault) return c.json({ error: 'Cannot delete the default term' }, 400);
     await sql`DELETE FROM subjects WHERE term_id = ${id}`;
     await sql`DELETE FROM terms WHERE id = ${id}`;
     return c.json({ ok: true });

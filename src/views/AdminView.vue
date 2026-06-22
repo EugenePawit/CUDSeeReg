@@ -4,6 +4,7 @@ import {
     Lock, LogOut, Plus, Trash2, Edit2, Save, X, Check,
     Settings, BookOpen, CalendarDays, Layout,
     Eye, EyeOff, Upload, FileDown, Search,
+    ChevronUp, ChevronDown,
 } from 'lucide-vue-next';
 import { fetchSubjects } from '@/lib/dataFetcher';
 import { useAdminStore } from '@/stores/admin';
@@ -735,11 +736,28 @@ const handleImport = (e: Event) => {
                                         <Edit2 :size="15" />
                                     </button>
                                     <button
-                                        v-if="!term.isDefault"
                                         @click="termStore.deleteTerm(term.id)"
                                         class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                     >
                                         <Trash2 :size="15" />
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button
+                                        @click="termStore.reorderTerm(term.id, 'up')"
+                                        :disabled="termStore.terms.indexOf(term) === 0"
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
+                                        title="Move up"
+                                    >
+                                        <ChevronUp :size="15" />
+                                    </button>
+                                    <button
+                                        @click="termStore.reorderTerm(term.id, 'down')"
+                                        :disabled="termStore.terms.indexOf(term) === termStore.terms.length - 1"
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
+                                        title="Move down"
+                                    >
+                                        <ChevronDown :size="15" />
                                     </button>
                                 </div>
                             </div>

@@ -7,6 +7,7 @@ export interface Term {
     year: number;
     semester: number;
     isDefault?: boolean;
+    order?: number;
 }
 
 export interface TimetableEntry {
