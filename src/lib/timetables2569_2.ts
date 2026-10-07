@@ -58,7 +58,13 @@ export function supportsMilitarySchedule(timetable: BaseTimetable | null): boole
 
 export function militaryTimetable(timetable: BaseTimetable): BaseTimetable {
     if (!supportsMilitarySchedule(timetable)) return timetable;
-    const schedule = structuredClone(timetable.schedule);
+    // Database/admin schedules are Vue proxies; structuredClone rejects them.
+    // Copy each plain entry so changing the display never mutates stored data.
+    const schedule: BaseTimetable['schedule'] = Object.fromEntries(
+        Object.entries(timetable.schedule).map(([day, periods]) => [day,
+            Object.fromEntries(Object.entries(periods).map(([period, entry]) => [period, { ...entry }]))
+        ])
+    );
     const moves = MOVES[timetable.grade];
     // Clear all sources first: destinations can also be sources (e.g. Wed 8).
     for (const source of Object.keys(moves)) {

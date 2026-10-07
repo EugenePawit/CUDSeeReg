@@ -1,9 +1,21 @@
 import { expect, test } from 'bun:test';
+import { reactive } from 'vue';
 import { TIMETABLES_2569_2, militaryTimetable, subjectForSchedule, fitsTimetable, supportsMilitarySchedule } from '../src/lib/timetables2569_2';
 import { flattenSubjects } from '../src/lib/dataFetcher';
 import { getBundledSubjects } from '../src/lib/bundledSubjects';
 import { decodeTimetableShare, encodeTimetableShare, resolveSharedSubjects } from '../src/lib/shareTimetable';
 import seed from '../server/src/seed-timetables.json';
+
+test('database timetables in reactive Pinia state can switch modes without mutating the source', () => {
+    const timetable = reactive(JSON.parse(JSON.stringify(TIMETABLES_2569_2['M5-Science-2569-2'])));
+    const original = JSON.stringify(timetable);
+    const military = militaryTimetable(timetable);
+    expect(military.schedule.Thursday[9].type).toBe('elective');
+    expect(military.schedule.Tuesday[4].type).toBe('core');
+    expect(JSON.stringify(timetable)).toBe(original);
+    military.schedule.Friday[3].name = 'Changed';
+    expect(JSON.stringify(timetable)).toBe(original);
+});
 
 test('all 12 schedules match the elective counts in the supplied images', () => {
     const counts = [4, 8, 4, 8, 4, 8, 19, 16, 18, 15, 22, 22];
