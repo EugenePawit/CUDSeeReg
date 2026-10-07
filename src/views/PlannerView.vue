@@ -610,7 +610,7 @@ const getBreakContent = (cell: CellType) => {
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'unavailable'"
                                         aria-label="ไม่มีคาบเรียน"
-                                        class="border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800/20 backdrop-blur-sm h-24"
+                                        class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 p-2 h-24 shadow-sm dark:shadow-none"
                                     />
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'empty'"
