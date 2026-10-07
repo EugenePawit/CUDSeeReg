@@ -12,6 +12,8 @@ export interface SharedTimetablePayload {
     b: string;
     s: SharedSubjectRef[];
     n?: string; // optional student name
+    term?: string;
+    military?: boolean;
 }
 
 // Map base timetable IDs to single bytes for ultra-compact encoding
@@ -179,10 +181,19 @@ export function encodeTimetableShare(
     baseTimetableId: string,
     selectedElectives: UserTimetable,
     studentName?: string,
-    catalog: FlattenedSubject[] = []
+    catalog: FlattenedSubject[] = [],
+    military = false
 ): string | null {
     if (!baseTimetableId) {
         return null;
+    }
+
+    // Term-scoped schedules carry stable course references and the display mode.
+    if (baseTimetableId.endsWith('-2569-2')) {
+        return toBase64Url(new TextEncoder().encode(JSON.stringify({
+            v: 3, b: baseTimetableId, s: extractSharedSubjects(selectedElectives),
+            n: studentName?.trim() || undefined, term: '2569/2', military,
+        })));
     }
 
     const baseIdByte = BASE_ID_TO_BYTE[baseTimetableId];
@@ -229,6 +240,16 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
 
     try {
         const bytes = fromBase64Url(token);
+
+        if (bytes[0] === 123) {
+            const payload = JSON.parse(new TextDecoder().decode(bytes));
+            if (payload.v !== 3 || typeof payload.b !== 'string' || payload.term !== '2569/2'
+                || !Array.isArray(payload.s) || !payload.s.every((s: SharedSubjectRef) => s
+                    && typeof s.c === 'string' && typeof s.g === 'string' && typeof s.t === 'string')
+                || (payload.n !== undefined && typeof payload.n !== 'string')
+                || typeof payload.military !== 'boolean') return null;
+            return { ...payload, v: 1 };
+        }
 
         if (bytes.length < 1) {
             return null;

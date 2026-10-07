@@ -16,6 +16,7 @@ const ACTIVE_TERM_KEY = 'cudseereg_active_term';
 
 const DEFAULT_TERMS: Term[] = [
     { id: '2569/1', label: '2569/1', year: 2569, semester: 1, isDefault: true },
+    { id: '2569/2', label: '2569/2', year: 2569, semester: 2 },
 ];
 
 export const useTermStore = defineStore('term', {
@@ -28,6 +29,10 @@ export const useTermStore = defineStore('term', {
             const a = localStorage.getItem(ACTIVE_TERM_KEY);
             if (a) activeTerm = a;
         } catch {}
+        // Introduce the supplied catalog for browsers with an older term cache.
+        if (!terms.some(t => t.id === '2569/2')) {
+            terms = [...terms, { id: '2569/2', label: '2569/2', year: 2569, semester: 2 }];
+        }
         // Bumped after the API hydrates so data-loading watchers re-run.
         return { terms, activeTerm, dataRevision: 0 };
     },

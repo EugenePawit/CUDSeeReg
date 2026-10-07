@@ -1,6 +1,7 @@
 import { checkHealth, isApiAvailable, api } from '@/lib/api';
 import { useTermStore } from '@/stores/term';
 import { useAdminStore } from '@/stores/admin';
+import { isBundledSubject } from '@/lib/bundledSubjects';
 
 const MIGRATED_KEY = 'cudseereg_migrated_v1';
 
@@ -23,6 +24,8 @@ async function migrateLocalToServer() {
             for (const subject of subjects) {
                 const { id: _localId, ...data } = subject as typeof subject & { id?: number };
                 void _localId;
+                // These rows are already installed by the server seed.
+                if (isBundledSubject(termId, grade, data)) continue;
                 await api.createSubject(termId, grade, data).catch(() => {});
             }
         }

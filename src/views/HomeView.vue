@@ -184,11 +184,16 @@ watch([gradeValue, () => termStore.activeTerm, () => termStore.dataRevision], as
 
     try {
         await adminStore.ensureSubjects(termStore.activeTerm, String(newGrade));
-        const [data, descs] = await Promise.all([fetchSubjects(newGrade), fetchSubjectDescriptions(newGrade)]);
+        const [data, descs] = termStore.isLiveDataTerm
+            ? await Promise.all([fetchSubjects(newGrade), fetchSubjectDescriptions(newGrade)])
+            : [[], {} as Record<string, string>];
         // The live CUD catalog only applies to the term it was published for
         // (the default term); other terms show only admin-managed subjects.
         const liveData = termStore.isLiveDataTerm ? data : [];
         const customRaw = adminStore.getSubjects(termStore.activeTerm, String(newGrade));
+        for (const subject of customRaw) {
+            if (subject.description) descs[subject.code] = subject.description;
+        }
         const merged = [...liveData, ...customRaw];
         const flattened = flattenSubjects(merged);
         const grouped = groupSubjectsByCode(flattened);

@@ -6,6 +6,7 @@ const STUDENT_NAME_KEY = 'cudseereg_student_name';
 export const useTimetableStore = defineStore('timetable', {
     state: () => ({
         baseTimetableId: '',
+        militaryMode: false,
         selectedElectives: {} as UserTimetable,
         studentName: localStorage.getItem(STUDENT_NAME_KEY) ?? '',
     }),

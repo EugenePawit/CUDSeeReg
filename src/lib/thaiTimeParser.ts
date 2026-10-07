@@ -22,7 +22,7 @@ export const PERIOD_TIMES: Record<number, string> = {
     1: '08:30-09:20',
     2: '09:20-10:10',
     3: '10:20-11:10',
-    4: '11:10-12:50', // Lunch for M.1-M.3 (longer break)
+    4: '11:10-12:00', // Lunch for M.1-M.3
     5: '12:00-12:50', // Lunch for M.4-M.6
     6: '12:50-13:40',
     7: '13:50-14:40',

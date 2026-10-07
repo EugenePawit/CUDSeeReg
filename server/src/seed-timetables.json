@@ -1,8 +1,3225 @@
 {
+  "M1-EP-2569-2": {
+    "id": "M1-EP-2569-2",
+    "label": "ม.1 EP",
+    "grade": 1,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M1-Normal-2569-2": {
+    "id": "M1-Normal-2569-2",
+    "label": "ม.1 ปกติ",
+    "grade": 1,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M2-EP-2569-2": {
+    "id": "M2-EP-2569-2",
+    "label": "ม.2 EP",
+    "grade": 2,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M2-Normal-2569-2": {
+    "id": "M2-Normal-2569-2",
+    "label": "ม.2 ปกติ",
+    "grade": 2,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M3-EP-2569-2": {
+    "id": "M3-EP-2569-2",
+    "label": "ม.3 EP",
+    "grade": 3,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M3-Normal-2569-2": {
+    "id": "M3-Normal-2569-2",
+    "label": "ม.3 ปกติ",
+    "grade": 3,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "5": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M4-Science-2569-2": {
+    "id": "M4-Science-2569-2",
+    "label": "ม.4 วิทย์-คณิต",
+    "grade": 4,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M4-Arts-2569-2": {
+    "id": "M4-Arts-2569-2",
+    "label": "ม.4 ศิลป์",
+    "grade": 4,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M5-Science-2569-2": {
+    "id": "M5-Science-2569-2",
+    "label": "ม.5 วิทย์-คณิต",
+    "grade": 5,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M5-Arts-2569-2": {
+    "id": "M5-Arts-2569-2",
+    "label": "ม.5 ศิลป์",
+    "grade": 5,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M6-Science-2569-2": {
+    "id": "M6-Science-2569-2",
+    "label": "ม.6 วิทย์-คณิต",
+    "grade": 6,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
+  "M6-Arts-2569-2": {
+    "id": "M6-Arts-2569-2",
+    "label": "ม.6 ศิลป์",
+    "grade": 6,
+    "termId": "2569/2",
+    "schedule": {
+      "Monday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Tuesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "2": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Wednesday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "8": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Thursday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      },
+      "Friday": {
+        "0": {
+          "code": "",
+          "name": "Homeroom",
+          "type": "core"
+        },
+        "1": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "2": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "3": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "4": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "5": {
+          "code": "",
+          "name": "พักเที่ยง",
+          "type": "break"
+        },
+        "6": {
+          "code": "",
+          "name": "",
+          "type": "core"
+        },
+        "7": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "8": {
+          "code": "",
+          "name": "วิชาเลือก",
+          "type": "elective"
+        },
+        "9": {
+          "code": "",
+          "name": "ไม่มีเรียน",
+          "type": "core"
+        }
+      }
+    }
+  },
   "M1-EP": {
     "id": "M1-EP",
     "label": "ม.1 EP",
     "grade": 1,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -245,6 +3462,7 @@
     "id": "M1-Normal",
     "label": "ม.1 ปกติ",
     "grade": 1,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -487,6 +3705,7 @@
     "id": "M2-EP",
     "label": "ม.2 EP",
     "grade": 2,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -729,6 +3948,7 @@
     "id": "M2-Normal",
     "label": "ม.2 ปกติ",
     "grade": 2,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -971,6 +4191,7 @@
     "id": "M3-EP",
     "label": "ม.3 EP",
     "grade": 3,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -1213,6 +4434,7 @@
     "id": "M3-Normal",
     "label": "ม.3 ปกติ",
     "grade": 3,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -1455,6 +4677,7 @@
     "id": "M4-Science",
     "label": "ม.4 วิทย์-คณิต",
     "grade": 4,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -1697,6 +4920,7 @@
     "id": "M4-Arts",
     "label": "ม.4 ศิลป์",
     "grade": 4,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -1939,6 +5163,7 @@
     "id": "M5-Science",
     "label": "ม.5 วิทย์-คณิต",
     "grade": 5,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -2181,6 +5406,7 @@
     "id": "M5-Arts",
     "label": "ม.5 ศิลป์",
     "grade": 5,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -2423,6 +5649,7 @@
     "id": "M6-Science",
     "label": "ม.6 วิทย์-คณิต",
     "grade": 6,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {
@@ -2665,6 +5892,7 @@
     "id": "M6-Arts",
     "label": "ม.6 ศิลป์",
     "grade": 6,
+    "termId": "2569/1",
     "schedule": {
       "Monday": {
         "0": {

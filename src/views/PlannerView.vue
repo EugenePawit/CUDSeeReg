@@ -7,6 +7,7 @@ import { useTimetableStore } from '@/stores/timetable';
 import { useTermStore } from '@/stores/term';
 import { useAdminStore } from '@/stores/admin';
 import { BASE_TIMETABLES, DAYS, DAY_NAMES_TH, PERIODS } from '@/lib/baseTimetables';
+import { militaryTimetable, supportsMilitarySchedule, subjectForSchedule, fitsTimetable } from '@/lib/timetables2569_2';
 import { PERIOD_TIMES } from '@/lib/thaiTimeParser';
 import { fetchSubjects, flattenSubjects } from '@/lib/dataFetcher';
 import {
@@ -29,28 +30,7 @@ const DAY_COLORS: Record<string, string> = {
 };
 
 const GRADES = ['1', '2', '3', '4', '5', '6'];
-const PROGRAMS: Record<string, { value: string; label: string }[]> = {
-    '1': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
-    '2': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
-    '3': [{ value: 'EP', label: 'EP' }, { value: 'Normal', label: 'ปกติ' }],
-    '4': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์' }],
-    '5': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์' }],
-    '6': [{ value: 'Science', label: 'วิทย์-คณิต' }, { value: 'Arts', label: 'ศิลป์' }],
-};
-
 const FEEDBACK_TIMEOUT_MS = 2800;
-
-function getDefaultProgram(grade: string): string {
-    return ['1', '2', '3'].includes(grade) ? 'EP' : 'Science';
-}
-
-function normalizeProgram(grade: string, program: string, customTimetables: Record<string, unknown> = {}): string {
-    const options = PROGRAMS[grade] ?? [];
-    if (options.some((item) => item.value === program)) return program;
-    // Accept custom timetable programs
-    if (customTimetables[`M${grade}-${program}`]) return program;
-    return getDefaultProgram(grade);
-}
 
 function parseBaseTimetableId(baseTimetableId: string): { grade: string; program: string } | null {
     // Standard format: M1-EP, M4-Science, etc.
@@ -67,19 +47,19 @@ const route = useRoute();
 const timetableStore = useTimetableStore();
 const termStore = useTermStore();
 const adminStore = useAdminStore();
-const { baseTimetableId, selectedElectives, studentName } = storeToRefs(timetableStore);
+const { baseTimetableId, selectedElectives, studentName, militaryMode } = storeToRefs(timetableStore);
 
 const allTimetables = computed(() => {
     const activeTerm = termStore.activeTerm;
     return {
-        ...Object.fromEntries(Object.entries(BASE_TIMETABLES).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
-        ...Object.fromEntries(Object.entries(adminStore.customTimetables).filter(([id, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+        ...Object.fromEntries(Object.entries(BASE_TIMETABLES).filter(([, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+        ...Object.fromEntries(Object.entries(adminStore.customTimetables).filter(([, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
     };
 });
 
 const modalOpen = ref(false);
 const selectedSlot = ref<{ day: string; period: number } | null>(null);
-const subjects = ref<FlattenedSubject[]>([]);
+const rawSubjects = ref<FlattenedSubject[]>([]);
 const subjectsGrade = ref<number | null>(null);
 const loading = ref(false);
 const searchQuery = ref('');
@@ -95,20 +75,34 @@ const parsedFromStore = computed(() => {
     return parseBaseTimetableId(baseTimetableId.value) ?? { grade: '1', program: 'EP' };
 });
 
-const programs = computed(() => {
-    const grade = parsedFromStore.value.grade;
-    const activeTerm = termStore.activeTerm;
-    const standard = PROGRAMS[grade] ?? [];
-    // Also include custom timetables for this grade and term as program options
-    const custom = Object.values(adminStore.customTimetables)
-        .filter(tt => String(tt.grade) === grade && tt.termId === activeTerm)
-        .map(tt => ({ value: tt.id.replace(`M${grade}-`, ''), label: tt.label }));
-    return [...standard, ...custom];
+const programs = computed(() => Object.values(allTimetables.value)
+    .filter(tt => tt.grade === Number(parsedFromStore.value.grade))
+    .map(tt => ({ value: tt.id.replace(`M${tt.grade}-`, ''), label: tt.label })));
+
+const normalTimetable = computed(() => allTimetables.value[baseTimetableId.value] ?? null);
+const canUseMilitarySchedule = computed(() => supportsMilitarySchedule(normalTimetable.value));
+const baseTimetable = computed(() => normalTimetable.value && militaryMode.value && canUseMilitarySchedule.value
+    ? militaryTimetable(normalTimetable.value) : normalTimetable.value);
+const subjects = computed(() => rawSubjects.value.map(subject => subjectForSchedule(subject,
+    normalTimetable.value?.grade ?? 1, militaryMode.value && canUseMilitarySchedule.value)));
+
+watch(() => termStore.activeTerm, () => {
+    timetableStore.clearAllElectives();
+    militaryMode.value = false;
+    const grade = Number(parsedFromStore.value.grade);
+    const program = parsedFromStore.value.program.replace(/-2569-2$/, '');
+    const options = Object.values(allTimetables.value).filter(tt => tt.grade === grade);
+    const next = options.find(tt => tt.id.replace(/-2569-2$/, '') === `M${grade}-${program}`) ?? options[0];
+    timetableStore.setBaseTimetableId(next?.id ?? '');
 });
 
-const baseTimetable = computed(() => {
-    return baseTimetableId.value ? allTimetables.value[baseTimetableId.value] ?? null : null;
-});
+watch(militaryMode, () => {
+    modalOpen.value = false;
+    const selected = [...new Map(Object.values(selectedElectives.value).flatMap(day => Object.values(day))
+        .map(subject => [makeSubjectIdentity(subject), subject])).values()];
+    timetableStore.replaceTimetable(baseTimetableId.value, selected.map(subject =>
+        subjectForSchedule(subject, normalTimetable.value?.grade ?? 1, militaryMode.value && canUseMilitarySchedule.value)));
+}, { flush: 'sync' });
 
 const shareToken = computed(() => {
     const queryToken = route.query.s || route.query.t || route.query.tt;
@@ -139,9 +133,9 @@ const setTransientFeedback = (message: string) => {
     }, FEEDBACK_TIMEOUT_MS);
 };
 
-watch([baseTimetable, () => termStore.activeTerm, () => termStore.dataRevision], async ([newBaseTimetable]) => {
+watch([normalTimetable, () => termStore.activeTerm, () => termStore.dataRevision], async ([newBaseTimetable]) => {
     if (!newBaseTimetable) {
-        subjects.value = [];
+        rawSubjects.value = [];
         subjectsGrade.value = null;
         loading.value = false;
         return;
@@ -152,16 +146,16 @@ watch([baseTimetable, () => termStore.activeTerm, () => termStore.dataRevision],
 
     try {
         await adminStore.ensureSubjects(termStore.activeTerm, String(newBaseTimetable.grade));
-        const data = await fetchSubjects(newBaseTimetable.grade);
+        const data = termStore.isLiveDataTerm ? await fetchSubjects(newBaseTimetable.grade) : [];
         // Live CUD data only applies to its published (default) term; other
         // terms rely solely on admin-managed subjects.
         const liveData = termStore.isLiveDataTerm ? data : [];
         const customRaw = adminStore.getSubjects(termStore.activeTerm, String(newBaseTimetable.grade));
-        subjects.value = flattenSubjects([...liveData, ...customRaw]);
+        rawSubjects.value = flattenSubjects([...liveData, ...customRaw]);
         subjectsGrade.value = newBaseTimetable.grade;
     } catch (err) {
         console.error('Failed to fetch subjects:', err);
-        subjects.value = [];
+        rawSubjects.value = [];
         subjectsGrade.value = newBaseTimetable.grade;
     } finally {
         loading.value = false;
@@ -176,6 +170,7 @@ watch([shareToken, decodedSharePayload], () => {
         return;
     }
 
+    if (decodedSharePayload.value.term) termStore.setActiveTerm(decodedSharePayload.value.term);
     const parsed = parseBaseTimetableId(decodedSharePayload.value.b);
     if (!parsed || !allTimetables.value[decodedSharePayload.value.b]) {
         setTransientFeedback('ลิงก์แชร์ไม่ถูกต้อง');
@@ -204,6 +199,7 @@ watch([pendingSharedPayload, () => baseTimetableId.value, () => subjectsGrade.va
         return;
     }
 
+    militaryMode.value = pend.military ?? false;
     const { resolved, missing } = resolveSharedSubjects(pend.s, subjects.value);
     timetableStore.replaceTimetable(pend.b, resolved);
     if (pend.n) {
@@ -272,7 +268,7 @@ const filteredSubjects = computed(() => {
         const matchesSlot = subject.parsedTimeSlots.some(
             (slot) => slot.day === selectedSlot.value!.day && slot.periods.includes(selectedSlot.value!.period)
         );
-        if (!matchesSlot) {
+        if (!matchesSlot || !baseTimetable.value || !fitsTimetable(subject, baseTimetable.value)) {
             return false;
         }
 
@@ -298,12 +294,15 @@ const filteredSubjects = computed(() => {
 });
 
 const handleGradeChange = (nextGrade: string) => {
-    const nextProgram = normalizeProgram(nextGrade, parsedFromStore.value.program, adminStore.customTimetables);
-    const nextBaseId = `M${nextGrade}-${nextProgram}`;
-    timetableStore.setBaseTimetableId(nextBaseId);
+    const program = parsedFromStore.value.program.replace(/-2569-2$/, '');
+    const options = Object.values(allTimetables.value).filter(tt => tt.grade === Number(nextGrade));
+    const next = options.find(tt => tt.id.replace(/-2569-2$/, '') === `M${nextGrade}-${program}`) ?? options[0];
+    militaryMode.value = false;
+    timetableStore.setBaseTimetableId(next?.id ?? '');
 };
 
 const handleProgramChange = (nextProgram: string) => {
+    militaryMode.value = false;
     const nextBaseId = `M${parsedFromStore.value.grade}-${nextProgram}`;
     timetableStore.setBaseTimetableId(nextBaseId);
 };
@@ -358,13 +357,13 @@ const handleExport = async () => {
         windowHeight: fullHeight,
     });
     const link = document.createElement('a');
-    link.download = `timetable-${baseTimetable.value?.label || 'cudseereg'}.png`;
+    link.download = `timetable-${termStore.activeTerm.replace('/', '-')}-${baseTimetable.value?.label || 'cudseereg'}${militaryMode.value ? '-รด' : ''}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 };
 
 const handleCopyShareLink = async () => {
-    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value, subjects.value);
+    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value, subjects.value, militaryMode.value);
     if (!token) {
         setTransientFeedback('ไม่สามารถสร้างลิงก์แชร์ได้');
         return;
@@ -415,12 +414,16 @@ onUnmounted(() => {
 });
 
 type CellType = { type: 'empty'; content: null } |
+    { type: 'blocked'; content: null } |
     { type: 'break'; content: string } |
     { type: 'core'; content: { code: string; name: string } } |
     { type: 'elective'; content: FlattenedSubject } |
     { type: 'elective-empty'; content: null };
 
 const getCellContent = (day: string, period: number): CellType => {
+    if (militaryMode.value && canUseMilitarySchedule.value && day === 'Tuesday') {
+        return { type: 'blocked', content: null };
+    }
     const entry = baseTimetable.value?.schedule[day]?.[period];
     const elective = selectedElectives.value[day]?.[period];
 
@@ -429,7 +432,7 @@ const getCellContent = (day: string, period: number): CellType => {
     }
 
     if (entry.type === 'break') {
-        return { type: 'break', content: period === 5 ? 'พักเที่ยง' : 'พัก' };
+        return { type: 'break', content: entry.name };
     }
 
     if (entry.type === 'core') {
@@ -508,6 +511,11 @@ const getBreakContent = (cell: CellType) => {
                             <ChevronDown class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" :size="18" />
                         </div>
                     </div>
+                    <label v-if="canUseMilitarySchedule" class="flex items-center gap-3 cursor-pointer text-slate-700 dark:text-slate-200 py-3">
+                        <input v-model="militaryMode" type="checkbox" role="switch" aria-label="รด." class="sr-only peer" />
+                        <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 dark:bg-slate-600 transition-colors peer-checked:bg-pink-600 peer-focus-visible:ring-2 peer-focus-visible:ring-pink-500 peer-focus-visible:ring-offset-2 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5"></span>
+                        <span class="font-medium">รด.</span>
+                    </label>
                 </div>
             </div>
 
@@ -564,7 +572,10 @@ const getBreakContent = (cell: CellType) => {
                             maxlength="60"
                             class="font-kanit font-semibold text-lg text-slate-800 dark:text-slate-200 bg-transparent border-none focus:outline-none placeholder-slate-300 dark:placeholder-slate-500 min-w-0 flex-1"
                         />
-                        <div class="text-xs text-slate-400 dark:text-slate-500 shrink-0">{{ baseTimetable?.label }}</div>
+                        <div class="text-xs text-slate-400 dark:text-slate-500 shrink-0 text-right">
+                            <div>{{ baseTimetable?.label }} · {{ termStore.activeTerm }}</div>
+                            <div v-if="militaryMode">4 พ.ย. – 11 ธ.ค. 2569</div>
+                        </div>
                     </div>
                     <table class="w-full border-collapse min-w-[1200px] table-fixed">
                         <thead>
@@ -587,7 +598,12 @@ const getBreakContent = (cell: CellType) => {
                                 </td>
                                 <template v-for="period in PERIODS" :key="period">
                                     <td
-                                        v-if="getCellContent(day, period).type === 'empty'"
+                                        v-if="getCellContent(day, period).type === 'blocked'"
+                                        aria-label="ไม่มีคาบเรียน"
+                                        class="border border-slate-700 bg-slate-950 h-24"
+                                    />
+                                    <td
+                                        v-else-if="getCellContent(day, period).type === 'empty'"
                                         class="border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800/20 backdrop-blur-sm"
                                     />
                                     <td

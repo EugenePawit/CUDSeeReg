@@ -1,4 +1,5 @@
 import type { BaseTimetable } from '@/types/subject';
+import { TIMETABLES_2569_2 } from './timetables2569_2';
 
 // Helper to create a day schedule
 const createSchedule = (data: Record<string, Record<number, { code: string; name: string; type: 'core' | 'elective' | 'break' }>>) => data;
@@ -15,6 +16,7 @@ export const DAY_NAMES_TH: Record<string, string> = {
 export const PERIODS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const BASE_TIMETABLES: Record<string, BaseTimetable> = {
+    ...TIMETABLES_2569_2,
     // M.1 EP - Elective: Wed 7-8, Thurs 5-6
     'M1-EP': {
         id: 'M1-EP', label: 'ม.1 EP', grade: 1, termId: '2569/1', schedule: createSchedule({

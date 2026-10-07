@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import type { Subject, BaseTimetable } from '@/types/subject';
 import { api, isApiAvailable, type StoredSubject } from '@/lib/api';
+import { getBundledSubjects } from '@/lib/bundledSubjects';
 
 const PASSWORD_KEY = 'cudseereg_admin_pw';
 const SESSION_KEY = 'cudseereg_admin_session';
@@ -59,7 +60,14 @@ export const useAdminStore = defineStore('admin', {
         },
 
         getSubjects(termId: string, grade: string): StoredSubject[] {
-            return this.customSubjects[termId]?.[grade] ?? [];
+            return this.customSubjects[termId]?.[grade] ?? getBundledSubjects(termId, grade);
+        },
+
+        _initializeSubjects(termId: string, grade: string) {
+            if (!this.customSubjects[termId]) this.customSubjects[termId] = {};
+            if (!this.customSubjects[termId][grade]) {
+                this.customSubjects[termId][grade] = structuredClone(getBundledSubjects(termId, grade));
+            }
         },
 
         // Pull the authoritative subject list for a term+grade from the API
@@ -108,8 +116,7 @@ export const useAdminStore = defineStore('admin', {
         },
 
         addSubject(termId: string, grade: string, subject: Subject) {
-            if (!this.customSubjects[termId]) this.customSubjects[termId] = {};
-            if (!this.customSubjects[termId][grade]) this.customSubjects[termId][grade] = [];
+            this._initializeSubjects(termId, grade);
             const stored: StoredSubject = { ...subject };
             this.customSubjects[termId][grade].push(stored);
             this._saveSubjects();
@@ -125,6 +132,7 @@ export const useAdminStore = defineStore('admin', {
         },
 
         updateSubject(termId: string, grade: string, index: number, subject: Subject) {
+            this._initializeSubjects(termId, grade);
             const existing = this.customSubjects[termId]?.[grade]?.[index];
             if (existing === undefined) return;
             const stored: StoredSubject = { ...subject, id: existing.id };
@@ -136,6 +144,7 @@ export const useAdminStore = defineStore('admin', {
         },
 
         deleteSubject(termId: string, grade: string, index: number) {
+            this._initializeSubjects(termId, grade);
             const removed = this.customSubjects[termId]?.[grade]?.[index];
             this.customSubjects[termId]?.[grade]?.splice(index, 1);
             this._saveSubjects();
