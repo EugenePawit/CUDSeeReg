@@ -415,6 +415,7 @@ onUnmounted(() => {
 
 type CellType = { type: 'empty'; content: null } |
     { type: 'blocked'; content: null } |
+    { type: 'unavailable'; content: null } |
     { type: 'break'; content: string } |
     { type: 'core'; content: { code: string; name: string } } |
     { type: 'elective'; content: FlattenedSubject } |
@@ -429,6 +430,10 @@ const getCellContent = (day: string, period: number): CellType => {
 
     if (!entry) {
         return { type: 'empty', content: null };
+    }
+
+    if (entry.type === 'core' && entry.name.trim() === 'ไม่มีเรียน') {
+        return { type: 'unavailable', content: null };
     }
 
     if (entry.type === 'break') {
@@ -601,6 +606,11 @@ const getBreakContent = (cell: CellType) => {
                                         v-if="getCellContent(day, period).type === 'blocked'"
                                         aria-label="ไม่มีคาบเรียน"
                                         class="border border-slate-700 bg-slate-950 h-24"
+                                    />
+                                    <td
+                                        v-else-if="getCellContent(day, period).type === 'unavailable'"
+                                        aria-label="ไม่มีคาบเรียน"
+                                        class="border border-slate-600 bg-slate-700 h-24"
                                     />
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'empty'"
