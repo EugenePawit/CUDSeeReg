@@ -22,7 +22,8 @@ const DEFAULT_TERMS: Term[] = [
 export const useTermStore = defineStore('term', {
     state: () => {
         let terms: Term[] = DEFAULT_TERMS;
-        let activeTerm = '2569/1';
+        // New visitors start with 2569/2; returning visitors keep their selection.
+        let activeTerm = '2569/2';
         try {
             const s = localStorage.getItem(TERMS_KEY);
             if (s) terms = JSON.parse(s);

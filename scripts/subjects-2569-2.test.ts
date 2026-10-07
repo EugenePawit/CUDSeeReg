@@ -24,6 +24,22 @@ beforeEach(() => {
     setActivePinia(createPinia());
 });
 
+test('new visitors start on 2569/2 without changing the live catalog term', () => {
+    const term = useTermStore();
+    expect(term.activeTerm).toBe('2569/2');
+    expect(term.currentTerm.id).toBe('2569/2');
+    expect(term.defaultTermId).toBe('2569/1');
+    expect(term.isLiveDataTerm).toBe(false);
+});
+
+test('returning visitors retain their selected term', () => {
+    localStorage.setItem('cudseereg_active_term', '2569/1');
+    expect(useTermStore().activeTerm).toBe('2569/1');
+    useTermStore().setActiveTerm('2569/2');
+    setActivePinia(createPinia());
+    expect(useTermStore().activeTerm).toBe('2569/2');
+});
+
 test('all six grades retain their groups and every checked spreadsheet period', () => {
     expect(serverCatalog).toEqual(catalog);
     const groupCounts = [54, 53, 52, 77, 86, 108];
