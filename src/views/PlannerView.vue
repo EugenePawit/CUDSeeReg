@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { Plus, X, Download, Trash2, ChevronDown, Share2, Check } from 'lucide-vue-next';
+import { Plus, X, Download, LoaderCircle, Trash2, ChevronDown, Share2, Check } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { useTimetableStore } from '@/stores/timetable';
 import { useTermStore } from '@/stores/term';
@@ -18,6 +18,7 @@ import {
 } from '@/lib/shareTimetable';
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
+import PlannerCredits from '@/components/PlannerCredits.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import TermSelector from '@/components/TermSelector.vue';
 
@@ -65,6 +66,7 @@ const loading = ref(false);
 const searchQuery = ref('');
 const feedback = ref('');
 const didCopyShareLink = ref(false);
+const exporting = ref(false);
 
 const timetableRef = ref<HTMLElement | null>(null);
 const feedbackTimeoutRef = ref<number | null>(null);
@@ -239,24 +241,6 @@ const selectedSubjectKeys = computed(() => {
     return keys;
 });
 
-const totalCredits = computed(() => {
-    let credits = 0;
-    const seen = new Set<string>();
-    for (const day of Object.keys(selectedElectives.value)) {
-        for (const periodKey of Object.keys(selectedElectives.value[day])) {
-            const subject = selectedElectives.value[day]?.[Number(periodKey)];
-            if (subject) {
-                const key = makeSubjectIdentity(subject);
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    credits += parseFloat(subject.credit) || 0;
-                }
-            }
-        }
-    }
-    return credits;
-});
-
 const normalizedSearch = computed(() => searchQuery.value.trim().toLowerCase());
 
 const filteredSubjects = computed(() => {
@@ -330,36 +314,57 @@ const handleSelectSubject = (subject: FlattenedSubject) => {
 };
 
 const handleExport = async () => {
-    if (!timetableRef.value) {
+    if (!timetableRef.value || exporting.value) {
         return;
     }
-    const html2canvas = (await import('html2canvas')).default;
-
-    // Get the full content dimensions
     const el = timetableRef.value;
-    const fullWidth = el.scrollWidth;
-    const fullHeight = el.scrollHeight;
+    const filename = `timetable-${termStore.activeTerm.replace('/', '-')}-${baseTimetable.value?.label || 'cudseereg'}${militaryMode.value ? '-รด' : ''}.png`;
+    exporting.value = true;
 
-    // Scroll to top to ensure capture starts from beginning
-    window.scrollTo(0, 0);
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    const canvas = await html2canvas(el, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        width: fullWidth,
-        height: fullHeight,
-        useCORS: true,
-        allowTaint: true,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: fullWidth,
-        windowHeight: fullHeight,
-    });
-    const link = document.createElement('a');
-    link.download = `timetable-${termStore.activeTerm.replace('/', '-')}-${baseTimetable.value?.label || 'cudseereg'}${militaryMode.value ? '-รด' : ''}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    try {
+        const html2canvas = (await import('html2canvas')).default;
+        await document.fonts.ready;
+        const styles = window.getComputedStyle(el);
+        const fullWidth = Math.max(el.offsetWidth, (el.querySelector('table')?.scrollWidth ?? el.scrollWidth)
+            + parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight)
+            + parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth));
+        const canvas = await html2canvas(el, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            windowWidth: Math.max(window.innerWidth, fullWidth),
+            // Expand only the cloned card so every period is captured, even on
+            // mobile or when the live timetable has been scrolled horizontally.
+            onclone: (_document, clonedElement) => {
+                clonedElement.style.width = `${fullWidth}px`;
+                clonedElement.style.maxWidth = 'none';
+                clonedElement.style.overflow = 'visible';
+                clonedElement.style.transition = 'none';
+                clonedElement.scrollLeft = 0;
+                clonedElement.scrollTop = 0;
+            },
+        });
+        const blob = await new Promise<Blob>((resolve, reject) => {
+            canvas.toBlob(result => result ? resolve(result) : reject(new Error('PNG export failed')), 'image/png');
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = url;
+        document.body.appendChild(link);
+        try {
+            link.click();
+        } finally {
+            link.remove();
+            // Give the browser time to consume the file before releasing it.
+            window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        }
+    } catch (error) {
+        console.error('Timetable download failed:', error);
+        setTransientFeedback('ดาวน์โหลดตารางไม่สำเร็จ กรุณาลองอีกครั้ง');
+    } finally {
+        exporting.value = false;
+    }
 };
 
 const handleCopyShareLink = async () => {
@@ -540,9 +545,6 @@ const getBreakContent = (cell: CellType) => {
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-3 items-center">
-                        <div v-if="totalCredits > 0" class="px-4 py-2 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl text-pink-700 dark:text-pink-300 font-semibold text-sm shadow-sm">
-                            {{ totalCredits }} หน่วยกิต
-                        </div>
                         <button
                             @click="handleCopyShareLink"
                             class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm"
@@ -559,12 +561,18 @@ const getBreakContent = (cell: CellType) => {
                         </button>
                         <button
                             @click="handleExport"
-                            class="btn-primary flex items-center gap-2 interactive-press"
+                            :disabled="exporting"
+                            :aria-busy="exporting"
+                            class="btn-primary flex items-center gap-2 interactive-press disabled:opacity-60 disabled:cursor-wait"
                         >
-                            <Download :size="18" /> ดาวน์โหลด
+                            <LoaderCircle v-if="exporting" :size="18" class="animate-spin" />
+                            <Download v-else :size="18" />
+                            {{ exporting ? 'กำลังดาวน์โหลด...' : 'ดาวน์โหลด' }}
                         </button>
                     </div>
                 </div>
+
+                <PlannerCredits :key="`${termStore.activeTerm}:${baseTimetableId}`" :electives="selectedElectives" />
 
                 <div ref="timetableRef" class="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 dark:border-slate-700 z-20 relative text-slate-800 dark:text-slate-200">
                     <!-- Student name: shown always, editable inline, captured in export -->
@@ -646,6 +654,7 @@ const getBreakContent = (cell: CellType) => {
                                         </div>
                                         <button
                                             @click.stop="removeElective(day, period)"
+                                            data-html2canvas-ignore
                                             class="absolute top-1 right-1 p-1 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 dark:hover:bg-red-800/50 interactive-press"
                                         >
                                             <X :size="12" />
