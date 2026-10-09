@@ -18,6 +18,7 @@ import {
 } from '@/lib/shareTimetable';
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
+import { minimumElectiveCredits, selectedElectiveCredits } from '@/lib/plannerCredits';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import TermSelector from '@/components/TermSelector.vue';
 
@@ -239,6 +240,11 @@ const selectedSubjectKeys = computed(() => {
     }
     return keys;
 });
+
+const creditSummary = computed(() => selectedElectiveCredits(selectedElectives.value));
+const minimumCredits = computed(() => minimumElectiveCredits(normalTimetable.value));
+const creditMinimumMet = computed(() => creditSummary.value.complete && minimumCredits.value !== null
+    && creditSummary.value.total >= minimumCredits.value);
 
 const normalizedSearch = computed(() => searchQuery.value.trim().toLowerCase());
 
@@ -544,6 +550,17 @@ const getBreakContent = (cell: CellType) => {
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-3 items-center">
+                        <div
+                            v-if="minimumCredits !== null"
+                            role="status"
+                            :title="!creditSummary.complete ? 'บางวิชาไม่มีข้อมูลหน่วยกิต' : creditMinimumMet ? 'ครบหน่วยกิตวิชาเลือกขั้นต่ำแล้ว' : 'ยังไม่ครบหน่วยกิตวิชาเลือกขั้นต่ำ'"
+                            :aria-label="`${creditSummary.total} จาก ${minimumCredits} หน่วยกิตวิชาเลือก · ${!creditSummary.complete ? 'ข้อมูลหน่วยกิตไม่ครบ' : creditMinimumMet ? 'ครบขั้นต่ำแล้ว' : 'ยังไม่ครบขั้นต่ำ'}`"
+                            :class="['px-4 py-2.5 border rounded-xl font-semibold text-sm tabular-nums whitespace-nowrap', creditMinimumMet
+                                ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                                : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300']"
+                        >
+                            {{ creditSummary.total }} of {{ minimumCredits }} หน่วยกิต<span v-if="!creditSummary.complete">*</span>
+                        </div>
                         <button
                             @click="handleCopyShareLink"
                             class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm"
