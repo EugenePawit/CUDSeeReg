@@ -18,7 +18,6 @@ import {
 } from '@/lib/shareTimetable';
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
-import PlannerCredits from '@/components/PlannerCredits.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import TermSelector from '@/components/TermSelector.vue';
 
@@ -571,8 +570,6 @@ const getBreakContent = (cell: CellType) => {
                         </button>
                     </div>
                 </div>
-
-                <PlannerCredits :key="`${termStore.activeTerm}:${baseTimetableId}`" :electives="selectedElectives" />
 
                 <div ref="timetableRef" class="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 dark:border-slate-700 z-20 relative text-slate-800 dark:text-slate-200">
                     <!-- Student name: shown always, editable inline, captured in export -->
