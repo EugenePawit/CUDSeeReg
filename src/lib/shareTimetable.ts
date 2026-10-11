@@ -177,22 +177,84 @@ function extractSharedSubjectIndexes(selectedElectives: UserTimetable, catalog: 
     return indexes;
 }
 
+// V4 uses stable references rather than catalog positions, so catalog edits
+// cannot silently change the courses in a shared schedule. Strings have a
+// variable-length UTF-8 byte count; names and custom references are not truncated.
+function encodeCompactTermShare(baseId: number, refs: SharedSubjectRef[], name: string): string {
+    // Bit 0 is reserved for reading mode-bearing links; new links omit mode.
+    const parts = [4, baseId, name ? 2 : 0];
+    const writeNumber = (value: number) => {
+        do {
+            const next = Math.floor(value / 128);
+            parts.push((value % 128) | (next ? 0x80 : 0));
+            value = next;
+        } while (value);
+    };
+    const writeString = (value: string) => {
+        const bytes = new TextEncoder().encode(value);
+        writeNumber(bytes.length);
+        for (const byte of bytes) parts.push(byte);
+    };
+    writeNumber(refs.length);
+    for (const ref of refs) {
+        writeString(ref.c);
+        writeString(ref.g);
+        writeString(ref.t);
+    }
+    if (name) writeString(name);
+    return toBase64Url(new Uint8Array(parts));
+}
+
+function decodeCompactTermShare(bytes: Uint8Array): SharedTimetablePayload | null {
+    let offset = 1;
+    const baseId = BYTE_TO_BASE_ID[bytes[offset++]];
+    const flags = bytes[offset++];
+    if (!baseId || flags === undefined || (flags & ~3)) return null;
+    const readNumber = () => {
+        let value = 0;
+        for (let shift = 0; shift <= 28; shift += 7) {
+            if (offset >= bytes.length) throw new Error('Truncated share token');
+            const byte = bytes[offset++];
+            value += (byte & 0x7f) * 2 ** shift;
+            if (!(byte & 0x80)) return value;
+        }
+        throw new Error('Invalid share length');
+    };
+    const readString = () => {
+        const length = readNumber();
+        if (length > bytes.length - offset) throw new Error('Truncated share string');
+        const value = new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(offset, offset + length));
+        offset += length;
+        return value;
+    };
+    const count = readNumber();
+    if (count > Math.floor((bytes.length - offset) / 3)) return null;
+    const refs: SharedSubjectRef[] = [];
+    for (let i = 0; i < count; i++) refs.push({ c: readString(), g: readString(), t: readString() });
+    const name = flags & 2 ? readString() : undefined;
+    if (offset !== bytes.length) return null;
+    return { v: 1, b: `${baseId}-2569-2`, s: refs, n: name, term: '2569/2', military: Boolean(flags & 1) };
+}
+
 export function encodeTimetableShare(
     baseTimetableId: string,
     selectedElectives: UserTimetable,
     studentName?: string,
-    catalog: FlattenedSubject[] = [],
-    military = false
+    catalog: FlattenedSubject[] = []
 ): string | null {
     if (!baseTimetableId) {
         return null;
     }
 
-    // Term-scoped schedules carry stable course references and the display mode.
+    // Term-scoped schedules carry stable course references.
     if (baseTimetableId.endsWith('-2569-2')) {
+        const baseId = BASE_ID_TO_BYTE[baseTimetableId.slice(0, -'-2569-2'.length)];
+        if (baseId !== undefined) {
+            return encodeCompactTermShare(baseId, extractSharedSubjects(selectedElectives), studentName?.trim() || '');
+        }
         return toBase64Url(new TextEncoder().encode(JSON.stringify({
             v: 3, b: baseTimetableId, s: extractSharedSubjects(selectedElectives),
-            n: studentName?.trim() || undefined, term: '2569/2', military,
+            n: studentName?.trim() || undefined, term: '2569/2', military: false,
         })));
     }
 
@@ -240,6 +302,8 @@ export function decodeTimetableShare(token: string | null): SharedTimetablePaylo
 
     try {
         const bytes = fromBase64Url(token);
+
+        if (bytes[0] === 4) return decodeCompactTermShare(bytes);
 
         if (bytes[0] === 123) {
             const payload = JSON.parse(new TextDecoder().decode(bytes));

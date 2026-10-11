@@ -67,7 +67,7 @@ test('every eligible catalog group survives normal → military → normal witho
     }
 });
 
-test('multi-day groups move simultaneously and share links preserve term, mode, and identity', () => {
+test('multi-day groups move simultaneously and share links preserve term and identity in normal mode', () => {
     const subjects = flattenSubjects(getBundledSubjects('2569/2', '5'));
     const original = subjects.find(s => s.code === 'ค32234')!;
     const moved = subjectForSchedule(original, 5, true);
@@ -76,10 +76,10 @@ test('multi-day groups move simultaneously and share links preserve term, mode, 
     ]);
     const selected = Object.fromEntries(moved.parsedTimeSlots.map(slot => [slot.day,
         Object.fromEntries(slot.periods.map(p => [p, moved]))]));
-    const token = encodeTimetableShare('M5-Science-2569-2', selected, 'ทดสอบ', subjects, true)!;
+    const token = encodeTimetableShare('M5-Science-2569-2', selected, 'ทดสอบ', subjects)!;
     const payload = decodeTimetableShare(token)!;
     expect(payload.term).toBe('2569/2');
-    expect(payload.military).toBe(true);
+    expect(payload.military).toBe(false);
     expect(payload.n).toBe('ทดสอบ');
     expect(payload.s).toHaveLength(1);
     expect(resolveSharedSubjects(payload.s, subjects).resolved).toEqual([original]);

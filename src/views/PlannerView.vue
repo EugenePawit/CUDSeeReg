@@ -373,7 +373,7 @@ const handleExport = async () => {
 };
 
 const handleCopyShareLink = async () => {
-    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value, subjects.value, militaryMode.value);
+    const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value, subjects.value);
     if (!token) {
         setTransientFeedback('ไม่สามารถสร้างลิงก์แชร์ได้');
         return;
