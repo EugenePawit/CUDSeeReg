@@ -1,22 +1,22 @@
 /* Liquid-glass surfaces shared by pages and teleported dialogs. */
 body.liquid-glass {
-  --liquid-fill: rgb(255 255 255 / 16%);
+  --liquid-fill: rgb(255 255 255 / 12%);
   --liquid-edge: rgb(255 255 255 / 82%);
   --liquid-highlight: rgb(255 255 255 / 92%);
   --liquid-shadow: rgb(74 48 109 / 10%);
-  --liquid-control: rgb(255 255 255 / 24%);
-  --liquid-dialog: rgb(255 255 255 / 68%);
+  --liquid-control: rgb(255 255 255 / 18%);
+  --liquid-dialog: rgb(255 255 255 / 64%);
   background-color: #f6f2f8;
   background-image: none;
 }
 
 .dark body.liquid-glass {
-  --liquid-fill: rgb(24 33 53 / 30%);
+  --liquid-fill: rgb(24 33 53 / 24%);
   --liquid-edge: rgb(203 213 225 / 34%);
   --liquid-highlight: rgb(226 232 240 / 48%);
   --liquid-shadow: rgb(0 0 0 / 24%);
-  --liquid-control: rgb(30 41 59 / 38%);
-  --liquid-dialog: rgb(24 33 53 / 72%);
+  --liquid-control: rgb(30 41 59 / 30%);
+  --liquid-dialog: rgb(24 33 53 / 68%);
   background-color: #101827;
 }
 
@@ -28,11 +28,11 @@ body.liquid-glass {
   z-index: 0;
   background:
     radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 30%), transparent 70%),
-    linear-gradient(135deg, #fff3f8, #f0f0fc 55%, #eef6ff);
+    linear-gradient(135deg, #f8f5f7, #f2f2f8 55%, #f0f4f8);
 }
 
 .dark .liquid-backdrop {
-  background: linear-gradient(135deg, #20172f, #101b30 55%, #15273a);
+  background: linear-gradient(135deg, #1c1927, #141c2c 55%, #192532);
 }
 
 .liquid-orb {
@@ -41,7 +41,7 @@ body.liquid-glass {
   aspect-ratio: 1;
   border-radius: 46% 54% 62% 38% / 42% 42% 58% 58%;
   filter: blur(24px);
-  opacity: .85;
+  opacity: .65;
   animation: liquid-drift 24s ease-in-out infinite alternate;
 }
 
@@ -59,7 +59,7 @@ body.liquid-glass {
   background: radial-gradient(circle at 50% 40%, #fed7aa, #fbcfe8 45%, transparent 72%);
   animation-delay: -16s;
 }
-.dark .liquid-orb { opacity: .32; }
+.dark .liquid-orb { opacity: .25; }
 
 @keyframes liquid-drift {
   from { transform: translate3d(0, 0, 0) rotate(-8deg); }
@@ -71,10 +71,10 @@ body.liquid-glass {
    controls or cover content in the existing 3D course cards. */
 .liquid-glass :is(.glass-card, .liquid-nav, .liquid-dialog, .liquid-popover) {
   background-color: var(--liquid-fill);
-  background-image: linear-gradient(135deg, rgb(255 255 255 / 22%), transparent 22%, transparent 72%, rgb(255 255 255 / 12%));
+  background-image: linear-gradient(135deg, rgb(255 255 255 / 18%), transparent 18%, transparent 78%, rgb(255 255 255 / 10%));
   border: 1px solid var(--liquid-edge);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
   box-shadow:
     inset 0 1px 2px var(--liquid-highlight),
     inset 1px 0 1px rgb(255 255 255 / 36%),
@@ -136,8 +136,8 @@ body.liquid-glass {
 @media (max-width: 640px) {
   .liquid-orb { width: 110vw; filter: blur(30px); }
   .liquid-glass :is(.glass-card, .liquid-nav, .liquid-dialog, .liquid-popover) {
-    -webkit-backdrop-filter: blur(10px) saturate(160%);
-    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(9px) saturate(130%);
+    backdrop-filter: blur(9px) saturate(130%);
   }
 }
 
