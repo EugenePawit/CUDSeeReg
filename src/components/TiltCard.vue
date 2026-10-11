@@ -20,6 +20,7 @@ const sheenOpacity = computed(() => {
 });
 
 const handleMouseMove = (e: MouseEvent) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (!cardRef.value) return;
     const rect = cardRef.value.getBoundingClientRect();
     const width = rect.width;
@@ -41,7 +42,7 @@ const handleMouseLeave = () => {
 <template>
     <div
         ref="cardRef"
-        class="relative overflow-hidden cursor-pointer"
+        class="liquid-tilt relative overflow-hidden cursor-pointer"
         :class="props.className"
         @mousemove="handleMouseMove"
         @mouseleave="handleMouseLeave"

@@ -20,7 +20,7 @@ const select = (id: string) => {
     <div ref="containerRef" class="relative">
         <button
             @click="isOpen = !isOpen"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pink-50 dark:bg-pink-900/30 border border-pink-200 dark:border-pink-800 text-pink-700 dark:text-pink-300 text-xs sm:text-sm font-medium hover:bg-pink-100 dark:hover:bg-pink-900/50 transition-colors whitespace-nowrap"
+            class="liquid-control flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pink-50 dark:bg-pink-900/30 border border-pink-200 dark:border-pink-800 text-pink-700 dark:text-pink-300 text-xs sm:text-sm font-medium hover:bg-pink-100 dark:hover:bg-pink-900/50 transition-colors whitespace-nowrap"
         >
             <Calendar :size="13" />
             <span>ภาคเรียน {{ termStore.currentTerm?.label }}</span>
@@ -37,7 +37,7 @@ const select = (id: string) => {
         >
             <div
                 v-if="isOpen"
-                class="absolute top-full mt-2 right-0 min-w-[170px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 py-1 overflow-hidden"
+                class="liquid-popover absolute top-full mt-2 right-0 min-w-[170px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 py-1 overflow-hidden"
             >
                 <button
                     v-for="term in termStore.terms"

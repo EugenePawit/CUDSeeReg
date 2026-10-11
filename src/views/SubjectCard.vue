@@ -64,7 +64,7 @@ const handleKeydown = (e: KeyboardEvent) => {
             <select
                 v-model="selectedGroup"
                 @click.stop
-                class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors relative z-50"
+                class="liquid-control w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 appearance-none cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors relative z-50"
             >
                 <option
                     v-for="(group, groupIndex) in subject.groups"
@@ -83,7 +83,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         <div class="mt-auto">
             <div class="text-sm text-slate-600 dark:text-slate-400 space-y-3 font-medium">
                 <div v-if="!hasMultipleGroups" class="mb-5 relative z-40">
-            <div class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-300 relative">
+            <div class="liquid-control w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-300 relative">
                 กลุ่ม 1 - {{ current.instructor }}
             </div>
         </div>

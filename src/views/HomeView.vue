@@ -305,7 +305,7 @@ onUnmounted(() => {
             >
                 <div
                     v-if="!modalData.anchor || isMobile"
-                    class="modal-content bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/40 dark:border-slate-700"
+                    class="liquid-dialog modal-content bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/40 dark:border-slate-700"
                     @click.stop
                 >
                     <ModalContent
@@ -319,7 +319,7 @@ onUnmounted(() => {
                 <div
                     v-else
                     ref="modalPanelRef"
-                    class="modal-content bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-2xl border border-white/40 dark:border-slate-700"
+                    class="liquid-dialog modal-content bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-2xl border border-white/40 dark:border-slate-700"
                     :style="modalPositionStyle"
                     @click.stop
                 >

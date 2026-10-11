@@ -1,0 +1,160 @@
+/* Liquid-glass surfaces shared by pages and teleported dialogs. */
+body.liquid-glass {
+  --liquid-fill: rgb(255 255 255 / 56%);
+  --liquid-edge: rgb(255 255 255 / 82%);
+  --liquid-highlight: rgb(255 255 255 / 92%);
+  --liquid-shadow: rgb(74 48 109 / 10%);
+  --liquid-control: rgb(255 255 255 / 62%);
+  --liquid-dialog: rgb(255 255 255 / 88%);
+  background-color: #f6f2f8;
+  background-image: none;
+}
+
+.dark body.liquid-glass {
+  --liquid-fill: rgb(24 33 53 / 66%);
+  --liquid-edge: rgb(203 213 225 / 23%);
+  --liquid-highlight: rgb(226 232 240 / 26%);
+  --liquid-shadow: rgb(0 0 0 / 24%);
+  --liquid-control: rgb(30 41 59 / 74%);
+  --liquid-dialog: rgb(24 33 53 / 92%);
+  background-color: #101827;
+}
+
+.liquid-backdrop {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 70%), transparent 70%),
+    linear-gradient(135deg, #fff3f8, #f0f0fc 55%, #eef6ff);
+}
+
+.dark .liquid-backdrop {
+  background: linear-gradient(135deg, #20172f, #101b30 55%, #15273a);
+}
+
+.liquid-orb {
+  position: absolute;
+  width: min(65vw, 850px);
+  aspect-ratio: 1;
+  border-radius: 46% 54% 62% 38% / 42% 42% 58% 58%;
+  filter: blur(45px);
+  opacity: .68;
+  animation: liquid-drift 24s ease-in-out infinite alternate;
+}
+
+.liquid-orb-rose {
+  top: -20%; left: -12%;
+  background: radial-gradient(circle at 40% 40%, #fda4c7, #f8c9df 45%, transparent 72%);
+}
+.liquid-orb-blue {
+  top: 12%; right: -20%;
+  background: radial-gradient(circle at 45% 45%, #a5c4fd, #c4b5fd 45%, transparent 72%);
+  animation-delay: -8s;
+}
+.liquid-orb-peach {
+  bottom: -42%; left: 22%;
+  background: radial-gradient(circle at 50% 40%, #fed7aa, #fbcfe8 45%, transparent 72%);
+  animation-delay: -16s;
+}
+.dark .liquid-orb { opacity: .22; }
+
+@keyframes liquid-drift {
+  from { transform: translate3d(0, 0, 0) rotate(-8deg); }
+  to { transform: translate3d(5vw, 5vh, 0) rotate(12deg); }
+}
+
+/* The two inset highlights suggest a curved edge without blurring content.
+   Keep the surface on the element itself: pseudo-overlays can intercept
+   controls or cover content in the existing 3D course cards. */
+.liquid-glass :is(.glass-card, .liquid-nav, .liquid-dialog, .liquid-popover) {
+  background-color: var(--liquid-fill);
+  background-image: linear-gradient(135deg, rgb(255 255 255 / 26%), transparent 42%, rgb(255 255 255 / 8%) 75%, rgb(255 255 255 / 25%));
+  border: 1px solid var(--liquid-edge);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+  backdrop-filter: blur(28px) saturate(165%);
+  box-shadow:
+    inset 0 1px 0 var(--liquid-highlight),
+    inset 1px 0 0 rgb(255 255 255 / 22%),
+    inset 0 -1px 0 rgb(255 255 255 / 20%),
+    0 12px 36px -12px var(--liquid-shadow),
+    0 2px 8px rgb(74 48 109 / 4%);
+  transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.dark .liquid-glass :is(.glass-card, .liquid-nav, .liquid-dialog, .liquid-popover) {
+  background-image: linear-gradient(135deg, rgb(255 255 255 / 9%), transparent 45%, rgb(255 255 255 / 3%) 75%, rgb(255 255 255 / 7%));
+}
+
+.liquid-glass .glass-card:hover {
+  background-color: var(--liquid-control);
+  border-color: var(--liquid-highlight);
+  box-shadow: inset 0 1px 0 var(--liquid-highlight), inset 0 -1px 0 rgb(255 255 255 / 22%), 0 16px 40px -12px var(--liquid-shadow);
+}
+
+.liquid-glass .liquid-nav {
+  background-color: var(--liquid-control);
+  box-shadow: inset 0 1px 1px var(--liquid-highlight), inset 0 -1px 1px rgb(255 255 255 / 25%), 0 8px 32px var(--liquid-shadow);
+}
+
+.liquid-glass :is(.liquid-dialog, .liquid-popover) { background-color: var(--liquid-dialog); }
+
+.liquid-glass .liquid-control {
+  background-color: var(--liquid-control);
+  border-color: var(--liquid-edge);
+  box-shadow: inset 0 1px 0 var(--liquid-highlight), 0 2px 6px rgb(74 48 109 / 4%);
+}
+
+.liquid-glass .btn-primary {
+  background-image: linear-gradient(150deg, #f472b6, #db2777 65%, #be185d);
+  border: 1px solid rgb(255 255 255 / 45%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 50%), 0 5px 18px rgb(219 39 119 / 22%);
+  border-radius: 999px;
+}
+.liquid-glass .btn-secondary {
+  background: var(--liquid-control);
+  border: 1px solid var(--liquid-edge);
+  box-shadow: inset 0 1px 0 var(--liquid-highlight), 0 4px 12px var(--liquid-shadow);
+  border-radius: 999px;
+}
+
+/* Timetable cells retain their solid, semantic day colors for readability. */
+.liquid-glass :is(button, a, input, select):focus-visible {
+  outline: 2px solid #db2777;
+  outline-offset: 3px;
+}
+.dark .liquid-glass :is(button, a, input, select):focus-visible { outline-color: #f9a8d4; }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body.liquid-glass { --liquid-fill: #f8f5fa; --liquid-control: #fff; --liquid-dialog: #fff; }
+  .dark body.liquid-glass { --liquid-fill: #1e293b; --liquid-control: #273449; --liquid-dialog: #1e293b; }
+}
+
+@media (max-width: 640px) {
+  .liquid-orb { width: 110vw; filter: blur(30px); }
+  .liquid-glass :is(.glass-card, .liquid-nav, .liquid-dialog, .liquid-popover) {
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-orb { animation: none; }
+  .liquid-glass .liquid-tilt { transform: none !important; }
+  .liquid-glass *, .liquid-glass *::before, .liquid-glass *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body.liquid-glass { --liquid-fill: #f8f5fa; --liquid-control: #fff; --liquid-dialog: #fff; }
+  .dark body.liquid-glass { --liquid-fill: #1e293b; --liquid-control: #273449; --liquid-dialog: #1e293b; }
+  .liquid-glass :is(.glass-card, .liquid-nav, .liquid-dialog, .liquid-popover) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-image: none;
+  }
+}

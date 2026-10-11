@@ -57,7 +57,7 @@ const slotDisplay = computed(() => {
             @click="emit('close')"
         >
             <div
-                class="modal-content bg-white/90 dark:bg-slate-800/90 backdrop-blur-3xl border border-slate-200 dark:border-slate-700 shadow-glass-lg rounded-bento max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+                class="liquid-dialog modal-content bg-white/90 dark:bg-slate-800/90 backdrop-blur-3xl border border-slate-200 dark:border-slate-700 shadow-glass-lg rounded-bento max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
                 @click.stop
             >
                 <div class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0">
@@ -77,7 +77,7 @@ const slotDisplay = computed(() => {
                         placeholder="ค้นหาวิชา (ชื่อวิชา, รหัสวิชา, อาจารย์)..."
                         :value="searchQuery"
                         @input="emit('searchChange', ($event.target as HTMLInputElement).value)"
-                        class="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/50 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
+                        class="liquid-control w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/50 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
                         autofocus
                     />
                 </div>

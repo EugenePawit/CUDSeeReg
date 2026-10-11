@@ -501,7 +501,7 @@ const getBreakContent = (cell: CellType) => {
                             <select
                                 :value="parsedFromStore.grade"
                                 @change="handleGradeChange(($event.target as HTMLSelectElement).value)"
-                                class="appearance-none w-full sm:w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-3 pr-10 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors"
+                                class="liquid-control appearance-none w-full sm:w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-3 pr-10 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors"
                             >
                                 <option v-for="grade in GRADES" :key="grade" :value="grade" class="text-slate-900 dark:text-slate-200 bg-white dark:bg-slate-800">
                                     ม.{{ grade }}
@@ -517,7 +517,7 @@ const getBreakContent = (cell: CellType) => {
                             <select
                                 :value="parsedFromStore.program"
                                 @change="handleProgramChange(($event.target as HTMLSelectElement).value)"
-                                class="appearance-none w-full sm:w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-3 pr-10 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors"
+                                class="liquid-control appearance-none w-full sm:w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-3 pr-10 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 backdrop-blur-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors"
                             >
                                 <option v-for="program in programs" :key="program.value" :value="program.value" class="text-slate-900 dark:text-slate-200 bg-white dark:bg-slate-800">
                                     {{ program.label }}
