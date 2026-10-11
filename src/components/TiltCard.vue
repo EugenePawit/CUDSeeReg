@@ -47,6 +47,8 @@ const handleMouseLeave = () => {
         @mousemove="handleMouseMove"
         @mouseleave="handleMouseLeave"
         :style="{
+            '--liquid-sheen-x': `${sheenX}%`,
+            '--liquid-sheen-y': `${sheenY}%`,
             transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`,
             transition: 'transform 0.1s ease-out',
             transformStyle: 'preserve-3d',
