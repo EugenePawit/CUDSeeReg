@@ -588,7 +588,7 @@ const getBreakContent = (cell: CellType) => {
                     </div>
                 </div>
 
-                <div ref="timetableRef" class="glass-card shadow-glass p-6 rounded-bento overflow-x-auto backdrop-blur-2xl border-slate-200 dark:border-slate-700 z-20 relative text-slate-800 dark:text-slate-200">
+                <div ref="timetableRef" class="timetable-panel bg-white dark:bg-slate-900 border shadow-glass p-6 rounded-bento overflow-x-auto border-slate-200 dark:border-slate-700 z-20 relative text-slate-800 dark:text-slate-200">
                     <!-- Student name: shown always, editable inline, captured in export -->
                     <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-200 dark:border-slate-700">
                         <input
@@ -636,7 +636,7 @@ const getBreakContent = (cell: CellType) => {
                                     />
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'empty'"
-                                        class="border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800/20 backdrop-blur-sm"
+                                        class="border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800/20"
                                     />
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'break'"
@@ -657,7 +657,7 @@ const getBreakContent = (cell: CellType) => {
                                     </td>
                                     <td
                                         v-else-if="getCellContent(day, period).type === 'elective'"
-                                        class="border border-slate-200 dark:border-slate-700 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 p-2 relative group h-24 align-middle interactive-press backdrop-blur-md"
+                                        class="border border-slate-200 dark:border-slate-700 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 p-2 relative group h-24 align-middle interactive-press"
                                     >
                                         <div class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                                             {{ getElectiveContent(getCellContent(day, period))?.code }}
@@ -682,7 +682,7 @@ const getBreakContent = (cell: CellType) => {
                                         tabindex="0"
                                         role="button"
                                         :aria-label="`เพิ่มวิชาเลือก วัน${day} คาบ${period}`"
-                                        class="border border-slate-200 dark:border-slate-700 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 p-2 hover:bg-purple-100 dark:hover:bg-purple-900/40 cursor-pointer transition-colors group relative h-24 align-middle interactive-press backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-inset"
+                                        class="border border-slate-200 dark:border-slate-700 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 p-2 hover:bg-purple-100 dark:hover:bg-purple-900/40 cursor-pointer transition-colors group relative h-24 align-middle interactive-press focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-inset"
                                     >
                                         <div class="flex flex-col items-center justify-center h-full text-purple-400 dark:text-purple-500 group-hover:text-purple-600 dark:group-hover:text-purple-300">
                                             <Plus :size="20" />
