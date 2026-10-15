@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { Plus, X, Download, LoaderCircle, Trash2, ChevronDown, Share2, Check } from 'lucide-vue-next';
+import { Plus, X, Trash2, ChevronDown } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { useTimetableStore } from '@/stores/timetable';
 import { useTermStore } from '@/stores/term';
@@ -18,6 +18,7 @@ import {
 } from '@/lib/shareTimetable';
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
+import ExportMenu from '@/components/ExportMenu.vue';
 import { minimumElectiveCredits, selectedElectiveCredits } from '@/lib/plannerCredits';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import TermSelector from '@/components/TermSelector.vue';
@@ -65,7 +66,13 @@ const subjectsGrade = ref<number | null>(null);
 const loading = ref(false);
 const searchQuery = ref('');
 const feedback = ref('');
-const didCopyShareLink = ref(false);
+const canCopyImage = window.isSecureContext && typeof ClipboardItem !== 'undefined'
+    && typeof navigator.clipboard?.write === 'function'
+    && (typeof ClipboardItem.supports !== 'function' || ClipboardItem.supports('image/png'));
+const subjectList = computed(() => [...new Map(
+    Object.values(selectedElectives.value).flatMap(day => Object.values(day))
+        .map(subject => [subject.code.trim(), `${subject.code.trim()} ${subject.name.trim()}`])
+).values()].join('\n'));
 const exporting = ref(false);
 
 const timetableRef = ref<HTMLElement | null>(null);
@@ -318,59 +325,88 @@ const handleSelectSubject = (subject: FlattenedSubject) => {
     searchQuery.value = '';
 };
 
-const handleExport = async () => {
-    if (!timetableRef.value || exporting.value) {
-        return;
-    }
+const captureTimetableImage = async (): Promise<Blob> => {
     const el = timetableRef.value;
-    const filename = `timetable-${termStore.activeTerm.replace('/', '-')}-${baseTimetable.value?.label || 'cudseereg'}${militaryMode.value ? '-รด' : ''}.png`;
-    exporting.value = true;
+    if (!el) throw new Error('Timetable unavailable');
+    const html2canvas = (await import('html2canvas')).default;
+    await document.fonts.ready;
+    const styles = window.getComputedStyle(el);
+    const fullWidth = Math.max(el.offsetWidth, (el.querySelector('table')?.scrollWidth ?? el.scrollWidth)
+        + parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight)
+        + parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth));
+    const canvas = await html2canvas(el, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        windowWidth: Math.max(window.innerWidth, fullWidth),
+        // Expand only the cloned card so every period is captured, even on
+        // mobile or when the live timetable has been scrolled horizontally.
+        onclone: (_document, clonedElement) => {
+            clonedElement.style.width = `${fullWidth}px`;
+            clonedElement.style.maxWidth = 'none';
+            clonedElement.style.overflow = 'visible';
+            clonedElement.style.transition = 'none';
+            clonedElement.scrollLeft = 0;
+            clonedElement.scrollTop = 0;
+        },
+    });
+    return new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(result => result ? resolve(result) : reject(new Error('PNG export failed')), 'image/png');
+    });
+};
 
+const handleImageExport = async (copy: boolean) => {
+    if (!timetableRef.value || exporting.value) return;
+    exporting.value = true;
     try {
-        const html2canvas = (await import('html2canvas')).default;
-        await document.fonts.ready;
-        const styles = window.getComputedStyle(el);
-        const fullWidth = Math.max(el.offsetWidth, (el.querySelector('table')?.scrollWidth ?? el.scrollWidth)
-            + parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight)
-            + parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth));
-        const canvas = await html2canvas(el, {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            useCORS: true,
-            windowWidth: Math.max(window.innerWidth, fullWidth),
-            // Expand only the cloned card so every period is captured, even on
-            // mobile or when the live timetable has been scrolled horizontally.
-            onclone: (_document, clonedElement) => {
-                clonedElement.style.width = `${fullWidth}px`;
-                clonedElement.style.maxWidth = 'none';
-                clonedElement.style.overflow = 'visible';
-                clonedElement.style.transition = 'none';
-                clonedElement.scrollLeft = 0;
-                clonedElement.scrollTop = 0;
-            },
-        });
-        const blob = await new Promise<Blob>((resolve, reject) => {
-            canvas.toBlob(result => result ? resolve(result) : reject(new Error('PNG export failed')), 'image/png');
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = url;
-        document.body.appendChild(link);
-        try {
-            link.click();
-        } finally {
-            link.remove();
-            // Give the browser time to consume the file before releasing it.
-            window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        if (copy) {
+            // Start clipboard.write in the click event; Safari needs the user
+            // gesture even though rendering the PNG finishes asynchronously.
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': captureTimetableImage() }),
+            ]);
+            setTransientFeedback('คัดลอกรูปภาพแล้ว');
+        } else {
+            const blob = await captureTimetableImage();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `timetable-${termStore.activeTerm.replace('/', '-')}-${baseTimetable.value?.label || 'cudseereg'}${militaryMode.value ? '-รด' : ''}.png`;
+            link.href = url;
+            document.body.appendChild(link);
+            try {
+                link.click();
+            } finally {
+                link.remove();
+                window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+            }
+            setTransientFeedback('ดาวน์โหลดรูปภาพแล้ว');
         }
     } catch (error) {
-        console.error('Timetable download failed:', error);
-        setTransientFeedback('ดาวน์โหลดตารางไม่สำเร็จ กรุณาลองอีกครั้ง');
+        console.error('Timetable image export failed:', error);
+        setTransientFeedback(copy ? 'คัดลอกรูปภาพไม่สำเร็จ กรุณาใช้ดาวน์โหลดรูปภาพ' : 'ดาวน์โหลดตารางไม่สำเร็จ กรุณาลองอีกครั้ง');
     } finally {
         exporting.value = false;
     }
 };
+
+async function copyText(text: string) {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        try {
+            textArea.focus();
+            textArea.select();
+            if (!document.execCommand('copy')) throw new Error('Clipboard unavailable');
+        } finally {
+            textArea.remove();
+        }
+    }
+}
 
 const handleCopyShareLink = async () => {
     const token = encodeTimetableShare(baseTimetableId.value, selectedElectives.value, studentName.value, subjects.value);
@@ -381,25 +417,22 @@ const handleCopyShareLink = async () => {
 
     const url = `${window.location.origin}/?s=${token}`;
 
-    try {
-        await navigator.clipboard.writeText(url);
-    } catch {
-        const textArea = document.createElement('textarea');
-        textArea.value = url;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-9999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand('copy');
-        textArea.remove();
-    }
-
-    didCopyShareLink.value = true;
-    window.setTimeout(() => {
-        didCopyShareLink.value = false;
-    }, 1800);
+    await copyText(url);
     setTransientFeedback('คัดลอกลิงก์แชร์แล้ว');
+};
+
+const handleExportAction = async (action: 'link' | 'copy-image' | 'download-image' | 'list') => {
+    try {
+        if (action === 'link') await handleCopyShareLink();
+        else if (action === 'list') {
+            if (!subjectList.value) return;
+            await copyText(subjectList.value);
+            setTransientFeedback('คัดลอกรายชื่อวิชาแล้ว');
+        } else await handleImageExport(action === 'copy-image');
+    } catch (error) {
+        console.error('Clipboard copy failed:', error);
+        setTransientFeedback('คัดลอกไม่สำเร็จ กรุณาลองอีกครั้ง');
+    }
 };
 
 const handleEsc = (event: KeyboardEvent) => {
@@ -545,7 +578,7 @@ const getBreakContent = (cell: CellType) => {
                         <p class="text-slate-600 dark:text-slate-400 font-medium tracking-wide">
                             คลิกที่ช่อง <span class="bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded-md mx-1 border border-pink-200 dark:border-pink-800">วิชาเลือก</span> เพื่อเพิ่มวิชา
                         </p>
-                        <p v-if="feedback" class="text-sm text-emerald-600 dark:text-emerald-400 mt-2 font-medium bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
+                        <p v-if="feedback" role="status" aria-live="polite" class="text-sm text-emerald-600 dark:text-emerald-400 mt-2 font-medium bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
                             {{ feedback }}
                         </p>
                     </div>
@@ -562,29 +595,12 @@ const getBreakContent = (cell: CellType) => {
                             {{ creditSummary.total }} of {{ minimumCredits }} หน่วยกิต<span v-if="!creditSummary.complete">*</span>
                         </div>
                         <button
-                            @click="handleCopyShareLink"
-                            class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium px-5 py-2.5 rounded-xl transition-all interactive-press flex items-center gap-2 shadow-sm"
-                        >
-                            <Check v-if="didCopyShareLink" :size="18" class="text-pink-600" />
-                            <Share2 v-else :size="18" />
-                            {{ didCopyShareLink ? 'คัดลอกแล้ว' : 'แชร์ตาราง' }}
-                        </button>
-                        <button
                             @click="timetableStore.clearAllElectives()"
                             class="btn-secondary flex items-center gap-2 interactive-press"
                         >
                             <Trash2 :size="18" /> ล้างทั้งหมด
                         </button>
-                        <button
-                            @click="handleExport"
-                            :disabled="exporting"
-                            :aria-busy="exporting"
-                            class="btn-primary flex items-center gap-2 interactive-press disabled:opacity-60 disabled:cursor-wait"
-                        >
-                            <LoaderCircle v-if="exporting" :size="18" class="animate-spin" />
-                            <Download v-else :size="18" />
-                            {{ exporting ? 'กำลังดาวน์โหลด...' : 'ดาวน์โหลด' }}
-                        </button>
+                        <ExportMenu :busy="exporting" :can-copy-image="canCopyImage" :has-subjects="!!subjectList" @action="handleExportAction" />
                     </div>
                 </div>
 
