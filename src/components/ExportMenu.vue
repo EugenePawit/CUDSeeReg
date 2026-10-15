@@ -52,8 +52,8 @@ function dismiss(event: MouseEvent) {
                 <button type="button" class="export-option" :disabled="!canCopyImage" :aria-describedby="!canCopyImage ? 'copy-image-help' : undefined" @click="choose('copy-image')">
                     <Image :size="20" /><span>คัดลอกรูปภาพ<small v-if="!canCopyImage" id="copy-image-help">เบราว์เซอร์นี้ไม่รองรับ กรุณาดาวน์โหลดรูปภาพ</small></span>
                 </button>
-                <button type="button" class="export-option" @click="choose('download-image')"><Download :size="20" /><span>ดาวน์โหลดรูปภาพ<small>บันทึกตารางเรียนเป็น PNG</small></span></button>
-                <button type="button" class="export-option" :disabled="!hasSubjects" @click="choose('list')"><List :size="20" /><span>คัดลอกรายชื่อวิชา<small>{{ hasSubjects ? 'วิชาเลือกที่เลือกไว้ · รหัสและชื่อวิชา' : 'เลือกวิชาเลือกก่อนคัดลอกรายชื่อ' }}</small></span></button>
+                <button type="button" class="export-option" @click="choose('download-image')"><Download :size="20" /><span>ดาวน์โหลดรูปภาพ</span></button>
+                <button type="button" class="export-option" :disabled="!hasSubjects" @click="choose('list')"><List :size="20" /><span>คัดลอกรายชื่อวิชา</span></button>
             </div>
         </dialog>
     </Teleport>
