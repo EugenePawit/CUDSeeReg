@@ -64,6 +64,20 @@ test('merged continuation rows preserve course metadata and distinct instructors
     expect(groups[1].classtime).toBe('พุธ 7');
 });
 
+test('duplicate stored offerings appear once while separate groups and times remain', () => {
+    const waves = getBundledSubjects('2569/2', '6').filter(s => s.code === 'ว30218');
+    const duplicate = { ...waves[0], order: 999, updatedElectiveQuantity: '12', id: 123 };
+    const anotherTime = { ...waves[0], classtime: 'ศุกร์ 1' };
+    const flattened = flattenSubjects([...waves, duplicate, anotherTime]);
+    expect(flattened).toHaveLength(3);
+    expect(flattened[0].availableSeats).toBe(12);
+    expect(flattened.map(s => [s.group, s.classtime])).toEqual([
+        ['1', 'พุธ 1'], ['2', 'อังคาร 6'], ['1', 'ศุกร์ 1'],
+    ]);
+    // Repeated groups inside an imported array use the same deduplication.
+    expect(flattenSubjects([{ ...waves[0], group: ['1', '1'] }])).toHaveLength(1);
+});
+
 test('temporary upper-grade timetable periods are notes, not extra weekly periods', () => {
     const subject = getBundledSubjects('2569/2', '6').find(s => s.code === 'ท30229')!;
     expect(subject.classtime).toBe('อังคาร 6');

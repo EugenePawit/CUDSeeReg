@@ -197,7 +197,14 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
         }
     }
 
-    return flattened;
+    // Imported/server rows can overlap with another catalog entry. Row IDs
+    // and ordering do not make the same course offering a separate choice.
+    const offerings = new Map<string, FlattenedSubject>();
+    for (const subject of flattened) {
+        const key = JSON.stringify([subject.code.trim(), subject.group.trim(), subject.classtime.trim()]);
+        offerings.set(key, subject);
+    }
+    return [...offerings.values()];
 }
 
 export function groupSubjectsByCode(flattened: FlattenedSubject[]): GroupedSubject[] {
