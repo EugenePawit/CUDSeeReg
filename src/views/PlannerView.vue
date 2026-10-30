@@ -21,6 +21,7 @@ import {
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
 import ExportMenu from '@/components/ExportMenu.vue';
+import { timetableClassrooms } from '@/lib/timetableClassrooms';
 import { minimumElectiveCredits, selectedElectiveCredits } from '@/lib/plannerCredits';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import TermSelector from '@/components/TermSelector.vue';
@@ -101,6 +102,8 @@ const normalTimetable = computed(() => allTimetables.value[baseTimetableId.value
 const canUseMilitarySchedule = computed(() => supportsMilitarySchedule(normalTimetable.value));
 const baseTimetable = computed(() => normalTimetable.value && militaryMode.value && canUseMilitarySchedule.value
     ? M3_M5_DEMO_MILITARY[normalTimetable.value.id] ?? M6_DEMO_MILITARY[normalTimetable.value.id] ?? militaryTimetable(normalTimetable.value) : normalTimetable.value);
+const electiveClassrooms = computed(() => timetableClassrooms(selectedElectives.value,
+    militaryMode.value && canUseMilitarySchedule.value));
 const subjects = computed(() => rawSubjects.value.map(subject => subjectForSchedule(subject,
     normalTimetable.value?.grade ?? 1, militaryMode.value && canUseMilitarySchedule.value)));
 
@@ -718,6 +721,16 @@ const getBreakContent = (cell: CellType) => {
                             </tr>
                         </tbody>
                     </table>
+                    <section v-if="electiveClassrooms.length" aria-labelledby="elective-classrooms-title"
+                        class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <h2 id="elective-classrooms-title" class="font-semibold text-base mb-3">ห้องเรียนวิชาเพิ่มเติม</h2>
+                        <ul class="space-y-2 text-sm">
+                            <li v-for="subject in electiveClassrooms" :key="subject.id" class="flex flex-col sm:flex-row sm:gap-2">
+                                <span class="font-medium">{{ subject.code }} {{ subject.name }}<span v-if="subject.group"> · กลุ่ม {{ subject.group }}</span></span>
+                                <span class="whitespace-pre-line break-words text-slate-600 dark:text-slate-400">{{ subject.classroom }}</span>
+                            </li>
+                        </ul>
+                    </section>
                 </div>
             </template>
         </main>
