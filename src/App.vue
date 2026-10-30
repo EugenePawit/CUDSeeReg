@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, defineComponent, h } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
-import { useWindowScroll } from '@vueuse/core';
+import { useMediaQuery, useWindowScroll } from '@vueuse/core';
 import { bootstrapData } from '@/lib/bootstrap';
 const route = useRoute();
 const { y: scrollY } = useWindowScroll();
@@ -13,8 +13,9 @@ onMounted(() => {
     void bootstrapData();
 });
 
-const navWidth = computed(() => scrollY.value > 100 ? '85%' : '100%');
-const navY = computed(() => Math.min(scrollY.value * 0.1, 10));
+const mouseNavigation = useMediaQuery('(hover: hover) and (pointer: fine)');
+const navWidth = computed(() => mouseNavigation.value && scrollY.value > 100 ? '85%' : '100%');
+const navY = computed(() => mouseNavigation.value ? Math.min(scrollY.value * 0.1, 10) : 0);
 
 const isSearch = computed(() => route.name === 'search');
 const isPlanner = computed(() => route.name === 'planner');
@@ -26,7 +27,11 @@ const MagneticButton = defineComponent({
         const buttonRef = ref<HTMLElement | null>(null);
         const position = ref({ x: 0, y: 0 });
 
-        const handleMouse = (e: MouseEvent) => {
+        const handlePointer = (e: PointerEvent) => {
+            if (e.pointerType !== 'mouse' || !mouseNavigation.value) {
+                position.value = { x: 0, y: 0 };
+                return;
+            }
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             if (!buttonRef.value) return;
             const rect = buttonRef.value.getBoundingClientRect();
@@ -43,8 +48,9 @@ const MagneticButton = defineComponent({
             return h('div',
                 {
                     ref: buttonRef,
-                    onMousemove: handleMouse,
-                    onMouseleave: reset,
+                    onPointermove: handlePointer,
+                    onPointerleave: reset,
+                    onPointerdown: (event: PointerEvent) => { if (event.pointerType !== 'mouse') reset(); },
                     class: 'inline-block',
                     style: {
                         transform: `translate(${position.value.x}px, ${position.value.y}px)`,
@@ -70,15 +76,15 @@ const MagneticButton = defineComponent({
         :style="{ transform: `translateY(${navY}px)` }"
     >
         <div
-            class="liquid-nav flex items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass dark:shadow-sm pointer-events-auto border overflow-x-auto no-scrollbar transition-all duration-300"
+            class="liquid-nav flex items-center justify-between gap-2 px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-glass dark:shadow-sm pointer-events-auto border transition-[width,background-color,border-color,box-shadow] duration-300"
             :class="scrollY > 100 ? 'bg-white/70 dark:bg-slate-900/80 backdrop-blur-[24px] border-slate-200/50 dark:border-slate-700/50' : 'bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border-white/50 dark:border-slate-700/50'"
             :style="{
                 width: navWidth,
                 maxWidth: '1200px'
             }"
         >
-            <RouterLink to="/" class="flex items-center gap-2 shrink-0">
-                <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-sm">
+            <RouterLink to="/" class="flex min-h-11 touch-manipulation items-center gap-2 shrink-0">
+                <span class="text-base sm:text-xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-sm">
                     CUD<span class="text-pink-600">See</span>Reg
                 </span>
             </RouterLink>
@@ -88,7 +94,7 @@ const MagneticButton = defineComponent({
                     <RouterLink
                         to="/search"
                         :class="[
-                            'inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
+                            'inline-flex items-center justify-center min-h-11 touch-manipulation px-2.5 py-2 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
                             isSearch ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                         ]"
                     >
@@ -99,7 +105,7 @@ const MagneticButton = defineComponent({
                     <RouterLink
                         to="/"
                         :class="[
-                            'inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
+                            'inline-flex items-center justify-center min-h-11 touch-manipulation px-2.5 py-2 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap',
                             isPlanner ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                         ]"
                     >
