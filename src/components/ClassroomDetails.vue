@@ -1,8 +1,16 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue';
+
+const props = defineProps<{
     classroom: string;
     classroomMilitary?: string;
 }>();
+
+const showMilitaryClassroom = computed(() => {
+    const normalize = (room: string) => room.replace(/\s+/g, ' ').trim();
+    const military = normalize(props.classroomMilitary ?? '');
+    return military !== '' && military !== normalize(props.classroom);
+});
 </script>
 
 <template>
@@ -11,7 +19,7 @@ defineProps<{
             <dt class="font-semibold">ห้องเรียน</dt>
             <dd class="mt-0.5 whitespace-pre-line break-words">{{ classroom.trim() || 'ยังไม่ระบุ' }}</dd>
         </div>
-        <div v-if="classroomMilitary?.trim()">
+        <div v-if="showMilitaryClassroom">
             <dt class="font-semibold">ห้องเรียน (ช่วง รด.)</dt>
             <dd class="mt-0.5 whitespace-pre-line break-words">{{ classroomMilitary }}</dd>
         </div>

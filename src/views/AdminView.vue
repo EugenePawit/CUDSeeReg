@@ -986,7 +986,7 @@ const handleImport = (e: Event) => {
                                         />
                                     </div>
                                 </div>
-                                <div class="mt-4 space-y-3">
+                                <div v-if="subjectsGrade === '6'" class="mt-4 space-y-3">
                                     <div v-for="(room, index) in getSubjectClassrooms(subjectForm)" :key="index" class="space-y-2">
                                         <div class="text-xs font-semibold text-slate-600 dark:text-slate-400">กลุ่ม {{ room.group }}</div>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1035,7 +1035,7 @@ const handleImport = (e: Event) => {
                                     Showing {{ filteredSubjectsList.length }} of {{ allSubjectsRaw.length }} subjects
                                 </p>
                                 <div class="overflow-x-auto">
-                                    <table class="w-full text-sm min-w-[960px]">
+                                    <table :class="['w-full text-sm', subjectsGrade === '6' ? 'min-w-[960px]' : 'min-w-[760px]']">
                                         <thead>
                                             <tr class="text-left border-b border-slate-200 dark:border-slate-700">
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Code</th>
@@ -1043,7 +1043,7 @@ const handleImport = (e: Event) => {
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Credits</th>
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Instructor</th>
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Time</th>
-                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">ห้องเรียน</th>
+                                                <th v-if="subjectsGrade === '6'" class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">ห้องเรียน</th>
                                                 <th class="pb-2 font-medium text-slate-600 dark:text-slate-400"></th>
                                             </tr>
                                         </thead>
@@ -1058,7 +1058,7 @@ const handleImport = (e: Event) => {
                                                 <td class="py-3 pr-4 text-slate-600 dark:text-slate-400">{{ item.subject.credit }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs max-w-[160px] truncate">{{ getSubjectInstructor(item.subject) }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-500 text-xs">{{ getSubjectClasstime(item.subject) }}</td>
-                                                <td class="py-3 pr-4 min-w-[200px] max-w-[320px]">
+                                                <td v-if="subjectsGrade === '6'" class="py-3 pr-4 min-w-[200px] max-w-[320px]">
                                                     <div class="space-y-3">
                                                         <div v-for="(room, index) in getSubjectClassrooms(item.subject)" :key="index">
                                                             <div class="text-xs font-semibold text-pink-700 dark:text-pink-400 mb-1">กลุ่ม {{ room.group }}</div>

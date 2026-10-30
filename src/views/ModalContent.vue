@@ -10,6 +10,7 @@ const props = defineProps<{
         description: string;
         anchor?: DOMRect;
     } | null;
+    grade: number;
     descriptions: Record<string, string>;
     dayColors: Record<string, string>;
 }>();
@@ -92,6 +93,7 @@ const currentGroup = computed(() => {
                             <span v-else class="text-xs text-slate-400 dark:text-slate-500 italic">ไม่มีข้อมูลเวลา</span>
                         </div>
                         <ClassroomDetails
+                            v-if="grade === 6"
                             class="mt-3"
                             :classroom="group.classroom"
                             :classroom-military="group.classroomMilitary"

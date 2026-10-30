@@ -310,6 +310,7 @@ onUnmounted(() => {
                 >
                     <ModalContent
                         :data="modalData"
+                        :grade="gradeValue"
                         :descriptions="descriptions"
                         :day-colors="DAY_COLORS"
                         @close="closeModal"
@@ -325,6 +326,7 @@ onUnmounted(() => {
                 >
                     <ModalContent
                         :data="modalData"
+                        :grade="gradeValue"
                         :descriptions="descriptions"
                         :day-colors="DAY_COLORS"
                         @close="closeModal"
