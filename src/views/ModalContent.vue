@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import ClassroomDetails from '@/components/ClassroomDetails.vue';
 import type { GroupedSubject } from '@/types/subject';
 
 const props = defineProps<{
@@ -90,6 +91,11 @@ const currentGroup = computed(() => {
                             </template>
                             <span v-else class="text-xs text-slate-400 dark:text-slate-500 italic">ไม่มีข้อมูลเวลา</span>
                         </div>
+                        <ClassroomDetails
+                            class="mt-3"
+                            :classroom="group.classroom"
+                            :classroom-military="group.classroomMilitary"
+                        />
                         <div v-if="group.note" class="text-xs text-amber-700 dark:text-amber-400 mt-2 bg-amber-50 dark:bg-amber-900/20 p-1.5 rounded border border-amber-100 dark:border-amber-900/40">{{ group.note }}</div>
                     </div>
                 </div>

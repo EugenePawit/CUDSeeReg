@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ClassroomDetails from '@/components/ClassroomDetails.vue';
 import { ref, computed, reactive, watch } from 'vue';
 import {
     Lock, LogOut, Plus, Trash2, Edit2, Save, X, Check,
@@ -141,6 +142,7 @@ const blankSubject = (): Subject => ({
     updatedElectiveQuantity: '30',
     classtime: '',
     classroom: '',
+    classroomMilitary: '',
     note: '',
 });
 
@@ -193,6 +195,27 @@ const filteredSubjectsList = computed(() => {
     });
 });
 
+// Keep room arrays aligned with กลุ่ม, including blank room entries.
+const getSubjectClassrooms = (subject: Subject) => {
+    const groups = Array.isArray(subject.group) ? subject.group : [subject.group];
+    return groups.map((group, index) => ({
+        group,
+        classroom: Array.isArray(subject.classroom) ? subject.classroom[index] ?? '' : subject.classroom ?? '',
+        classroomMilitary: Array.isArray(subject.classroomMilitary)
+            ? subject.classroomMilitary[index] ?? '' : subject.classroomMilitary ?? '',
+    }));
+};
+
+const setSubjectClassroom = (index: number, field: 'classroom' | 'classroomMilitary', value: string) => {
+    if (Array.isArray(subjectForm.group)) {
+        const rooms = getSubjectClassrooms(subjectForm).map(room => room[field]);
+        rooms[index] = value;
+        subjectForm[field] = rooms;
+    } else {
+        subjectForm[field] = value;
+    }
+};
+
 const getSubjectClasstime = (s: Subject): string => {
     if (Array.isArray(s.classtime)) return s.classtime.join(', ');
     return s.classtime || '';
@@ -244,11 +267,11 @@ const resetSubjectForm = () => {
 const startEditSubject = (customIndex: number | null, subject?: Subject) => {
     if (customIndex !== null) {
         const s = customSubjectsList.value[customIndex];
-        Object.assign(subjectForm, JSON.parse(JSON.stringify(s)));
+        Object.assign(subjectForm, blankSubject(), JSON.parse(JSON.stringify(s)));
         editingSubjectIndex.value = customIndex;
         editingSubject.value = null;
     } else if (subject) {
-        Object.assign(subjectForm, JSON.parse(JSON.stringify(subject)));
+        Object.assign(subjectForm, blankSubject(), JSON.parse(JSON.stringify(subject)));
         editingSubjectIndex.value = null;
         editingSubject.value = subject;
     }
@@ -952,7 +975,6 @@ const handleImport = (e: Event) => {
                                         </p>
                                     </div>
                                     <div v-for="field in ([
-                                        { key: 'classroom', label: 'Classroom', placeholder: 'e.g. Room 101' },
                                         { key: 'enrollment', label: 'Capacity', placeholder: '30' },
                                         { key: 'electiveQuantity', label: 'Elective seats', placeholder: '30' },
                                     ] as const)" :key="field.key" class="flex flex-col gap-1">
@@ -962,6 +984,26 @@ const handleImport = (e: Event) => {
                                             :placeholder="field.placeholder"
                                             class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
                                         />
+                                    </div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div v-for="(room, index) in getSubjectClassrooms(subjectForm)" :key="index" class="space-y-2">
+                                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400">กลุ่ม {{ room.group }}</div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <label v-for="field in ([
+                                                { key: 'classroom', label: 'ห้องเรียน' },
+                                                { key: 'classroomMilitary', label: 'ห้องเรียน (ช่วง รด.)' },
+                                            ] as const)" :key="field.key" class="flex flex-col gap-1 text-xs text-slate-600 dark:text-slate-400">
+                                                {{ field.label }}
+                                                <textarea
+                                                    :value="room[field.key]"
+                                                    @input="setSubjectClassroom(index, field.key, ($event.target as HTMLTextAreaElement).value)"
+                                                    rows="3"
+                                                    placeholder="เช่น ม.6/5"
+                                                    class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+                                                />
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="flex gap-2 mt-4">
@@ -993,7 +1035,7 @@ const handleImport = (e: Event) => {
                                     Showing {{ filteredSubjectsList.length }} of {{ allSubjectsRaw.length }} subjects
                                 </p>
                                 <div class="overflow-x-auto">
-                                    <table class="w-full text-sm min-w-[760px]">
+                                    <table class="w-full text-sm min-w-[960px]">
                                         <thead>
                                             <tr class="text-left border-b border-slate-200 dark:border-slate-700">
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Code</th>
@@ -1001,6 +1043,7 @@ const handleImport = (e: Event) => {
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Credits</th>
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Instructor</th>
                                                 <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">Time</th>
+                                                <th class="pb-2 pr-4 font-medium text-slate-600 dark:text-slate-400">ห้องเรียน</th>
                                                 <th class="pb-2 font-medium text-slate-600 dark:text-slate-400"></th>
                                             </tr>
                                         </thead>
@@ -1015,6 +1058,14 @@ const handleImport = (e: Event) => {
                                                 <td class="py-3 pr-4 text-slate-600 dark:text-slate-400">{{ item.subject.credit }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs max-w-[160px] truncate">{{ getSubjectInstructor(item.subject) }}</td>
                                                 <td class="py-3 pr-4 text-slate-500 dark:text-slate-500 text-xs">{{ getSubjectClasstime(item.subject) }}</td>
+                                                <td class="py-3 pr-4 min-w-[200px] max-w-[320px]">
+                                                    <div class="space-y-3">
+                                                        <div v-for="(room, index) in getSubjectClassrooms(item.subject)" :key="index">
+                                                            <div class="text-xs font-semibold text-pink-700 dark:text-pink-400 mb-1">กลุ่ม {{ room.group }}</div>
+                                                            <ClassroomDetails :classroom="room.classroom" :classroom-military="room.classroomMilitary" />
+                                                        </div>
+                                                    </div>
+                                                </td>
                                                 <td class="py-3">
                                                     <div class="flex gap-1">
                                                         <button @click="startEditSubject(item.customIndex ?? null, item.subject)" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
