@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { coursesFromWords, matchScannedCourses, offeringId, planScreenshotImport, type OcrWord } from '../src/lib/screenshotImport';
+import { coursesFromWords, courseFromText, mergeCourseReads, matchScannedCourses, offeringId, planScreenshotImport, type OcrWord } from '../src/lib/screenshotImport';
 import { flattenSubjects } from '../src/lib/dataFetcher';
 import { getBundledSubjects } from '../src/lib/bundledSubjects';
 import { M6_DEMO_TIMETABLES } from '../src/lib/m6Demo';
@@ -51,4 +51,19 @@ test('a matched subject with one offering selects its existing group despite unc
  // One group with multiple schedules still needs a schedule selection.
  const anotherTime={...subject,classtime:'ศุกร์ 1'};
  expect(matchScannedCourses([{code:subject.code,text:subject.name}],[subject,anotherTime]).matches[0].selected).toBe('');
+});
+
+
+test('focused card text preserves wrapped names and Thai group digits',()=>{
+ expect(courseFromText('กราฟิกสร้างอาชีพ กลุ่ม ๑\nง 30270\n')).toEqual({code:'ง30270',text:'กราฟิกสร้างอาชีพ กลุ่ม 1',group:'1'});
+ expect(courseFromText('พื้นฐานคณิตศาสตร์สำหรับศึกษา\nต่อ กลุ่ม 2\nค33221')).toEqual({code:'ค33221',text:'พื้นฐานคณิตศาสตร์สำหรับศึกษา ต่อ กลุ่ม 2',group:'2'});
+ expect(courseFromText('ภาษาไทย 12 ม.6/4')).toBeNull();
+});
+
+test('a fallback recovers different groups without undoing focused group recognition',()=>{
+ const focused={code:'ง30270',text:'กราฟิกสร้างอาชีพ กลุ่ม 1',group:'1'};
+ const second={code:'ง30270',text:'กราฟิกสร้างอาชีพ กลุ่ม 2',group:'2'};
+ const unclear={code:'030270',text:'กราฟิกสร้างอาชีพ'};
+ expect(mergeCourseReads([focused],[unclear,focused,second])).toEqual([focused,second]);
+ expect(mergeCourseReads([unclear],[focused])).toEqual([unclear,focused]);
 });

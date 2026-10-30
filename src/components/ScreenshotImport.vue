@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import type { Worker } from 'tesseract.js';
 import type { BaseTimetable, FlattenedSubject, UserTimetable } from '@/types/subject';
-import { coursesFromWords, matchScannedCourses, offeringId, planScreenshotImport, type ScannedCourse } from '@/lib/screenshotImport';
+import { matchScannedCourses, offeringId, planScreenshotImport, type ScannedCourse } from '@/lib/screenshotImport';
 const props=defineProps<{catalog: FlattenedSubject[]; timetable: BaseTimetable; existing: UserTimetable}>();
 const emit=defineEmits<{close: []; apply: [subjects: FlattenedSubject[]]}>();
 const dialog=ref<HTMLDialogElement|null>(null);
@@ -35,19 +35,21 @@ async function scan() {
     busy.value=true;error.value='';result.value=null;scanProgress.value=0;progress.value='กำลังเตรียมอ่านรูปภาพ';
     let index=0;
     try {
-        const { createWorker, PSM }=await import('tesseract.js');
+        const [{ createWorker }, { scanScreenshot }]=await Promise.all([import('tesseract.js'),import('@/lib/screenshotOcr')]);
         if(disposed)return;
-        const created=await createWorker('tha+eng',1,{logger:m=>{if(!disposed && m.status==='recognizing text') { scanProgress.value=Math.min(100,Math.round((index+(m.progress??0))/files.value.length*100)); progress.value=`กำลังอ่านรูป ${index+1}/${files.value.length}`; }}});
+        const created=await createWorker('tha+eng',1,{});
         if(disposed){await created.terminate();return;} worker=created;
-        await worker.setParameters({tessedit_pageseg_mode:PSM.SPARSE_TEXT});
         const courses: ScannedCourse[]=[];
         for(index=0;index<files.value.length;index++) {
             if(disposed)return;
             const canvas=await imageCanvas(files.value[index]);
             if(disposed)return;
-            const {data}=await worker.recognize(canvas,{}, {blocks:true});
-            courses.push(...coursesFromWords(data.blocks?.flatMap(b=>b.paragraphs.flatMap(p=>p.lines.flatMap(l=>l.words)))??[]));
-            canvas.width=canvas.height=1;
+            progress.value=`กำลังอ่านรูป ${index+1}/${files.value.length}`;
+            try {
+                courses.push(...await scanScreenshot(canvas,worker,fraction=>{
+                    if(!disposed)scanProgress.value=Math.min(100,Math.round((index+fraction)/files.value.length*100));
+                },()=>disposed));
+            } finally {canvas.width=canvas.height=1;}
         }
         if(!disposed) {result.value=matchScannedCourses(courses,props.catalog);if(!courses.length)error.value='ไม่พบรหัสวิชา ลองใช้รูปที่คมชัดขึ้นหรือตัดรูปให้เหลือรายการวิชา';}
     } catch(e) {if(!disposed){console.error(e);error.value='อ่านรูปไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตและลองใช้รูปที่คมชัดขึ้น';}}

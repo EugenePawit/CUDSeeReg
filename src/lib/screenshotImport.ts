@@ -36,6 +36,21 @@ export function coursesFromWords(words: OcrWord[]): ScannedCourse[] {
         return { code, text, group };
     });
 }
+export function courseFromText(text: string): ScannedCourse | null {
+    const lines=digits(text).split('\n').map(line=>line.trim()).filter(Boolean);
+    // Codes are printed below the course title; prefer the last code-shaped token.
+    for(let i=lines.length-1;i>=0;i--) {
+        const code=lines[i].replace(/\s/g,'').match(/^([ก-ฮa-zA-Z0-9]?)(\d{5})$/);
+        if(!code)continue;
+        const name=lines.slice(0,i).join(' ');
+        return {code:code[1]+code[2],text:name,group:normalize(name).match(/กลม(\d{1,2})(?!\d)/)?.[1]};
+    }
+    return null;
+}
+export function mergeCourseReads(focused: ScannedCourse[], fallback: ScannedCourse[]) {
+    return [...focused,...fallback.filter(course=>!focused.some(read=>read.code.slice(-5)===course.code.slice(-5)
+        && (read.group===course.group || (!!read.group && !course.group))))];
+}
 function similarity(a: string, b: string) {
     a=normalize(a).replace(/กลม\d+/g,''); b=normalize(b);
     if (a.length<4 || b.length<4) return 0;
