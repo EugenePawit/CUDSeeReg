@@ -8,6 +8,8 @@ import { useTermStore } from '@/stores/term';
 import { useAdminStore } from '@/stores/admin';
 import { BASE_TIMETABLES, DAYS, DAY_NAMES_TH, PERIODS } from '@/lib/baseTimetables';
 import { militaryTimetable, supportsMilitarySchedule, subjectForSchedule, fitsTimetable } from '@/lib/timetables2569_2';
+import { M3_M5_DEMO_TIMETABLES, M3_M5_DEMO_MILITARY } from '@/lib/m3m5Demo';
+import { M6_DEMO_TIMETABLES, M6_DEMO_MILITARY } from '@/lib/m6Demo';
 import { PERIOD_TIMES } from '@/lib/thaiTimeParser';
 import { fetchSubjects, flattenSubjects } from '@/lib/dataFetcher';
 import {
@@ -55,6 +57,7 @@ const allTimetables = computed(() => {
     const activeTerm = termStore.activeTerm;
     return {
         ...Object.fromEntries(Object.entries(BASE_TIMETABLES).filter(([, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
+        ...(activeTerm === '2569/2' ? { ...M3_M5_DEMO_TIMETABLES, ...M6_DEMO_TIMETABLES } : {}),
         ...Object.fromEntries(Object.entries(adminStore.customTimetables).filter(([, tt]) => tt.termId === activeTerm).map(([id, tt]) => [id, tt] as const)),
     };
 });
@@ -84,14 +87,20 @@ const parsedFromStore = computed(() => {
     return parseBaseTimetableId(baseTimetableId.value) ?? { grade: '1', program: 'EP' };
 });
 
-const programs = computed(() => Object.values(allTimetables.value)
-    .filter(tt => tt.grade === Number(parsedFromStore.value.grade))
+const timetableOptions = (grade: number) => {
+    const options = Object.values(allTimetables.value).filter(tt => tt.grade === grade);
+    const rooms = options.filter(tt => /^M[1-6]-Room/.test(tt.id));
+    return rooms.length ? rooms : options;
+};
+const hasRoomTimetables = computed(() => timetableOptions(Number(parsedFromStore.value.grade))
+    .some(tt => /^M[1-6]-Room/.test(tt.id)));
+const programs = computed(() => timetableOptions(Number(parsedFromStore.value.grade))
     .map(tt => ({ value: tt.id.replace(`M${tt.grade}-`, ''), label: tt.label })));
 
 const normalTimetable = computed(() => allTimetables.value[baseTimetableId.value] ?? null);
 const canUseMilitarySchedule = computed(() => supportsMilitarySchedule(normalTimetable.value));
 const baseTimetable = computed(() => normalTimetable.value && militaryMode.value && canUseMilitarySchedule.value
-    ? militaryTimetable(normalTimetable.value) : normalTimetable.value);
+    ? M3_M5_DEMO_MILITARY[normalTimetable.value.id] ?? M6_DEMO_MILITARY[normalTimetable.value.id] ?? militaryTimetable(normalTimetable.value) : normalTimetable.value);
 const subjects = computed(() => rawSubjects.value.map(subject => subjectForSchedule(subject,
     normalTimetable.value?.grade ?? 1, militaryMode.value && canUseMilitarySchedule.value)));
 
@@ -100,7 +109,7 @@ watch(() => termStore.activeTerm, () => {
     militaryMode.value = false;
     const grade = Number(parsedFromStore.value.grade);
     const program = parsedFromStore.value.program.replace(/-2569-2$/, '');
-    const options = Object.values(allTimetables.value).filter(tt => tt.grade === grade);
+    const options = timetableOptions(grade);
     const next = options.find(tt => tt.id.replace(/-2569-2$/, '') === `M${grade}-${program}`) ?? options[0];
     timetableStore.setBaseTimetableId(next?.id ?? '');
 });
@@ -291,7 +300,7 @@ const filteredSubjects = computed(() => {
 
 const handleGradeChange = (nextGrade: string) => {
     const program = parsedFromStore.value.program.replace(/-2569-2$/, '');
-    const options = Object.values(allTimetables.value).filter(tt => tt.grade === Number(nextGrade));
+    const options = timetableOptions(Number(nextGrade));
     const next = options.find(tt => tt.id.replace(/-2569-2$/, '') === `M${nextGrade}-${program}`) ?? options[0];
     militaryMode.value = false;
     timetableStore.setBaseTimetableId(next?.id ?? '');
@@ -545,7 +554,7 @@ const getBreakContent = (cell: CellType) => {
                     </div>
 
                     <div class="flex flex-col gap-2 w-full sm:w-auto">
-                        <label class="text-sm text-slate-600 dark:text-slate-400 font-medium">แผนการเรียน</label>
+                        <label class="text-sm text-slate-600 dark:text-slate-400 font-medium">{{ hasRoomTimetables ? 'ห้อง' : 'แผนการเรียน' }}</label>
                         <div class="relative">
                             <select
                                 :value="parsedFromStore.program"
