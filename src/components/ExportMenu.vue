@@ -2,8 +2,8 @@
 import { ref } from 'vue';
 import { Share2, X, Link, Image, Download, List, LoaderCircle } from 'lucide-vue-next';
 
-const props = defineProps<{ busy: boolean; canCopyImage: boolean; hasSubjects: boolean }>();
-const emit = defineEmits<{ action: [action: 'link' | 'copy-image' | 'download-image' | 'list'] }>();
+const props = defineProps<{ busy: boolean; canCopyImage: boolean; hasSubjects: boolean; showClassrooms: boolean }>();
+const emit = defineEmits<{ 'update:showClassrooms': [value: boolean]; action: [action: 'link' | 'copy-image' | 'download-image' | 'list'] }>();
 const dialog = ref<HTMLDialogElement | null>(null);
 const trigger = ref<HTMLButtonElement | null>(null);
 const position = ref({ top: '0px', left: '0px' });
@@ -35,7 +35,7 @@ function dismiss(event: MouseEvent) {
 </script>
 
 <template>
-    <button ref="trigger" type="button" class="btn-primary flex items-center gap-2 interactive-press disabled:opacity-60 disabled:cursor-wait"
+    <button ref="trigger" type="button" class="btn-primary min-h-11 min-w-11 justify-center flex items-center gap-2 interactive-press disabled:opacity-60 disabled:cursor-wait"
         :disabled="busy" :aria-busy="busy" :aria-label="busy ? 'กำลังเตรียมรูปภาพ' : 'แชร์ / ส่งออก'" :title="busy ? 'กำลังเตรียมรูปภาพ...' : 'แชร์ / ส่งออก'" aria-haspopup="dialog" @click="open">
         <LoaderCircle v-if="busy" :size="18" class="animate-spin" />
         <span v-else class="flex items-center gap-1" aria-hidden="true"><Share2 :size="17" /><Download :size="17" /></span>
@@ -45,8 +45,12 @@ function dismiss(event: MouseEvent) {
             class="export-dialog bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 shadow-2xl p-4" @click="dismiss">
             <div class="flex items-center justify-between px-2 mb-3">
                 <h2 id="export-title" class="font-semibold text-lg">แชร์ / ส่งออก</h2>
-                <button type="button" aria-label="ปิด" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" @click="dialog?.close()"><X :size="20" /></button>
+                <button type="button" aria-label="ปิด" class="min-h-11 min-w-11 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" @click="dialog?.close()"><X :size="20" /></button>
             </div>
+            <label class="flex items-center gap-2 px-2 py-3 mb-2 text-sm border-b border-slate-200 dark:border-slate-700">
+                <input type="checkbox" :checked="showClassrooms" @change="emit('update:showClassrooms', ($event.target as HTMLInputElement).checked)" />
+                แสดงห้องเรียนรายวิชาเพิ่มเติมในรูปภาพ
+            </label>
             <div class="flex flex-col gap-1">
                 <button type="button" class="export-option" @click="choose('link')"><Link :size="20" /><span>คัดลอกลิงก์</span></button>
                 <button type="button" class="export-option" :disabled="!canCopyImage" :aria-describedby="!canCopyImage ? 'copy-image-help' : undefined" @click="choose('copy-image')">
@@ -60,7 +64,7 @@ function dismiss(event: MouseEvent) {
 </template>
 
 <style scoped>
-.export-dialog { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: none; max-height: 90dvh; border-radius: 24px 24px 0 0; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+.export-dialog { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: none; max-height: 90dvh; overflow-y: auto; overscroll-behavior: contain; border-radius: 24px 24px 0 0; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
 .export-dialog::backdrop { background: rgb(15 23 42 / 0.35); }
 .export-option { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 12px; border-radius: 12px; text-align: left; }
 .export-option:hover:not(:disabled), .export-option:focus-visible { background: rgb(236 72 153 / 0.08); }

@@ -25,3 +25,14 @@ test('unknown rooms are omitted and legacy records can use their shared room', (
     expect(timetableClassrooms({ Monday: { 1: legacy } }, true)[0].classroom).toBe('101');
     expect(timetableClassrooms({ Monday: { 1: { ...legacy, classroomMilitary: '' } } }, true)).toEqual([]);
 });
+
+
+test('room lists refresh from the current catalog after an offline selection', () => {
+    const base = flattenSubjects(getBundledSubjects('2569/2', '6'))[0];
+    const selected = { Monday: { 1: { ...base, classroom: '' } } };
+    expect(timetableClassrooms(selected, false)).toEqual([]);
+    const current = { ...base, classroom: 'ม.6/5', classroomMilitary: 'ม.6/2' };
+    expect(timetableClassrooms(selected, false, [current])[0].classroom).toBe('ม.6/5');
+    expect(timetableClassrooms(selected, true, [current])[0].classroom).toBe('ม.6/2');
+    expect(selected.Monday[1].classroom).toBe('');
+});

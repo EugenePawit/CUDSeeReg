@@ -20,6 +20,7 @@ import {
 } from '@/lib/shareTimetable';
 import type { FlattenedSubject } from '@/types/subject';
 import PlannerModal from '@/components/PlannerModal.vue';
+import ScreenshotImport from '@/components/ScreenshotImport.vue';
 import ExportMenu from '@/components/ExportMenu.vue';
 import { timetableClassrooms } from '@/lib/timetableClassrooms';
 import { minimumElectiveCredits, selectedElectiveCredits } from '@/lib/plannerCredits';
@@ -64,6 +65,9 @@ const allTimetables = computed(() => {
 });
 
 const modalOpen = ref(false);
+const screenshotImportOpen = ref(false);
+const showExportClassrooms = ref(true);
+watch([baseTimetableId, () => termStore.activeTerm, militaryMode], () => { screenshotImportOpen.value = false; });
 const selectedSlot = ref<{ day: string; period: number } | null>(null);
 const rawSubjects = ref<FlattenedSubject[]>([]);
 const subjectsGrade = ref<number | null>(null);
@@ -103,7 +107,7 @@ const canUseMilitarySchedule = computed(() => supportsMilitarySchedule(normalTim
 const baseTimetable = computed(() => normalTimetable.value && militaryMode.value && canUseMilitarySchedule.value
     ? M3_M5_DEMO_MILITARY[normalTimetable.value.id] ?? M6_DEMO_MILITARY[normalTimetable.value.id] ?? militaryTimetable(normalTimetable.value) : normalTimetable.value);
 const electiveClassrooms = computed(() => timetableClassrooms(selectedElectives.value,
-    militaryMode.value && canUseMilitarySchedule.value));
+    militaryMode.value && canUseMilitarySchedule.value, rawSubjects.value));
 const subjects = computed(() => rawSubjects.value.map(subject => subjectForSchedule(subject,
     normalTimetable.value?.grade ?? 1, militaryMode.value && canUseMilitarySchedule.value)));
 
@@ -360,6 +364,8 @@ const captureTimetableImage = async (): Promise<Blob> => {
             clonedElement.style.transition = 'none';
             clonedElement.scrollLeft = 0;
             clonedElement.scrollTop = 0;
+            const rooms = clonedElement.querySelector<HTMLElement>('[data-elective-classrooms]');
+            if (rooms) rooms.style.display = showExportClassrooms.value ? 'block' : 'none';
         },
     });
     return new Promise<Blob>((resolve, reject) => {
@@ -594,13 +600,13 @@ const getBreakContent = (cell: CellType) => {
                             {{ feedback }}
                         </p>
                     </div>
-                    <div class="flex flex-wrap gap-3 items-center">
+                    <div class="grid grid-cols-[auto_1fr_auto] gap-3 items-center w-full sm:flex sm:w-auto">
                         <div
                             v-if="minimumCredits !== null"
                             role="status"
                             :title="!creditSummary.complete ? 'บางวิชาไม่มีข้อมูลหน่วยกิต' : creditMinimumMet ? 'ครบหน่วยกิตวิชาเลือกขั้นต่ำแล้ว' : 'ยังไม่ครบหน่วยกิตวิชาเลือกขั้นต่ำ'"
                             :aria-label="`${creditSummary.total} จาก ${minimumCredits} หน่วยกิตวิชาเลือก · ${!creditSummary.complete ? 'ข้อมูลหน่วยกิตไม่ครบ' : creditMinimumMet ? 'ครบขั้นต่ำแล้ว' : 'ยังไม่ครบขั้นต่ำ'}`"
-                            :class="['px-4 py-2.5 border rounded-xl font-semibold text-sm tabular-nums whitespace-nowrap', creditMinimumMet
+                            :class="['col-span-3 sm:col-span-1 px-4 py-2.5 border rounded-xl font-semibold text-sm tabular-nums whitespace-nowrap', creditMinimumMet
                                 ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
                                 : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300']"
                         >
@@ -608,11 +614,13 @@ const getBreakContent = (cell: CellType) => {
                         </div>
                         <button
                             @click="timetableStore.clearAllElectives()"
-                            class="btn-secondary flex items-center gap-2 interactive-press"
+                            type="button" aria-label="ล้างทั้งหมด" title="ล้างทั้งหมด"
+                            class="btn-secondary flex items-center justify-center min-h-11 min-w-11 !p-3 interactive-press"
                         >
-                            <Trash2 :size="18" /> ล้างทั้งหมด
+                            <Trash2 :size="18" />
                         </button>
-                        <ExportMenu :busy="exporting" :can-copy-image="canCopyImage" :has-subjects="!!subjectList" @action="handleExportAction" />
+                        <button type="button" class="btn-secondary text-sm min-h-11" :disabled="loading || !subjects.length" @click="screenshotImportOpen = true">นำเข้าจากรูปภาพ</button>
+                        <ExportMenu v-model:show-classrooms="showExportClassrooms" :busy="exporting" :can-copy-image="canCopyImage" :has-subjects="!!subjectList" @action="handleExportAction" />
                     </div>
                 </div>
 
@@ -721,9 +729,9 @@ const getBreakContent = (cell: CellType) => {
                             </tr>
                         </tbody>
                     </table>
-                    <section v-if="electiveClassrooms.length" aria-labelledby="elective-classrooms-title"
+                    <section v-if="electiveClassrooms.length" style="display: none" data-elective-classrooms aria-labelledby="elective-classrooms-title"
                         class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <h2 id="elective-classrooms-title" class="font-semibold text-base mb-3">ห้องเรียนวิชาเพิ่มเติม</h2>
+                        <h2 id="elective-classrooms-title" class="font-semibold text-base mb-3">ห้องเรียนรายวิชาเพิ่มเติม</h2>
                         <ul class="space-y-2 text-sm">
                             <li v-for="subject in electiveClassrooms" :key="subject.id" class="flex flex-col sm:flex-row sm:gap-2">
                                 <span class="font-medium">{{ subject.code }} {{ subject.name }}<span v-if="subject.group"> · กลุ่ม {{ subject.group }}</span></span>
@@ -735,6 +743,9 @@ const getBreakContent = (cell: CellType) => {
             </template>
         </main>
 
+        <ScreenshotImport v-if="screenshotImportOpen && baseTimetable" :catalog="subjects" :timetable="baseTimetable" :existing="selectedElectives"
+            @close="screenshotImportOpen = false"
+            @apply="(items) => { items.forEach(subject => { const slot = subject.parsedTimeSlots[0]; timetableStore.addElective(slot.day, slot.startPeriod, subject); }); screenshotImportOpen = false; setTransientFeedback('นำเข้าวิชาแล้ว'); }" />
         <PlannerModal
             :is-open="modalOpen"
             :selected-slot="selectedSlot"
