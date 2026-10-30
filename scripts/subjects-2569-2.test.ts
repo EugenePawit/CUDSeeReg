@@ -99,3 +99,27 @@ test('older browsers get the new term and editing keeps all other bundled groups
     setActivePinia(createPinia());
     expect(useAdminStore().getSubjects('2569/2', '1')).toHaveLength(53);
 });
+
+
+test('classrooms stay with their groups and unknown rooms never borrow another group’s room', () => {
+    const subject = getBundledSubjects('2569/2', '1')[0];
+    const withRooms = { ...subject, group: ['1', '2', '3', '4'], classroom: ['101', '202', ''], classroomMilitary: ['M101', 'M202', ''] };
+    expect(flattenSubjects([withRooms]).map(s => [s.group, s.classroom])).toEqual([
+        ['1', '101'], ['2', '202'], ['3', ''], ['4', ''],
+    ]);
+    expect(flattenSubjects([withRooms]).map(s => s.classroomMilitary))
+        .toEqual(['M101', 'M202', '', '']);
+    expect(flattenSubjects([{ ...subject, classroomMilitary: ['M101'] }])[0].classroomMilitary).toBe('M101');
+    expect(flattenSubjects([{ ...withRooms, classroomMilitary: 'M101' }]).map(s => s.classroomMilitary))
+        .toEqual(['M101', 'M101', 'M101', 'M101']);
+    // Legacy scalar rooms explicitly apply to every group in the row.
+    expect(flattenSubjects([{ ...withRooms, classroom: '101' }]).map(s => s.classroom))
+        .toEqual(['101', '101', '101', '101']);
+    expect(flattenSubjects([{ ...subject, classroom: ['202'] }])[0].classroom).toBe('202');
+    expect(flattenSubjects([{ ...subject, classroom: '' }])[0].classroom).toBe('');
+    const separateGroups = [
+        { ...subject, group: '1', classroom: '101' },
+        { ...subject, group: '2', classroom: '202' },
+    ];
+    expect(flattenSubjects(separateGroups).map(s => s.classroom)).toEqual(['101', '202']);
+});

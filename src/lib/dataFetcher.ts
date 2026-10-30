@@ -147,7 +147,6 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
             const groups = subject.group as string[];
             const instructors = Array.isArray(subject.instructor) ? subject.instructor : [subject.instructor];
             const classtimes = Array.isArray(subject.classtime) ? subject.classtime : [subject.classtime];
-            const classrooms = Array.isArray(subject.classroom) ? subject.classroom : [subject.classroom];
             const enrollments = Array.isArray(subject.enrollment) ? subject.enrollment : [subject.enrollment];
             const electiveQuantities = Array.isArray(subject.electiveQuantity) ? subject.electiveQuantity : [subject.electiveQuantity];
             const updatedQuantities = Array.isArray(subject.updatedElectiveQuantity)
@@ -166,7 +165,12 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
                     group: groups[i] || '',
                     instructor: instructors[i] || instructors[0] || '',
                     classtime,
-                    classroom: classrooms[i] || classrooms[0] || '',
+                    classroom: Array.isArray(subject.classroom)
+                        ? subject.classroom[i] ?? ''
+                        : subject.classroom ?? '',
+                    classroomMilitary: Array.isArray(subject.classroomMilitary)
+                        ? subject.classroomMilitary[i] ?? ''
+                        : subject.classroomMilitary,
                     enrollment,
                     electiveQuantity: electiveQty,
                     updatedElectiveQuantity: updatedQty,
@@ -186,7 +190,12 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
                 group: subject.group as string,
                 instructor: subject.instructor as string,
                 classtime,
-                classroom: subject.classroom as string,
+                classroom: Array.isArray(subject.classroom)
+                    ? subject.classroom[0] ?? ''
+                    : subject.classroom ?? '',
+                classroomMilitary: Array.isArray(subject.classroomMilitary)
+                    ? subject.classroomMilitary[0] ?? ''
+                    : subject.classroomMilitary,
                 enrollment,
                 electiveQuantity: electiveQty,
                 updatedElectiveQuantity: updatedQty,
