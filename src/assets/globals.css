@@ -5,6 +5,12 @@
 @tailwind utilities;
 
 @layer base {
+  /* html2canvas measures text baselines with an inline image in the live
+     document. Tailwind's block reset shifts the text down in exported PNGs. */
+  img {
+    @apply inline-block;
+  }
+
   body {
     @apply bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen selection:bg-pink-200 dark:selection:bg-pink-900/40;
     background-image:
