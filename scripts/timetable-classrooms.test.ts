@@ -45,3 +45,28 @@ test('bundled courses without room assignments remain visible once per selected 
     expect(rooms).toHaveLength(1);
     expect(rooms[0]).toMatchObject({ code: subject.code, name: subject.name, group: subject.group, classroom: 'ยังไม่ระบุ' });
 });
+
+
+test('blank duplicate rows do not erase assigned rooms before export', () => {
+    const base = getBundledSubjects('2569/2', '6')[0];
+    const assigned = { ...base, classroom: 'ม.6/5', classroomMilitary: 'ม.6/2' };
+    // The live API returns older assigned records followed by blank seed rows.
+    const catalog = flattenSubjects([assigned, { ...base, classroom: '', classroomMilitary: '  ' }]);
+    expect(catalog).toHaveLength(1);
+    const selected = { Tuesday: { 6: { ...catalog[0], classroom: '', classroomMilitary: '' } } };
+    expect(timetableClassrooms(selected, false, catalog)[0].classroom).toBe('ม.6/5');
+    expect(timetableClassrooms(selected, true, catalog)[0].classroom).toBe('ม.6/2');
+});
+
+test('duplicate room merging preserves group boundaries and latest nonblank assignments', () => {
+    const base = getBundledSubjects('2569/2', '6')[0];
+    const rows = flattenSubjects([
+        { ...base, group: ['1', '2'], classroom: ['101', '202'], classroomMilitary: ['M101', 'M202'] },
+        { ...base, group: ['1', '2'], classroom: ['103', ''], classroomMilitary: ['', 'M204'] },
+        { ...base, group: '3', classroom: '', classroomMilitary: '' },
+        { ...base, group: '1', classtime: 'ศุกร์ 8', classroom: '', classroomMilitary: '' },
+    ]);
+    expect(rows.map(s => [s.group, s.classroom, s.classroomMilitary])).toEqual([
+        ['1', '103', 'M101'], ['2', '202', 'M204'], ['3', '', ''], ['1', '', ''],
+    ]);
+});

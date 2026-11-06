@@ -211,7 +211,16 @@ export function flattenSubjects(subjects: Subject[]): FlattenedSubject[] {
     const offerings = new Map<string, FlattenedSubject>();
     for (const subject of flattened) {
         const key = JSON.stringify([subject.code.trim(), subject.group.trim(), subject.classtime.trim()]);
-        offerings.set(key, subject);
+        const previous = offerings.get(key);
+        // Seeded/imported duplicates may follow rows with assigned rooms.
+        // Keep the latest row's other fields, but do not erase known rooms
+        // with blanks from another copy of the same course offering.
+        offerings.set(key, previous ? {
+            ...subject,
+            classroom: subject.classroom.trim() ? subject.classroom : previous.classroom,
+            classroomMilitary: subject.classroomMilitary?.trim()
+                ? subject.classroomMilitary : previous.classroomMilitary ?? subject.classroomMilitary,
+        } : subject);
     }
     return [...offerings.values()];
 }
