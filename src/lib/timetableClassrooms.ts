@@ -5,9 +5,11 @@ export function timetableClassrooms(timetable: UserTimetable, military: boolean,
         .map(subject => [JSON.stringify([subject.code, subject.group, subject.classtime]), subject]));
     // Selections may predate API hydration. Resolve rooms from the current catalog.
     const current = new Map(catalog.map(subject => [JSON.stringify([subject.code, subject.group, subject.classtime]), subject]));
-    return [...subjects.entries()].flatMap(([id, selected]) => {
+    return [...subjects.entries()].map(([id, selected]) => {
         const subject = current.get(id) ?? selected;
         const classroom = (military ? subject.classroomMilitary ?? subject.classroom : subject.classroom).trim();
-        return classroom ? [{ id, code: subject.code, name: subject.name, group: subject.group, classroom }] : [];
+        // Keep unassigned courses visible so enabling the export list still
+        // produces useful output before classroom assignments are published.
+        return { id, code: subject.code, name: subject.name, group: subject.group, classroom: classroom || 'ยังไม่ระบุ' };
     });
 }
